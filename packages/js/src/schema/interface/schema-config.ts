@@ -1,4 +1,2 @@
-export interface SchemaConfig {
-  /** The name of the named node this schema references. */
-  named?: string;
-}
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SchemaConfig {}
