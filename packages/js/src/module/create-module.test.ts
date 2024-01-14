@@ -34,7 +34,7 @@ describe('create module', () => {
   });
 
   it('detects and throws circular dependencies', () => {
-    let getModuleA;
+    let getModuleA: (appID?: string) => never[];
     const getModuleB = createModule((key) => {
       getModuleA(key);
       return [];
