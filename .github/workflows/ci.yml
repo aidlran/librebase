@@ -18,9 +18,9 @@ jobs:
     name: JS / Build
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run build:js
@@ -30,9 +30,9 @@ jobs:
     name: JS / Lint
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run lint:js
@@ -42,9 +42,9 @@ jobs:
     name: JS / Test
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run test -w packages/js
@@ -54,14 +54,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [18]
         svelte-version: [^3.55.0, ^4.0.0]
-    name: Svelte / Build / Svelte ${{ matrix.svelte-version }}
+    name: Svelte / Build / @${{ matrix.svelte-version }}
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node }}
+          node-version: 20
           cache: npm
       - run: npm ci
       - run: npm install -D svelte@${{ matrix.svelte-version }}
@@ -73,10 +72,22 @@ jobs:
     name: Svelte / Lint
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: 18
+          node-version: 20
           cache: npm
       - run: npm ci
       - run: npm run build:js
       - run: npm run lint:svelte
+
+  svelte-test:
+    runs-on: ubuntu-latest
+    name: Svelte / Test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run test:svelte
