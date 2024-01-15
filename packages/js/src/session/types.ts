@@ -1,5 +1,5 @@
 import type { Session as DBSession } from '../indexeddb/indexeddb.js';
-import type { Signal } from '../signal/function/create-signal.js';
+import type { WritableSignal } from '../signal/function/create-signal.js';
 
 export interface Session<T = unknown>
   extends Omit<DBSession<T>, 'id' | 'salt' | 'nonce' | 'payload'> {
@@ -17,5 +17,5 @@ export interface InactiveSession<T = unknown> extends Session<T> {
 
 export type AllSessions<T = unknown> = Partial<Record<number, Session<T>>>;
 
-export type ActiveSessionSignal<T = unknown> = Signal<ActiveSession<T> | undefined>;
-export type AllSessionsSignal<T = unknown> = Signal<AllSessions<T>>;
+export type ActiveSessionSignal<T = unknown> = WritableSignal<ActiveSession<T> | undefined>;
+export type AllSessionsSignal<T = unknown> = WritableSignal<AllSessions<T>>;

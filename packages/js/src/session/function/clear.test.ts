@@ -21,28 +21,30 @@ const activeSession = createSignal<ActiveSession | undefined>(undefined);
 const allSessions = createSignal<AllSessions>({});
 const fn = construct({ postToAll }, activeSession, allSessions);
 
-it("doesn't use an unexpected request action", () => {
-  expect(fn).not.toThrow();
-});
-
-describe('clears the active session', () => {
-  const checkResult = () => {
-    expect(allSessions()[1]).property('active').equals(false);
-    expect(activeSession()).toBeUndefined();
-  };
-
-  beforeEach(() => {
-    const session: ActiveSession = { id: 1, active: true };
-    allSessions.update(() => ({ 1: session }));
-    activeSession.update(() => session);
+describe('clear session', () => {
+  it("doesn't use an unexpected request action", () => {
+    expect(fn).not.toThrow();
   });
 
-  test('callback', () => {
-    fn(checkResult);
-  });
+  describe('clears the active session', () => {
+    const checkResult = () => {
+      expect(allSessions()[1]).property('active').equals(false);
+      expect(activeSession()).toBeUndefined();
+    };
 
-  test('asPromise', () => {
-    expect(fn.asPromise()).resolves;
-    checkResult();
+    beforeEach(() => {
+      const session: ActiveSession = { id: 1, active: true };
+      allSessions.update(() => ({ 1: session }));
+      activeSession.update(() => session);
+    });
+
+    test('callback', () => {
+      fn(checkResult);
+    });
+
+    test('asPromise', () => {
+      expect(fn.asPromise()).resolves;
+      checkResult();
+    });
   });
 });

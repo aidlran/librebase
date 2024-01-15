@@ -1,6 +1,6 @@
 import { createModule } from '../module/create-module.js';
 import { createSignal } from '../signal/function/create-signal.js';
-import { toReadOnlySignal, type ReadOnlySignal } from '../signal/function/to-read-only-signal.js';
+import { toReadOnlySignal, type ReadableSignal } from '../signal/function/to-read-only-signal.js';
 import { workerModule } from '../worker/worker.module.js';
 import { construct as constructClear, type SessionClearFn } from './function/clear.js';
 import { construct as constructCreate, type SessionCreateFn } from './function/create.js';
@@ -10,8 +10,8 @@ import { construct as constructLoad, type SessionLoadFn } from './function/load.
 import type { ActiveSession, AllSessions } from './types.js';
 
 export interface SessionModule<T = unknown> {
-  activeSession: ReadOnlySignal<ActiveSession | undefined>;
-  allSessions: ReadOnlySignal<AllSessions>;
+  activeSession: ReadableSignal<ActiveSession | undefined>;
+  allSessions: ReadableSignal<AllSessions>;
   clear: SessionClearFn;
   create: SessionCreateFn<T>;
   getSessions(callback?: (sessions: Readonly<AllSessions>) => unknown): void;

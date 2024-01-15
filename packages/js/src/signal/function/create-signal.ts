@@ -1,15 +1,15 @@
-import type { ReadOnlySignal, Subscriber } from './to-read-only-signal.js';
+import type { ReadableSignal, Subscriber } from './to-read-only-signal.js';
 
 export type Updater<T> = (currentValue: T) => T;
 
-export interface Signal<T> extends ReadOnlySignal<T> {
+export interface WritableSignal<T> extends ReadableSignal<T> {
   set: (newValue: T) => void;
   update: (updater: Updater<T>) => void;
 }
 
 // TODO: process in batched ticks in microtask queue
 
-export const createSignal = <T>(initialValue: T): Signal<T> => {
+export const createSignal = <T>(initialValue: T): WritableSignal<T> => {
   let currentValue = initialValue;
   const signal = () => currentValue;
   const subscribers = new Set<Subscriber<T>>();

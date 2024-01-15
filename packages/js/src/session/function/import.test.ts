@@ -29,25 +29,27 @@ load.asPromise = (id, passphrase) => {
 const allSessions = createSignal<AllSessions>({});
 const fn = construct({ postToOne }, load, allSessions);
 
-it("doesn't use an unexpected request action", () => {
-  expect(() => fn({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' })).not.toThrow();
-});
-
-describe('add created session to all sessions observable', () => {
-  const checkResult = () => {
-    expect(allSessions()[1]).property('active').equals(false);
-  };
-
-  beforeEach(() => {
-    allSessions.update(() => ({}));
+describe('import session', () => {
+  it("doesn't use an unexpected request action", () => {
+    expect(() => fn({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' })).not.toThrow();
   });
 
-  test('callback', () => {
-    fn({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' }, checkResult);
-  });
+  describe('add created session to all sessions observable', () => {
+    const checkResult = () => {
+      expect(allSessions()[1]).property('active').equals(false);
+    };
 
-  test('asPromise', () => {
-    expect(fn.asPromise({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' })).resolves;
-    checkResult();
+    beforeEach(() => {
+      allSessions.update(() => ({}));
+    });
+
+    test('callback', () => {
+      fn({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' }, checkResult);
+    });
+
+    test('asPromise', () => {
+      expect(fn.asPromise({ mnemonic: 'mnemonic sentence', passphrase: 'passphrase' })).resolves;
+      checkResult();
+    });
   });
 });
