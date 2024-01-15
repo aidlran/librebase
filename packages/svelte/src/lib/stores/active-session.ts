@@ -13,8 +13,6 @@ export function activeSession<T = unknown>(appID?: string): Readable<ActiveSessi
   return readable<ActiveSession<T> | undefined>(undefined, (update) => {
     // "[...] called when the number of subscribers goes from zero to one [...]"
     // "[...] return a stop function that is called when the subscriber count goes from one to zero."
-    return session(appID).onActiveSessionChange((session) => {
-      update(session as ActiveSession<T>);
-    });
+    return session(appID).activeSession.subscribe((session) => update(session as ActiveSession<T>));
   });
 }

@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import { Observable } from '../../observable/observable.js';
+import { createSignal } from '../../signal/function/create-signal.js';
 import type { PostToAllAction } from '../../worker/types/action.js';
 import type { Request } from '../../worker/types/request.js';
 import type { Result } from '../../worker/types/result.js';
 import type { WorkerPostMultiResultCallback } from '../../worker/worker-dispatch.js';
-import type { ActiveSessionObservable, AllSessionsObservable } from '../types.js';
+import type { AllSessions, ActiveSession } from '../types.js';
 import { construct } from './load.js';
 
 const postToAll = <T extends PostToAllAction>(
@@ -23,8 +23,8 @@ const postToAll = <T extends PostToAllAction>(
     callback([result as Result<T>]);
   }
 };
-const allSessions: AllSessionsObservable = new Observable({});
-const activeSession = new Observable(undefined) as ActiveSessionObservable;
+const allSessions = createSignal<AllSessions>({});
+const activeSession = createSignal<ActiveSession | undefined>(undefined);
 const fn = construct({ postToAll }, activeSession, allSessions);
 
 it("doesn't use an unexpected request action", () => {
@@ -33,8 +33,8 @@ it("doesn't use an unexpected request action", () => {
 
 describe('sets the active session', () => {
   const checkResult = () => {
-    expect(allSessions.get()[1]).property('active').equals(true);
-    expect(activeSession.get()).property('id').equals(1);
+    expect(allSessions()[1]).property('active').equals(true);
+    expect(activeSession()).property('id').equals(1);
   };
 
   beforeEach(() => {

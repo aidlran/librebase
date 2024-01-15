@@ -3,7 +3,7 @@ import type {
   ImportSessionResult,
 } from '../../worker/interface/payload/index.js';
 import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { AllSessionsObservable, InactiveSession } from '../types.js';
+import type { AllSessionsSignal, InactiveSession } from '../types.js';
 import type { SessionLoadFn } from './load.js';
 
 export interface SessionImportFn<T = unknown> {
@@ -14,7 +14,7 @@ export interface SessionImportFn<T = unknown> {
 export const construct = <T = unknown>(
   { postToOne }: Pick<WorkerDispatch, 'postToOne'>,
   load: SessionLoadFn,
-  allSessions: AllSessionsObservable,
+  allSessions: AllSessionsSignal,
 ): SessionImportFn => {
   const fn: SessionImportFn = (options, callback): void => {
     postToOne({ action: 'session.import', payload: options }, ({ payload }) => {

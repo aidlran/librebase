@@ -1,5 +1,5 @@
 import { getAll, type Session as DBSession } from '../../indexeddb/indexeddb.js';
-import type { Session, AllSessionsObservable } from '../types.js';
+import type { Session, AllSessionsSignal } from '../types.js';
 
 // TODO: refactor/improve architecture
 // we have to manually call this
@@ -7,9 +7,9 @@ import type { Session, AllSessionsObservable } from '../types.js';
 // it doesn't remove sessions that were deleted in indexeddb
 // we don't know how it affects the active session or anonymous (unsaved) sessions
 
-export function getSessions(sessionsObservable: AllSessionsObservable, callback?: () => unknown) {
+export function getSessions(allSessions: AllSessionsSignal, callback?: () => unknown) {
   void getAll('session').then((savedSessions) => {
-    sessionsObservable.update((memorySessions) => {
+    allSessions.update((memorySessions) => {
       for (const retrievedSession of savedSessions as Array<DBSession & { id: number }>) {
         const existingSession: Partial<DBSession & Session> =
           memorySessions[retrievedSession.id] ?? retrievedSession;

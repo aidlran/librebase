@@ -1,5 +1,5 @@
 import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { ActiveSessionObservable, Session, AllSessionsObservable } from '../types.js';
+import type { Session, ActiveSessionSignal, AllSessionsSignal } from '../types.js';
 
 export interface SessionClearFn {
   (callback?: () => unknown): void;
@@ -8,16 +8,16 @@ export interface SessionClearFn {
 
 export const construct = (
   { postToAll }: Pick<WorkerDispatch, 'postToAll'>,
-  sessionsObservable: AllSessionsObservable,
-  activeSessionObservable: ActiveSessionObservable,
+  activeSession: ActiveSessionSignal,
+  allSessions: AllSessionsSignal,
 ): SessionClearFn => {
   const fn: SessionClearFn = (callback) => {
     postToAll({ action: 'session.clear' }, () => {
-      if (activeSessionObservable.get()) {
-        activeSessionObservable.update((activeSession) => {
+      if (activeSession()) {
+        activeSession.update((activeSession) => {
           const session = activeSession as Session;
           session.active = false;
-          sessionsObservable.emit();
+          allSessions.update((value) => value);
           return undefined;
         });
       }

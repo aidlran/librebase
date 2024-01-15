@@ -10,8 +10,6 @@ export function allSessions<T = unknown>(appID?: string): Readable<AllSessions<T
   return readable<AllSessions<T>>(undefined, (update) => {
     // "[...] called when the number of subscribers goes from zero to one [...]"
     // "[...] return a stop function that is called when the subscriber count goes from one to zero."
-    return session(appID).onSessionsChange((sessions) => {
-      update(sessions as AllSessions<T>);
-    });
+    return session(appID).allSessions.subscribe((sessions) => update(sessions as AllSessions<T>));
   });
 }

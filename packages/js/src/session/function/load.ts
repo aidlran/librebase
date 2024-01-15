@@ -1,6 +1,6 @@
 import type { LoadSessionResult } from '../../worker/interface/payload/index.js';
 import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { ActiveSession, ActiveSessionObservable, AllSessionsObservable } from '../types.js';
+import type { ActiveSession, ActiveSessionSignal, AllSessionsSignal } from '../types.js';
 
 export interface SessionLoadFn<T = unknown> {
   (
@@ -13,8 +13,8 @@ export interface SessionLoadFn<T = unknown> {
 
 export const construct = <T = unknown>(
   { postToAll }: Pick<WorkerDispatch, 'postToAll'>,
-  activeSession: ActiveSessionObservable,
-  allSessions: AllSessionsObservable,
+  activeSession: ActiveSessionSignal,
+  allSessions: AllSessionsSignal,
 ): SessionLoadFn<T> => {
   const fn: SessionLoadFn<T> = (id, passphrase, callback) => {
     postToAll({ action: 'session.load', payload: { id, passphrase } }, ([{ payload }]) => {

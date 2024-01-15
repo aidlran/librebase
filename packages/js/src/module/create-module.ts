@@ -1,16 +1,16 @@
 const DEPENDENCIES = new Set();
 
-export function createModule<T>(constructor: (appID: string) => T): (appID?: string) => T {
+export function createModule<T>(constructor: (key: string) => T): (key?: string) => T {
   const INSTANCES: Record<string, T> = {};
-  return (appID = ''): T => {
+  return (key = ''): T => {
     if (DEPENDENCIES.has(constructor)) {
       throw new Error('Circular dependency detected');
     }
     DEPENDENCIES.add(constructor);
-    if (!INSTANCES[appID]) {
-      INSTANCES[appID] = constructor(appID);
+    if (!INSTANCES[key]) {
+      INSTANCES[key] = constructor(key);
     }
     DEPENDENCIES.delete(constructor);
-    return INSTANCES[appID];
+    return INSTANCES[key];
   };
 }

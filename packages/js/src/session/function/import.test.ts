@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import { Observable } from '../../observable/observable.js';
+import { createSignal } from '../../signal/function/create-signal.js';
 import type { PostToOneAction } from '../../worker/types/action.js';
 import type { Request } from '../../worker/types/request.js';
 import type { Result } from '../../worker/types/result.js';
 import type { JobCallback } from '../../worker/worker-instance.js';
-import type { AllSessionsObservable } from '../types.js';
+import type { AllSessions } from '../types.js';
 import { construct } from './import.js';
 import type { SessionLoadFn } from './load.js';
 
@@ -26,7 +26,7 @@ const load: SessionLoadFn = (id, _passphrase, callback) => {
 load.asPromise = (id, passphrase) => {
   return new Promise((resolve) => load(id, passphrase, resolve));
 };
-const allSessions: AllSessionsObservable = new Observable({});
+const allSessions = createSignal<AllSessions>({});
 const fn = construct({ postToOne }, load, allSessions);
 
 it("doesn't use an unexpected request action", () => {
@@ -35,7 +35,7 @@ it("doesn't use an unexpected request action", () => {
 
 describe('add created session to all sessions observable', () => {
   const checkResult = () => {
-    expect(allSessions.get()[1]).property('active').equals(false);
+    expect(allSessions()[1]).property('active').equals(false);
   };
 
   beforeEach(() => {
