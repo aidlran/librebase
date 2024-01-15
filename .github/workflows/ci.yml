@@ -4,13 +4,7 @@ concurrency:
   group: ${{ github.ref }}
   cancel-in-progress: true
 
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   js-build:
@@ -54,7 +48,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        svelte-version: [^3.55.0, ^4.0.0]
+        svelte-version: ['3.44.2', ^3.44.2, ^4.0.0, ^5.0.0-next.1]
     name: Svelte / Build / @${{ matrix.svelte-version }}
     steps:
       - uses: actions/checkout@v4
@@ -63,8 +57,12 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm install -D svelte@${{ matrix.svelte-version }}
       - run: npm run build:js
+      # - run: npm install --legacy-peer-deps --prefix . -D svelte@${{ matrix.svelte-version }}
+      #   working-directory: packages/svelte
+      # - run: npm run build
+      #   working-directory: packages/svelte
+      - run: npm i --legacy-peer-deps -D svelte@${{ matrix.svelte-version }}
       - run: npm run build:svelte
 
   svelte-lint:
