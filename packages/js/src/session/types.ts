@@ -1,5 +1,5 @@
 import type { Session as DBSession } from '../indexeddb/indexeddb.js';
-import type { WritableSignal } from '../signal/function/create-signal.js';
+import type { WritableSignal } from '../signal';
 
 export interface Session<T = unknown>
   extends Omit<DBSession<T>, 'id' | 'salt' | 'nonce' | 'payload'> {

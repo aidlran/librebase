@@ -1,6 +1,5 @@
 import { createModule } from '../module/create-module.js';
-import { createSignal } from '../signal/function/create-signal.js';
-import { toReadOnlySignal, type ReadableSignal } from '../signal/function/to-read-only-signal.js';
+import { createSignal, toReadOnlySignal, type ReadableSignal } from '../signal';
 import { workerModule } from '../worker/worker.module.js';
 import { construct as constructClear, type SessionClearFn } from './function/clear.js';
 import { construct as constructCreate, type SessionCreateFn } from './function/create.js';

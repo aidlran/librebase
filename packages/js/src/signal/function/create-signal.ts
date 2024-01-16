@@ -1,33 +1,31 @@
-import type { ReadableSignal, Subscriber } from './to-read-only-signal.js';
+import type { Subscriber, Updater, WritableSignal } from '../types';
 
-export type Updater<T> = (currentValue: T) => T;
+export const constructCreateSignal = (addToNotifyQueue: (item: () => void) => void) => {
+  return <T>(initialValue: T): WritableSignal<T> => {
+    let currentValue = initialValue;
+    const signal = () => currentValue;
+    const subscribers = new Set<Subscriber<T>>();
+    let awaitingPush = false;
 
-export interface WritableSignal<T> extends ReadableSignal<T> {
-  set: (newValue: T) => void;
-  update: (updater: Updater<T>) => void;
-}
+    const push = () => subscribers.forEach((subscriber) => subscriber(currentValue));
 
-// TODO: process in batched ticks in microtask queue
+    signal.set = (newValue: T) => {
+      currentValue = newValue;
+      if (!awaitingPush) {
+        addToNotifyQueue(push);
+      }
+    };
 
-export const createSignal = <T>(initialValue: T): WritableSignal<T> => {
-  let currentValue = initialValue;
-  const signal = () => currentValue;
-  const subscribers = new Set<Subscriber<T>>();
+    signal.update = (updater: Updater<T>) => {
+      signal.set(updater(currentValue));
+    };
 
-  signal.set = (newValue: T) => {
-    currentValue = newValue;
-    subscribers.forEach((subscriber) => subscriber(currentValue));
+    signal.subscribe = (subscriber: Subscriber<T>) => {
+      subscribers.add(subscriber);
+      subscriber(currentValue);
+      return () => subscribers.delete(subscriber);
+    };
+
+    return signal;
   };
-
-  signal.update = (updater: Updater<T>) => {
-    signal.set(updater(currentValue));
-  };
-
-  signal.subscribe = (subscriber: Subscriber<T>) => {
-    subscribers.add(subscriber);
-    subscriber(currentValue);
-    return () => subscribers.delete(subscriber);
-  };
-
-  return signal;
 };
