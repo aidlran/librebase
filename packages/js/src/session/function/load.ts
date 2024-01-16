@@ -23,11 +23,9 @@ export const construct = <T = unknown>(
         metadata: payload.metadata as T,
         active: true,
       };
-      allSessions.update((all) => {
-        all[payload.id] = session;
-        return all;
-      });
-      activeSession.update(() => session);
+      allSessions()[payload.id] = session;
+      allSessions.set(allSessions());
+      activeSession.set(session);
       if (callback) callback(payload as LoadSessionResult<T>);
     });
   };

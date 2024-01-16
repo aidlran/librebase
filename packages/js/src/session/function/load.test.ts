@@ -39,8 +39,8 @@ describe('load session', () => {
     };
 
     beforeEach(() => {
-      allSessions.update(() => ({}));
-      activeSession.update(() => undefined);
+      allSessions.set({});
+      activeSession.set(undefined);
     });
 
     test('callback', () => {

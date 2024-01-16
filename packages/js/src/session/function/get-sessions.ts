@@ -9,18 +9,17 @@ import type { Session, AllSessionsSignal } from '../types.js';
 
 export function getSessions(allSessions: AllSessionsSignal, callback?: () => unknown) {
   void getAll('session').then((savedSessions) => {
-    allSessions.update((memorySessions) => {
-      for (const retrievedSession of savedSessions as Array<DBSession & { id: number }>) {
-        const existingSession: Partial<DBSession & Session> =
-          memorySessions[retrievedSession.id] ?? retrievedSession;
-        delete existingSession.nonce;
-        delete existingSession.payload;
-        delete existingSession.salt;
-        existingSession.active ??= false;
-        memorySessions[retrievedSession.id] = existingSession as Session;
-      }
-      return memorySessions;
-    });
+    const memorySessions = allSessions();
+    for (const retrievedSession of savedSessions as Array<DBSession & { id: number }>) {
+      const existingSession: Partial<DBSession & Session> =
+        memorySessions[retrievedSession.id] ?? retrievedSession;
+      delete existingSession.nonce;
+      delete existingSession.payload;
+      delete existingSession.salt;
+      existingSession.active ??= false;
+      memorySessions[retrievedSession.id] = existingSession as Session;
+    }
+    allSessions.set(memorySessions);
     if (callback) callback();
   });
 }

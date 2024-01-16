@@ -13,13 +13,11 @@ export const construct = (
 ): SessionClearFn => {
   const fn: SessionClearFn = (callback) => {
     postToAll({ action: 'session.clear' }, () => {
-      if (activeSession()) {
-        activeSession.update((activeSession) => {
-          const session = activeSession as Session;
-          session.active = false;
-          allSessions.update((value) => value);
-          return undefined;
-        });
+      const session = activeSession() as Session;
+      if (session) {
+        session.active = false;
+        activeSession.set(undefined);
+        allSessions.set(allSessions());
       }
       if (callback) callback();
     });

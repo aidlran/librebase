@@ -34,8 +34,8 @@ describe('clear session', () => {
 
     beforeEach(() => {
       const session: ActiveSession = { id: 1, active: true };
-      allSessions.update(() => ({ 1: session }));
-      activeSession.update(() => session);
+      allSessions.set({ 1: session });
+      activeSession.set(session);
     });
 
     test('callback', () => {

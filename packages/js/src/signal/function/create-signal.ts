@@ -1,4 +1,4 @@
-import type { Subscriber, Updater, WritableSignal } from '../types';
+import type { Subscriber, WritableSignal } from '../types';
 
 export const constructCreateSignal = (addToNotifyQueue: (item: () => void) => void) => {
   return <T>(initialValue: T): WritableSignal<T> => {
@@ -11,10 +11,6 @@ export const constructCreateSignal = (addToNotifyQueue: (item: () => void) => vo
     signal.set = (newValue: T) => {
       currentValue = newValue;
       addToNotifyQueue(push);
-    };
-
-    signal.update = (updater: Updater<T>) => {
-      signal.set(updater(currentValue));
     };
 
     signal.subscribe = (subscriber: Subscriber<T>) => {

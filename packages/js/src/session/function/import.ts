@@ -22,12 +22,8 @@ export const construct = <T = unknown>(
         id: payload.id,
         active: false,
       };
-
-      allSessions.update((all) => {
-        all[payload.id] = session;
-        return all;
-      });
-
+      allSessions()[payload.id] = session;
+      allSessions.set(allSessions());
       load(payload.id, options.passphrase, callback);
     });
   };

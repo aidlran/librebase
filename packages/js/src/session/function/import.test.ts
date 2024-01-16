@@ -40,7 +40,7 @@ describe('import session', () => {
     };
 
     beforeEach(() => {
-      allSessions.update(() => ({}));
+      allSessions.set({});
     });
 
     test('callback', () => {
