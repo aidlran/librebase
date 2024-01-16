@@ -58,7 +58,7 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ['packages/*/coverage', 'packages/*/dist', 'playwright.config.ts'],
+  ignorePatterns: ['packages/*/coverage', 'packages/*/dist'],
   rules: {
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/prefer-optional-chain': 'off',

@@ -1,2 +1,2 @@
 .eslintrc.* linguist-vendored
-*.config.js linguist-vendored
+*.config.*  linguist-vendored
