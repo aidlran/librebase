@@ -29,6 +29,7 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run build:js
       - run: npm run lint:js
 
   js-test:
@@ -71,6 +72,7 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:js
+      - run: npm run build:svelte
       - run: npm run lint:svelte
 
   svelte-test:
@@ -83,4 +85,5 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - run: npm run build:js
       - run: npm run test:svelte
