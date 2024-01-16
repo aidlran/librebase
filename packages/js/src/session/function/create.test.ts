@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import { createSignal } from '../../signal/function/create-signal.js';
+import { createSignal } from '../../signal';
 import type { PostToOneAction } from '../../worker/types/action.js';
 import type { Request } from '../../worker/types/request.js';
 import type { Result } from '../../worker/types/result.js';

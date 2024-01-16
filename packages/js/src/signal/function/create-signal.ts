@@ -5,15 +5,12 @@ export const constructCreateSignal = (addToNotifyQueue: (item: () => void) => vo
     let currentValue = initialValue;
     const signal = () => currentValue;
     const subscribers = new Set<Subscriber<T>>();
-    let awaitingPush = false;
 
     const push = () => subscribers.forEach((subscriber) => subscriber(currentValue));
 
     signal.set = (newValue: T) => {
       currentValue = newValue;
-      if (!awaitingPush) {
-        addToNotifyQueue(push);
-      }
+      addToNotifyQueue(push);
     };
 
     signal.update = (updater: Updater<T>) => {
