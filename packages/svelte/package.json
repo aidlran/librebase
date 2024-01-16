@@ -7,9 +7,9 @@
   "repository": "github:aidlran/trusync",
   "homepage": "https://github.com/aidlran/trusync/tree/main/packages/svelte#readme",
   "scripts": {
-    "build": "rm -dr dist; tsc",
-    "lc": "echo truSync Svelte: $(find src/lib -type f -exec cat {} \\; | wc -l) lines",
-    "start": "tsc --watch --preserveWatchOutput"
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "lc": "echo truSync Svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "exports": {
     ".": {
