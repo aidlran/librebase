@@ -14,36 +14,34 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "default": "./dist/src/index.js",
-      "types": "./dist/src/index.d.ts"
+      "types": "./dist/src/index.d.ts",
+      "default": "./dist/src/index.js"
     },
     "./channel": {
-      "default": "./dist/src/channel/index.js",
-      "types": "./dist/src/channel/index.d.ts"
+      "types": "./dist/src/channel/index.d.ts",
+      "default": "./dist/src/channel/index.js"
     },
     "./crypto": {
-      "default": "./dist/src/crypto/index.js",
-      "types": "./dist/src/crypto/index.d.ts"
+      "types": "./dist/src/crypto/index.d.ts",
+      "default": "./dist/src/crypto/index.js"
     },
     "./identity": {
-      "default": "./dist/src/identity/index.js",
-      "types": "./dist/src/identity/index.d.ts"
+      "types": "./dist/src/identity/index.d.ts",
+      "default": "./dist/src/identity/index.js"
     },
     "./schema": {
-      "default": "./dist/src/schema/index.js",
-      "types": "./dist/src/schema/index.d.ts"
+      "types": "./dist/src/schema/index.d.ts",
+      "default": "./dist/src/schema/index.js"
     },
     "./session": {
-      "default": "./dist/src/session/index.js",
-      "types": "./dist/src/session/index.d.ts"
+      "types": "./dist/src/session/index.d.ts",
+      "default": "./dist/src/session/index.js"
     }
   },
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "lc:old": "echo truSync JS: $(find bin src -type f ! -name \"*.json\" ! -name \"*.test.*\" -exec cat {} \\; | wc -l) lines",
-    "lc": "npm run build && echo truSync JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json",
-    "test": "vitest run"
+    "lc": "echo truSync JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "^1.0.5",
@@ -51,15 +49,5 @@
     "bip32": "^4.0.0",
     "buffer": "^6.0.3",
     "tweetnacl": "1.0.3"
-  },
-  "devDependencies": {
-    "@types/node": "^20.11.2",
-    "@vitest/coverage-v8": "^1.2.0",
-    "@vitest/web-worker": "^1.2.0",
-    "fake-indexeddb": "^5.0.2",
-    "happy-dom": "^13.1.4",
-    "typescript": "~5.3.3",
-    "vite": "^5.0.11",
-    "vitest": "^1.2.0"
   }
 }
