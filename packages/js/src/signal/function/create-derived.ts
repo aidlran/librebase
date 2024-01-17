@@ -1,9 +1,9 @@
 import { queueUniqueMicrotask } from '../../microtask/function/queue-unique-microtask';
-import { createSignal } from '../function/create-signal';
-import { toReadOnlySignal } from '../function/to-read-only-signal';
 import type { ReadableSignal } from '../types';
+import { createSignal } from './create-signal';
+import { toReadOnlySignal } from './to-read-only-signal';
 
-type InferredArgs<T extends ReadableSignal<any>[]> = {
+type InferredArgs<T extends ReadableSignal<unknown>[]> = {
   [K in keyof T]: ReturnType<T[K] extends ReadableSignal<infer U> ? ReadableSignal<U> : never>;
 };
 
@@ -21,7 +21,7 @@ type InferredArgs<T extends ReadableSignal<any>[]> = {
  *   If your signal depends on multiple other signals, you will need to manually narrow the type.
  *   This is because the inferred value type becomes a union of all possible values (TODO!)
  */
-export const createDerived = <TOutput, TInputs extends ReadableSignal<any>[]>(
+export const createDerived = <TOutput, TInputs extends ReadableSignal<unknown>[]>(
   dependencies: TInputs,
   callback: (...args: InferredArgs<TInputs>) => TOutput,
 ): ReadableSignal<TOutput> => {
