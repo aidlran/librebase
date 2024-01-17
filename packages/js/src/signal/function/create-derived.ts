@@ -16,10 +16,11 @@ type InferredArgs<T extends ReadableSignal<unknown>[]> = {
  *   you may even use another derived signal as a dependency, however exercise caution as
  *   introducing circular dependencies will freeze your program because there is not yet any
  *   mechnanism to detect them (TODO!)
- * @param callback A callback that accepts a mapped version of the values of the signals given in
- *   `dependencies` array. The returned value is the value is the new value of the derived signal.
- *   If your signal depends on multiple other signals, you will need to manually narrow the type.
- *   This is because the inferred value type becomes a union of all possible values (TODO!)
+ * @param callback A callback, called whenever the signal needs re-calculating, that accepts a
+ *   mapped version of the values of the signals given in `dependencies` array and returns the
+ *   calculated value of the derived signal. When depending on multiple other signals with varying
+ *   generic types, you will need to manually narrow the type. This is because the inferred value
+ *   type becomes a union of all possible generic types (TODO!)
  */
 export const createDerived = <TOutput, TInputs extends ReadableSignal<unknown>[]>(
   dependencies: TInputs,
