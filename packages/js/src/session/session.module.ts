@@ -22,6 +22,7 @@ export const getSessionModule = createModule((key) => {
   const workerDispatch = workerModule(key);
 
   const activeSession = createSignal<ActiveSession | undefined>(undefined);
+  // TODO: consider making allSessions a derived signal
   const allSessions = createSignal<AllSessions>({});
 
   const load = constructLoad(workerDispatch, activeSession, allSessions);
