@@ -1,0 +1,3 @@
+[submodule "lib/adamant"]
+	path = lib/adamant
+	url = git@github.com:aidlran/adamant

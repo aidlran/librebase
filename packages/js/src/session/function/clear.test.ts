@@ -1,5 +1,5 @@
+import { createSignal } from '@adamant/signals';
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import { createSignal } from '../../signal';
 import type { PostToAllAction } from '../../worker/types/action.js';
 import type { Request } from '../../worker/types/request.js';
 import type { WorkerPostMultiResultCallback } from '../../worker/worker-dispatch.js';

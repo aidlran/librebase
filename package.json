@@ -6,30 +6,26 @@
   "bugs": "https://github.com/aidlran/trusync/issues",
   "homepage": "https://github.com/aidlran/trusync#readme",
   "workspaces": [
+    "lib/*",
     "packages/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
-    "build:js": "npm run build -w packages/js",
-    "build:svelte": "npm run build -w packages/svelte",
     "format": "prettier --write .",
-    "lc": "npm run lc --workspaces",
-    "lint": "publint packages/js && publint packages/svelte && eslint .",
-    "lint:js": "publint packages/js && eslint packages/js",
-    "lint:svelte": "publint packages/svelte && eslint packages/svelte",
+    "lc": "npm run lc --workspaces --if-present",
+    "lint": "publint packages/js && publint packages/svelte && eslint packages",
     "start": "conc -k npm:start:*",
-    "start:js": "npm start --w packages/js",
-    "start:svelte": "npm start --w packages/svelte",
-    "test": "vitest run",
-    "test:js": "vitest run packages/js",
-    "test:svelte": "vitest run packages/svelte"
+    "start:lib:adamant": "npm start -w lib/adamant",
+    "start:js": "npm start -w packages/js",
+    "start:svelte": "npm start -w packages/svelte",
+    "test": "vitest run"
   },
   "devDependencies": {
-    "@types/node": "^20.11.4",
+    "@types/node": "^20.11.5",
     "@typescript-eslint/eslint-plugin": "^6.19.0",
     "@typescript-eslint/parser": "^6.19.0",
-    "@vitest/coverage-v8": "^1.2.0",
-    "@vitest/web-worker": "^1.2.0",
+    "@vitest/coverage-v8": "^1.2.1",
+    "@vitest/web-worker": "^1.2.1",
     "concurrently": "^8.2.2",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -37,15 +33,15 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-svelte": "^2.35.1",
     "fake-indexeddb": "^5.0.2",
-    "happy-dom": "^13.1.4",
-    "prettier": "^3.2.2",
+    "happy-dom": "^13.2.0",
+    "prettier": "^3.2.4",
     "prettier-plugin-jsdoc": "^1.3.0",
     "prettier-plugin-svelte": "^3.1.2",
     "publint": "^0.2.7",
-    "svelte": "^4.2.8",
-    "typescript": "~5.3.3",
+    "svelte": "^4.2.9",
     "trusync": "file:packages/js",
-    "vite": "^5.0.11",
-    "vitest": "^1.2.0"
+    "typescript": "~5.3.3",
+    "vite": "^5.0.12",
+    "vitest": "^1.2.1"
   }
 }

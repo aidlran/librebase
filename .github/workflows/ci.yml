@@ -7,83 +7,47 @@ concurrency:
 on: [push, pull_request]
 
 jobs:
-  js-build:
+  lint:
     runs-on: ubuntu-latest
-    name: JS / Build
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build:js
+      - run: npm run build
+      - run: npm run lint
 
-  js-lint:
+  test:
     runs-on: ubuntu-latest
-    name: JS / Lint
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build:js
-      - run: npm run lint:js
+      - run: npm run build
+      - run: npm run test
 
-  js-test:
-    runs-on: ubuntu-latest
-    name: JS / Test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run test:js
-
-  svelte-build:
+  svelte:
     runs-on: ubuntu-latest
     strategy:
-      fail-fast: false
       matrix:
-        svelte-version: ['3.44.2', ^3.44.2, ^4.0.0, ^5.0.0-next.1]
-    name: Svelte / Build / @${{ matrix.svelte-version }}
+        version: ['3.44.2', ^3.44.2, ^5.0.0-next.1]
+    name: svelte@${{ matrix.version }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: true
       - uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
-      - run: npm i --legacy-peer-deps -D svelte@${{ matrix.svelte-version }}
-      - run: npm run build:js
-      - run: npm run build:svelte
-
-  svelte-lint:
-    runs-on: ubuntu-latest
-    name: Svelte / Lint
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build:js
-      - run: npm run build:svelte
-      - run: npm run lint:svelte
-
-  svelte-test:
-    runs-on: ubuntu-latest
-    name: Svelte / Test
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build:js
-      - run: npm run test:svelte
+      - run: npm i --legacy-peer-deps -D svelte@${{ matrix.version }}
+      - run: npm run build
