@@ -1,5 +1,5 @@
+import { type ActiveSession, session } from 'librebase';
 import { type Readable, readable } from 'svelte/store';
-import { type ActiveSession, session } from 'trusync';
 
 // TODO: lazy create stores by appID, cache and re-return them
 //       maybe just use createModule from core package

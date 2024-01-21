@@ -1,14 +1,15 @@
 {
-  "name": "trusync-svelte",
-  "description": "Cybernetically enhanced truSync apps.",
-  "version": "1.0.0-alpha.1",
+  "name": "librebase-svelte",
+  "version": "0.0.0-next.1",
+  "description": "Cybernetically enhanced LibreBase apps.",
   "license": "Apache-2.0",
-  "private": true,
-  "repository": "github:aidlran/trusync",
-  "homepage": "https://github.com/aidlran/trusync/tree/main/packages/svelte#readme",
+  "author": "Aidan Loughran",
+  "repository": "github:aidlran/librebase",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "homepage": "https://github.com/aidlran/librebase/tree/main/packages/svelte#readme",
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "lc": "echo truSync Svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "lc": "echo LibreBase Svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "exports": {
@@ -23,8 +24,8 @@
     "!dist/**/*.spec.*"
   ],
   "peerDependencies": {
-    "svelte": ">=3.44.2 <6.0.0",
-    "trusync": "^1.0.0-alpha.1"
+    "librebase": "*",
+    "svelte": ">=3.44.2 <6.0.0"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",

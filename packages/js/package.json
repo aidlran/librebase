@@ -1,50 +1,48 @@
 {
-  "name": "trusync",
-  "version": "1.0.0-alpha.1",
-  "description": "JavaScript truSync implementation.",
+  "name": "librebase",
+  "version": "0.0.0-next.1",
+  "description": "JavaScript implementation of the LibreBase protocol.",
   "license": "Apache-2.0",
-  "private": true,
   "author": "Aidan Loughran",
-  "repository": "github:aidlran/trusync",
-  "bugs": "https://github.com/aidlran/trusync/issues",
-  "homepage": "https://github.com/aidlran/trusync/tree/main/packages/js#readme",
-  "main": "dist/src/index.js",
-  "bin": "dist/bin/trusync.js",
+  "repository": "github:aidlran/librebase",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "homepage": "https://github.com/aidlran/librebase/tree/main/packages/js#readme",
+  "main": "dist/index.js",
   "type": "module",
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/src/index.d.ts",
-      "default": "./dist/src/index.js"
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
     },
     "./channel": {
-      "types": "./dist/src/channel/index.d.ts",
-      "default": "./dist/src/channel/index.js"
+      "types": "./dist/channel/index.d.ts",
+      "default": "./dist/channel/index.js"
     },
     "./crypto": {
-      "types": "./dist/src/crypto/index.d.ts",
-      "default": "./dist/src/crypto/index.js"
+      "types": "./dist/crypto/index.d.ts",
+      "default": "./dist/crypto/index.js"
     },
     "./identity": {
-      "types": "./dist/src/identity/index.d.ts",
-      "default": "./dist/src/identity/index.js"
+      "types": "./dist/identity/index.d.ts",
+      "default": "./dist/identity/index.js"
     },
     "./schema": {
-      "types": "./dist/src/schema/index.d.ts",
-      "default": "./dist/src/schema/index.js"
+      "types": "./dist/schema/index.d.ts",
+      "default": "./dist/schema/index.js"
     },
     "./session": {
-      "types": "./dist/src/session/index.d.ts",
-      "default": "./dist/src/session/index.js"
+      "types": "./dist/session/index.d.ts",
+      "default": "./dist/session/index.js"
     }
   },
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "lc": "echo truSync JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "lc": "echo LibreBase JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
-    "@adamant/signals": "file:../../lib/adamant",
+    "@adamantjs/signals": "file:../../lib/adamant",
     "@bitcoinerlab/secp256k1": "^1.0.5",
     "base-x": "4.0.0",
     "bip32": "^4.0.0",

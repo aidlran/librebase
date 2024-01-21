@@ -1,4 +1,4 @@
-import { createSignal, toReadOnlySignal, type ReadableSignal } from '@adamant/signals';
+import { createSignal, toReadOnlySignal, type ReadableSignal } from '@adamantjs/signals';
 import { createModule } from '../module/create-module.js';
 import { workerModule } from '../worker/worker.module.js';
 import { construct as constructClear, type SessionClearFn } from './function/clear.js';

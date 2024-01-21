@@ -1,5 +1,5 @@
+import { type AllSessions, session } from 'librebase';
 import { type Readable, readable } from 'svelte/store';
-import { type AllSessions, session } from 'trusync';
 
 export function allSessions<T = unknown>(appID?: string): Readable<AllSessions<T>> {
   if (!globalThis.window) {

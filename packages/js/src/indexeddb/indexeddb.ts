@@ -20,7 +20,7 @@ const getConnection = (() => {
   let connection: IDBDatabase;
   return async () =>
     (connection ??= await new Promise<IDBDatabase>((resolve, reject) => {
-      const dbOpenRequest = indexedDB.open('trusync', 1);
+      const dbOpenRequest = indexedDB.open('librebase', 1);
 
       dbOpenRequest.onupgradeneeded = () => {
         dbOpenRequest.result.createObjectStore(SESSION_OBJECT_STORE_NAME, {

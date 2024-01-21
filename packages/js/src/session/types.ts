@@ -1,4 +1,4 @@
-import type { WritableSignal } from '@adamant/signals';
+import type { WritableSignal } from '@adamantjs/signals';
 import type { Session as DBSession } from '../indexeddb/indexeddb.js';
 
 export interface Session<T = unknown>

@@ -1,4 +1,4 @@
-import { createSignal } from '@adamant/signals';
+import { createSignal } from '@adamantjs/signals';
 import { beforeEach, describe, expect, it, test } from 'vitest';
 import type { PostToAllAction } from '../../worker/types/action.js';
 import type { Request } from '../../worker/types/request.js';

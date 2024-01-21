@@ -34,7 +34,7 @@ export class Data {
         }),
       ).then((results) => {
         if (!results.find((promise) => promise.status === 'fulfilled' && promise.value)) {
-          reject(new Error(`truSync: data not found: '${hash.algorithm}:${hash.value}'`));
+          reject(new Error(`LibreBase: data not found: '${hash.algorithm}:${hash.value}'`));
         }
       });
     });
@@ -93,7 +93,7 @@ export class Data {
         }),
       ).then((results) => {
         if (!results.find((promise) => promise.status === 'fulfilled' && promise.value)) {
-          reject(new Error(`truSync: named data not found: '${name}'`));
+          reject(new Error(`LibreBase: named data not found: '${name}'`));
         }
       });
     });
