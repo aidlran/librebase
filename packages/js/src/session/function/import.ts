@@ -14,7 +14,7 @@ export interface SessionImportFn<T = unknown> {
 export const construct = <T = unknown>(
   { postToOne }: Pick<WorkerDispatch, 'postToOne'>,
   load: SessionLoadFn,
-  allSessions: AllSessionsSignal,
+  [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionImportFn => {
   const fn: SessionImportFn = (options, callback): void => {
     postToOne({ action: 'session.import', payload: options }, ({ payload }) => {
@@ -22,8 +22,8 @@ export const construct = <T = unknown>(
         id: payload.id,
         active: false,
       };
-      allSessions()[payload.id] = session;
-      allSessions.set(allSessions());
+      getAllSessions()[payload.id] = session;
+      setAllSessions(getAllSessions());
       load(payload.id, options.passphrase, callback);
     });
   };

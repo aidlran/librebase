@@ -7,9 +7,12 @@ import type { Session, AllSessionsSignal } from '../types.js';
 // it doesn't remove sessions that were deleted in indexeddb
 // we don't know how it affects the active session or anonymous (unsaved) sessions
 
-export function getSessions(allSessions: AllSessionsSignal, callback?: () => unknown) {
+export function getSessions(
+  [getAllSessions, setAllSessions]: AllSessionsSignal,
+  callback?: () => unknown,
+) {
   void getAll('session').then((savedSessions) => {
-    const memorySessions = allSessions();
+    const memorySessions = getAllSessions();
     for (const retrievedSession of savedSessions as Array<DBSession & { id: number }>) {
       const existingSession: Partial<DBSession & Session> =
         memorySessions[retrievedSession.id] ?? retrievedSession;
@@ -19,7 +22,7 @@ export function getSessions(allSessions: AllSessionsSignal, callback?: () => unk
       existingSession.active ??= false;
       memorySessions[retrievedSession.id] = existingSession as Session;
     }
-    allSessions.set(memorySessions);
+    setAllSessions(memorySessions);
     if (callback) callback();
   });
 }

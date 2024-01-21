@@ -1,4 +1,4 @@
-import { createSignal, toReadOnlySignal, type ReadableSignal } from '@adamantjs/signals';
+import { createSignal } from '@adamantjs/signals';
 import { createModule } from '../module/create-module.js';
 import { workerModule } from '../worker/worker.module.js';
 import { construct as constructClear, type SessionClearFn } from './function/clear.js';
@@ -9,8 +9,8 @@ import { construct as constructLoad, type SessionLoadFn } from './function/load.
 import type { ActiveSession, AllSessions } from './types.js';
 
 export interface SessionModule<T = unknown> {
-  activeSession: ReadableSignal<ActiveSession | undefined>;
-  allSessions: ReadableSignal<AllSessions>;
+  activeSession: () => ActiveSession<T> | undefined;
+  allSessions: () => AllSessions<T>;
   clear: SessionClearFn;
   create: SessionCreateFn<T>;
   getSessions(callback?: (sessions: Readonly<AllSessions>) => unknown): void;
@@ -22,14 +22,16 @@ export const getSessionModule = createModule((key) => {
   const workerDispatch = workerModule(key);
 
   const activeSession = createSignal<ActiveSession | undefined>(undefined);
-  // TODO: consider making allSessions a derived signal
-  const allSessions = createSignal<AllSessions>({});
+  const [getActiveSession, setActiveSession] = activeSession;
 
-  const load = constructLoad(workerDispatch, activeSession, allSessions);
+  const allSessions = createSignal<AllSessions>({});
+  const [getAllSessions] = allSessions;
+
+  const load = constructLoad(workerDispatch, setActiveSession, allSessions);
 
   const SESSION_MODULE: SessionModule = {
-    activeSession: toReadOnlySignal(activeSession),
-    allSessions: toReadOnlySignal(allSessions),
+    activeSession: getActiveSession,
+    allSessions: getAllSessions,
     clear: constructClear(workerDispatch, activeSession, allSessions),
     create: constructCreate(workerDispatch, load, allSessions),
     import: constructImport(workerDispatch, load, allSessions),
@@ -37,7 +39,7 @@ export const getSessionModule = createModule((key) => {
 
     getSessions(callback?: (sessions: Readonly<AllSessions>) => unknown): void {
       getSessions(allSessions, () => {
-        if (callback) callback(allSessions());
+        if (callback) callback(getAllSessions());
       });
     },
   };

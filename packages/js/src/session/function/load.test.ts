@@ -23,9 +23,11 @@ const postToAll = <T extends PostToAllAction>(
     callback([result as Result<T>]);
   }
 };
-const allSessions = createSignal<AllSessions>({});
 const activeSession = createSignal<ActiveSession | undefined>(undefined);
-const fn = construct({ postToAll }, activeSession, allSessions);
+const [getActiveSession, setActiveSession] = activeSession;
+const allSessions = createSignal<AllSessions>({});
+const [getAllSessions, setAllSessions] = allSessions;
+const fn = construct({ postToAll }, setActiveSession, allSessions);
 
 describe('load session', () => {
   it("doesn't use an unexpected request action", () => {
@@ -34,13 +36,13 @@ describe('load session', () => {
 
   describe('sets the active session', () => {
     const checkResult = () => {
-      expect(allSessions()[1]).property('active').equals(true);
-      expect(activeSession()).property('id').equals(1);
+      expect(getAllSessions()[1]).property('active').equals(true);
+      expect(getActiveSession()).property('id').equals(1);
     };
 
     beforeEach(() => {
-      allSessions.set({});
-      activeSession.set(undefined);
+      setAllSessions({});
+      setActiveSession(undefined);
     });
 
     test('callback', () => {

@@ -18,7 +18,9 @@ const postToAll = <T extends PostToAllAction>(
   }
 };
 const activeSession = createSignal<ActiveSession | undefined>(undefined);
+const [getActiveSession, setActiveSession] = activeSession;
 const allSessions = createSignal<AllSessions>({});
+const [getAllSessions, setAllSessions] = allSessions;
 const fn = construct({ postToAll }, activeSession, allSessions);
 
 describe('clear session', () => {
@@ -28,14 +30,14 @@ describe('clear session', () => {
 
   describe('clears the active session', () => {
     const checkResult = () => {
-      expect(allSessions()[1]).property('active').equals(false);
-      expect(activeSession()).toBeUndefined();
+      expect(getAllSessions()[1]).property('active').equals(false);
+      expect(getActiveSession()).toBeUndefined();
     };
 
     beforeEach(() => {
       const session: ActiveSession = { id: 1, active: true };
-      allSessions.set({ 1: session });
-      activeSession.set(session);
+      setAllSessions({ 1: session });
+      setActiveSession(session);
     });
 
     test('callback', () => {

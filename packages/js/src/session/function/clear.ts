@@ -8,16 +8,16 @@ export interface SessionClearFn {
 
 export const construct = (
   { postToAll }: Pick<WorkerDispatch, 'postToAll'>,
-  activeSession: ActiveSessionSignal,
-  allSessions: AllSessionsSignal,
+  [getActiveSession, setActiveSession]: ActiveSessionSignal,
+  [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionClearFn => {
   const fn: SessionClearFn = (callback) => {
     postToAll({ action: 'session.clear' }, () => {
-      const session = activeSession() as Session;
+      const session = getActiveSession() as Session;
       if (session) {
         session.active = false;
-        activeSession.set(undefined);
-        allSessions.set(allSessions());
+        setActiveSession(undefined);
+        setAllSessions(getAllSessions());
       }
       if (callback) callback();
     });

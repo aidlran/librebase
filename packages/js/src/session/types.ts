@@ -1,4 +1,4 @@
-import type { WritableSignal } from '@adamantjs/signals';
+import type { Signal } from '@adamantjs/signals';
 import type { Session as DBSession } from '../indexeddb/indexeddb.js';
 
 export interface Session<T = unknown>
@@ -17,5 +17,5 @@ export interface InactiveSession<T = unknown> extends Session<T> {
 
 export type AllSessions<T = unknown> = Partial<Record<number, Session<T>>>;
 
-export type ActiveSessionSignal<T = unknown> = WritableSignal<ActiveSession<T> | undefined>;
-export type AllSessionsSignal<T = unknown> = WritableSignal<AllSessions<T>>;
+export type ActiveSessionSignal<T = unknown> = Signal<ActiveSession<T> | undefined>;
+export type AllSessionsSignal<T = unknown> = Signal<AllSessions<T>>;

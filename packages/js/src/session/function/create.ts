@@ -14,7 +14,7 @@ export interface SessionCreateFn<T = unknown> {
 export const construct = <T = unknown>(
   { postToOne }: Pick<WorkerDispatch, 'postToOne'>,
   load: SessionLoadFn<T>,
-  allSessions: AllSessionsSignal,
+  [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionCreateFn<T> => {
   const fn: SessionCreateFn<T> = (options, callback) => {
     postToOne({ action: 'session.create', payload: options }, ({ payload }) => {
@@ -22,8 +22,8 @@ export const construct = <T = unknown>(
         id: payload.id,
         active: false,
       };
-      allSessions()[payload.id] = session;
-      allSessions.set(allSessions());
+      getAllSessions()[payload.id] = session;
+      setAllSessions(getAllSessions());
       load(payload.id, options.passphrase, (result) => {
         if (callback) callback({ id: result.id, mnemonic: payload.mnemonic });
       });

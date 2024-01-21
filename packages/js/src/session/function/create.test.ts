@@ -27,6 +27,7 @@ load.asPromise = (id, passphrase) => {
   return new Promise((resolve) => load(id, passphrase, resolve));
 };
 const allSessions = createSignal<AllSessions>({});
+const [getAllSessions, setAllSessions] = allSessions;
 const fn = construct({ postToOne }, load, allSessions);
 
 describe('create session', () => {
@@ -36,11 +37,11 @@ describe('create session', () => {
 
   describe('add created session to all sessions observable', () => {
     const checkResult = () => {
-      expect(allSessions()[1]).property('active').equals(false);
+      expect(getAllSessions()[1]).property('active').equals(false);
     };
 
     beforeEach(() => {
-      allSessions.set({});
+      setAllSessions({});
     });
 
     test('callback', () => {

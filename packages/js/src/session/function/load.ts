@@ -1,6 +1,7 @@
+import type { SignalSetter } from '@adamantjs/signals';
 import type { LoadSessionResult } from '../../worker/interface/payload/index.js';
 import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { ActiveSession, ActiveSessionSignal, AllSessionsSignal } from '../types.js';
+import type { ActiveSession, AllSessionsSignal } from '../types.js';
 
 export interface SessionLoadFn<T = unknown> {
   (
@@ -13,8 +14,8 @@ export interface SessionLoadFn<T = unknown> {
 
 export const construct = <T = unknown>(
   { postToAll }: Pick<WorkerDispatch, 'postToAll'>,
-  activeSession: ActiveSessionSignal,
-  allSessions: AllSessionsSignal,
+  setActiveSession: SignalSetter<ActiveSession>,
+  [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionLoadFn<T> => {
   const fn: SessionLoadFn<T> = (id, passphrase, callback) => {
     postToAll({ action: 'session.load', payload: { id, passphrase } }, ([{ payload }]) => {
@@ -23,9 +24,9 @@ export const construct = <T = unknown>(
         metadata: payload.metadata as T,
         active: true,
       };
-      allSessions()[payload.id] = session;
-      allSessions.set(allSessions());
-      activeSession.set(session);
+      getAllSessions()[payload.id] = session;
+      setAllSessions(getAllSessions());
+      setActiveSession(session);
       if (callback) callback(payload as LoadSessionResult<T>);
     });
   };
