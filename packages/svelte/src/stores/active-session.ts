@@ -1,3 +1,4 @@
+import { createEffect } from '@adamantjs/signals';
 import { type ActiveSession, session } from 'librebase';
 import { type Readable, readable } from 'svelte/store';
 
@@ -10,9 +11,9 @@ export function activeSession<T = unknown>(appID?: string): Readable<ActiveSessi
   }
 
   // https://svelte.dev/docs/svelte-store
+  // "[...] called when the number of subscribers goes from zero to one [...]"
+  // "[...] return a stop function that is called when the subscriber count goes from one to zero."
   return readable<ActiveSession<T> | undefined>(undefined, (update) => {
-    // "[...] called when the number of subscribers goes from zero to one [...]"
-    // "[...] return a stop function that is called when the subscriber count goes from one to zero."
-    return session(appID).activeSession.subscribe((session) => update(session as ActiveSession<T>));
+    return createEffect(() => update(session(appID).activeSession() as ActiveSession<T>));
   });
 }
