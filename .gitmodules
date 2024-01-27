@@ -1,3 +1,3 @@
-[submodule "adamant"]
-	path = lib/adamant
-	url = https://github.com/aidlran/adamant
+[submodule "signals"]
+	path = lib/signals
+	url = https://github.com/aidlran/signals

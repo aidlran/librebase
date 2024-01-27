@@ -28,7 +28,7 @@
     "svelte": ">=3.44.2 <6.0.0"
   },
   "dependencies": {
-    "@adamantjs/signals": "file:../../lib/adamant"
+    "@adamantjs/signals": "^0.1.0"
   },
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
