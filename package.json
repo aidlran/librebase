@@ -15,7 +15,7 @@
     "lc": "npm run lc --workspaces --if-present",
     "lint": "publint packages/js && publint packages/svelte && eslint packages",
     "start": "conc -k npm:start:*",
-    "start:lib:adamant": "npm start -w lib/adamant",
+    "start:lib:signals": "npm start -w lib/signals",
     "start:js": "npm start -w packages/js",
     "start:svelte": "npm start -w packages/svelte",
     "test": "vitest run"
