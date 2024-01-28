@@ -1,6 +1,6 @@
 {
   "name": "librebase",
-  "version": "0.0.0-next.1",
+  "version": "0.1.0",
   "description": "JavaScript implementation of the LibreBase protocol.",
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
