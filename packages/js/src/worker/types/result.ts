@@ -1,11 +1,15 @@
-import type { ActionMixin } from '../interface/mixin/action.js';
-import type { Action } from './action.js';
-import type { ResultPayload } from './result-payload.js';
+import type { Action } from './action';
+import type * as Payload from './payload/index';
 
-/** Used internally for communication from workers. */
-export type Result<A extends Action> = ActionMixin<A> &
-  ResultPayload & {
-    // TODO: isolate these only to rejected promises
-    error?: string;
-    ok: boolean;
-  };
+/** Discriminated union that defines the result payloads for each action. */
+export type Result<T extends Action> = {
+  action: T;
+  // TODO: isolate these only to rejected promises
+  error?: string;
+  ok: boolean;
+} & (
+  | { action: 'session.clear' }
+  | { action: 'session.create'; payload: Payload.CreateSessionResult }
+  | { action: 'session.import'; payload: Payload.ImportSessionResult }
+  | { action: 'session.load'; payload: Payload.LoadSessionResult }
+);

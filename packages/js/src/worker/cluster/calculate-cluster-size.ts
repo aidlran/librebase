@@ -1,13 +1,11 @@
-export const CLUSTER_SIZE_DEFAULT_CEILING = 4;
+export const CLUSTER_SIZE_DEFAULT_CEILING = 1;
 export const CLUSTER_SIZE_DEFAULT_FLOOR = 1;
-export const CLUSTER_SIZE_DEFAULT_MULTIPLIER = 0.5;
+export const CLUSTER_SIZE_DEFAULT_MULTIPLIER = 0.25;
 
 /**
- * The default number of workers active in the cluster. It scales with the
- * `navigator.hardwareConcurrency` value when available.
+ * Calculate optimal cluster size, scaling with the `navigator.hardwareConcurrency` value when
+ * available.
  */
-export const CLUSTER_SIZE_DEFAULT = calculateClusterSize();
-
 export function calculateClusterSize(
   ceiling = CLUSTER_SIZE_DEFAULT_CEILING,
   floor = CLUSTER_SIZE_DEFAULT_FLOOR,

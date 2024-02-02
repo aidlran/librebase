@@ -1,5 +1,5 @@
 import 'fake-indexeddb/auto';
 import { describe } from 'vitest';
-import './worker-entrypoint.js';
+import './job-worker.js';
 
 describe.todo('worker entrypoint');

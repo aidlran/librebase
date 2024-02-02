@@ -1,6 +1,13 @@
 import { createModule } from '../module/create-module.js';
-import { workerConstructor } from './worker-constructor.js';
-import { workerDispatch } from './worker-dispatch.js';
-import { workerInstance } from './worker-instance.js';
+import { calculateClusterSize } from './cluster/calculate-cluster-size.js';
+import { createCluster } from './cluster/create-cluster.js';
+import { createWorker } from './constructor/create-worker.js';
+import { createDispatch } from './dispatch/create-dispatch.js';
+import { roundRobin } from './load-balancer/round-robin.js';
 
-export const workerModule = createModule(() => workerDispatch(workerInstance(workerConstructor())));
+export const getWorkerModule = createModule(() => {
+  const length = calculateClusterSize();
+  const workers = Array.from({ length }, createWorker);
+  const dispatches = workers.map(createDispatch);
+  return createCluster(dispatches, roundRobin);
+});

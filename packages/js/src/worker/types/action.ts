@@ -1,4 +1,4 @@
-export type Action = PostToAllAction | PostToOneAction | 'workerReady';
+export type Action = PostToAllAction | PostToOneAction;
 
 export type PostToAllAction = 'session.clear' | 'session.load';
 

@@ -1,5 +1,5 @@
-import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { Session, ActiveSessionSignal, AllSessionsSignal } from '../types.js';
+import type { Cluster } from '../../worker/cluster/create-cluster';
+import type { Session, ActiveSessionSignal, AllSessionsSignal } from '../types';
 
 export interface SessionClearFn {
   (callback?: () => unknown): void;
@@ -7,7 +7,7 @@ export interface SessionClearFn {
 }
 
 export const construct = (
-  { postToAll }: Pick<WorkerDispatch, 'postToAll'>,
+  { postToAll }: Pick<Cluster, 'postToAll'>,
   [getActiveSession, setActiveSession]: ActiveSessionSignal,
   [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionClearFn => {

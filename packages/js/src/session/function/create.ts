@@ -1,10 +1,7 @@
-import type {
-  CreateSessionRequest,
-  CreateSessionResult,
-} from '../../worker/interface/payload/index.js';
-import type { WorkerDispatch } from '../../worker/worker-dispatch.js';
-import type { AllSessionsSignal, InactiveSession } from '../types.js';
-import type { SessionLoadFn } from './load.js';
+import type { Cluster } from '../../worker/cluster/create-cluster';
+import type { CreateSessionRequest, CreateSessionResult } from '../../worker/types';
+import type { AllSessionsSignal, InactiveSession } from '../types';
+import type { SessionLoadFn } from './load';
 
 export interface SessionCreateFn<T = unknown> {
   (options: CreateSessionRequest<T>, callback?: (result: CreateSessionResult) => unknown): void;
@@ -12,7 +9,7 @@ export interface SessionCreateFn<T = unknown> {
 }
 
 export const construct = <T = unknown>(
-  { postToOne }: Pick<WorkerDispatch, 'postToOne'>,
+  { postToOne }: Pick<Cluster, 'postToOne'>,
   load: SessionLoadFn<T>,
   [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionCreateFn<T> => {

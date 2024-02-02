@@ -1,6 +1,6 @@
 import { createSignal } from '@adamantjs/signals';
 import { createModule } from '../module/create-module.js';
-import { workerModule } from '../worker/worker.module.js';
+import { getWorkerModule } from '../worker/worker.module.js';
 import { construct as constructClear, type SessionClearFn } from './function/clear.js';
 import { construct as constructCreate, type SessionCreateFn } from './function/create.js';
 import { getSessions } from './function/get-sessions.js';
@@ -19,27 +19,27 @@ export interface SessionModule<T = unknown> {
 }
 
 export const getSessionModule = createModule((key) => {
-  const workerDispatch = workerModule(key);
+  const workerDispatch = getWorkerModule(key);
 
-  const activeSession = createSignal<ActiveSession | undefined>(undefined);
-  const [getActiveSession, setActiveSession] = activeSession;
+  const activeSessionSignal = createSignal<ActiveSession | undefined>(undefined);
+  const [activeSession, setActiveSession] = activeSessionSignal;
 
-  const allSessions = createSignal<AllSessions>({});
-  const [getAllSessions] = allSessions;
+  const allSessionsSignal = createSignal<AllSessions>({});
+  const [allSessions] = allSessionsSignal;
 
-  const load = constructLoad(workerDispatch, setActiveSession, allSessions);
+  const load = constructLoad(workerDispatch, setActiveSession, allSessionsSignal);
 
   const SESSION_MODULE: SessionModule = {
-    activeSession: getActiveSession,
-    allSessions: getAllSessions,
-    clear: constructClear(workerDispatch, activeSession, allSessions),
-    create: constructCreate(workerDispatch, load, allSessions),
-    import: constructImport(workerDispatch, load, allSessions),
+    activeSession,
+    allSessions,
+    clear: constructClear(workerDispatch, activeSessionSignal, allSessionsSignal),
+    create: constructCreate(workerDispatch, load, allSessionsSignal),
+    import: constructImport(workerDispatch, load, allSessionsSignal),
     load,
 
     getSessions(callback?: (sessions: Readonly<AllSessions>) => unknown): void {
-      getSessions(allSessions, () => {
-        if (callback) callback(getAllSessions());
+      getSessions(allSessionsSignal, () => {
+        if (callback) callback(allSessions());
       });
     },
   };

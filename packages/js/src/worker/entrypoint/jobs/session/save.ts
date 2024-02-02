@@ -1,4 +1,4 @@
-import { create, put } from '../../../indexeddb/indexeddb.js';
+import { create, put } from '../../../../indexeddb/indexeddb';
 
 export const save = async (
   payload: Uint8Array,

@@ -1,8 +1,8 @@
 import ecc from '@bitcoinerlab/secp256k1';
 import { type BIP32API, BIP32Factory, type BIP32Interface } from 'bip32';
-import { entropyToMnemonic, mnemonicToSeed } from '../../../crypto/mnemonic/bip39.js';
-import { get, type Session } from '../../../indexeddb/indexeddb.js';
-import type { LoadSessionRequest, LoadSessionResult } from '../../interface/payload/index.js';
+import { entropyToMnemonic, mnemonicToSeed } from '../../../../crypto/mnemonic/bip39';
+import { get, type Session } from '../../../../indexeddb/indexeddb';
+import type { LoadSessionRequest, LoadSessionResult } from '../../../types';
 
 let bip32: BIP32API;
 

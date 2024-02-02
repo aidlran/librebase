@@ -1,6 +1,5 @@
-import { mnemonicToEntropy } from '../../../crypto/mnemonic/bip39.js';
-import type { ImportSessionRequest } from '../../interface/payload/index.js';
-import type { ImportSessionResult } from '../../interface/payload/result/import-session.js';
+import { mnemonicToEntropy } from '../../../../crypto/mnemonic/bip39';
+import type { ImportSessionRequest, ImportSessionResult } from '../../../types';
 
 export const importSession = async (
   save: (

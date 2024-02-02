@@ -1,5 +1,12 @@
-import type { ActionMixin } from '../interface/mixin/action.js';
-import type { Action } from './action.js';
-import type { RequestPayload } from './request-payload.js';
+import type { Action } from './action';
+import type * as Payload from './payload/index';
 
-export type Request<A extends Action> = ActionMixin<A> & RequestPayload;
+/** Discriminated union that defines the request payloads for each action. */
+export type Request<T extends Action> = {
+  action: T;
+} & (
+  | { action: 'session.clear' }
+  | { action: 'session.create'; payload: Payload.CreateSessionRequest }
+  | { action: 'session.import'; payload: Payload.ImportSessionRequest }
+  | { action: 'session.load'; payload: Payload.LoadSessionRequest }
+);
