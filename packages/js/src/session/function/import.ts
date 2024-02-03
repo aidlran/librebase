@@ -1,5 +1,5 @@
-import type { Cluster } from '../../worker/cluster/create-cluster';
 import type { ImportSessionRequest, ImportSessionResult } from '../../worker/types';
+import type { WorkerModule } from '../../worker/worker.module';
 import type { AllSessionsSignal, InactiveSession } from '../types';
 import type { SessionLoadFn } from './load';
 
@@ -9,7 +9,7 @@ export interface SessionImportFn<T = unknown> {
 }
 
 export const construct = <T = unknown>(
-  { postToOne }: Pick<Cluster, 'postToOne'>,
+  { postToOne }: Pick<WorkerModule, 'postToOne'>,
   load: SessionLoadFn,
   [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionImportFn => {

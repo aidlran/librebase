@@ -1,4 +1,4 @@
-import type { Cluster } from '../../worker/cluster/create-cluster';
+import type { WorkerModule } from '../../worker/worker.module';
 import type { Session, ActiveSessionSignal, AllSessionsSignal } from '../types';
 
 export interface SessionClearFn {
@@ -7,7 +7,7 @@ export interface SessionClearFn {
 }
 
 export const construct = (
-  { postToAll }: Pick<Cluster, 'postToAll'>,
+  { postToAll }: Pick<WorkerModule, 'postToAll'>,
   [getActiveSession, setActiveSession]: ActiveSessionSignal,
   [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionClearFn => {

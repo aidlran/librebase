@@ -1,6 +1,6 @@
 import type { SignalSetter } from '@adamantjs/signals';
-import type { Cluster } from '../../worker/cluster/create-cluster';
 import type { LoadSessionResult } from '../../worker/types';
+import type { WorkerModule } from '../../worker/worker.module';
 import type { ActiveSession, AllSessionsSignal } from '../types';
 
 export interface SessionLoadFn<T = unknown> {
@@ -13,7 +13,7 @@ export interface SessionLoadFn<T = unknown> {
 }
 
 export const construct = <T = unknown>(
-  { postToAll }: Pick<Cluster, 'postToAll'>,
+  { postToAll }: Pick<WorkerModule, 'postToAll'>,
   setActiveSession: SignalSetter<ActiveSession>,
   [getAllSessions, setAllSessions]: AllSessionsSignal,
 ): SessionLoadFn<T> => {

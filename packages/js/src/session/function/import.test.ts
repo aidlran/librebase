@@ -1,23 +1,25 @@
 import { createSignal } from '@adamantjs/signals';
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import type { PostToOneAction } from '../../worker/types/action.js';
-import type { Request } from '../../worker/types/request.js';
-import type { Result } from '../../worker/types/result.js';
-import type { JobCallback } from '../../worker/worker-instance.js';
-import type { AllSessions } from '../types.js';
-import { construct } from './import.js';
-import type { SessionLoadFn } from './load.js';
+import type { JobResultWorkerMessage } from '../../worker/dispatch/create-dispatch';
+import { WorkerMessageType } from '../../worker/types/message';
+import type { WorkerModule } from '../../worker/worker.module';
+import type { AllSessions } from '../types';
+import { construct } from './import';
+import type { SessionLoadFn } from './load';
 
-const postToOne = <T extends PostToOneAction>(request: Request<T>, callback?: JobCallback<T>) => {
+const postToOne: WorkerModule['postToOne'] = (request, callback?) => {
   if (request.action !== 'session.import') {
     throw new Error('Unexpected request action');
   }
   if (callback) {
-    callback({
+    const result: JobResultWorkerMessage<'session.import'> = {
+      type: WorkerMessageType.RESULT,
+      jobID: 0,
       action: 'session.import',
       ok: true,
       payload: { id: 1 },
-    } as Result<T>);
+    };
+    callback(result as never);
   }
 };
 const load: SessionLoadFn = (id, _passphrase, callback) => {

@@ -1,15 +1,10 @@
 import { createSignal } from '@adamantjs/signals';
 import { beforeEach, describe, expect, it, test } from 'vitest';
-import type { PostToAllAction } from '../../worker/types/action.js';
-import type { Request } from '../../worker/types/request.js';
-import type { WorkerPostMultiResultCallback } from '../../worker/worker-dispatch.js';
-import type { ActiveSession, AllSessions } from '../types.js';
-import { construct } from './clear.js';
+import type { WorkerModule } from '../../worker/worker.module';
+import type { ActiveSession, AllSessions } from '../types';
+import { construct } from './clear';
 
-const postToAll = <T extends PostToAllAction>(
-  request: Request<T>,
-  callback?: WorkerPostMultiResultCallback<T>,
-) => {
+const postToAll: WorkerModule['postToAll'] = (request, callback?) => {
   if (request.action !== 'session.clear') {
     throw new Error('Unexpected request action');
   }
