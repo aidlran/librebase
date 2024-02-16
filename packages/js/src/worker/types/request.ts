@@ -5,6 +5,7 @@ import type * as Payload from './payload/index';
 export type Request<T extends Action> = {
   action: T;
 } & (
+  | { action: 'node.root.get'; payload: string }
   | { action: 'session.clear' }
   | { action: 'session.create'; payload: Payload.CreateSessionRequest }
   | { action: 'session.import'; payload: Payload.ImportSessionRequest }

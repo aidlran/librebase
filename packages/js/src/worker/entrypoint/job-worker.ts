@@ -1,70 +1,92 @@
-import type { BIP32Interface } from 'bip32';
+import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
-import { WorkerMessageType, type WorkerMessage } from '../types/message';
-import type { Action, Job } from '../types/index';
+import { KdfType } from '../../crypto/kdf/types';
+import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
+import { WorkerDataRequestType, WorkerMessageType } from '../types';
+import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { createSession } from './jobs/session/create';
 import { importSession } from './jobs/session/import';
 import { load } from './jobs/session/load';
 import { save } from './jobs/session/save';
-import type { JobResultWorkerMessage } from '../dispatch/create-dispatch';
 
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- re-enable once using this
-let session: BIP32Interface | undefined;
+const dispatch = createDispatch(self, 1);
 
-self.onmessage = async (event: MessageEvent<Job<Action> | undefined>) => {
+let keyring: BIP32Interface | undefined;
+
+// eslint-disable-next-line @typescript-eslint/no-misused-promises
+self.addEventListener('message', async (event: MessageEvent<[number, number, Job]>) => {
   try {
-    if (!event.data?.action) {
-      throw TypeError('No action provided');
-    }
+    const [dispatchID, jobID, job] = event.data;
 
-    let resultPayload: unknown;
+    if (dispatchID == 0) {
+      if (!job.action) {
+        throw TypeError('No action provided');
+      }
 
-    switch (event.data.action) {
-      case 'session.clear': {
-        session = undefined;
-        break;
+      let resultPayload: unknown;
+
+      switch (job.action) {
+        case 'node.root.get': {
+          resultPayload = '';
+          const indexIdentity = keyring!.deriveHardened(0);
+          const indexNodeRequest: WorkerDataRequest = [
+            WorkerMessageType.DATA,
+            WorkerDataRequestType.IDENTITY_ROOT_NODE,
+            KdfType.secp256k1_hd,
+            new Uint8Array(indexIdentity.publicKey),
+          ];
+          dispatch(indexNodeRequest, (response) => {
+            // eslint-disable-next-line no-console
+            console.log('received a response!', response);
+          });
+          break;
+        }
+        case 'session.clear': {
+          keyring = undefined;
+          break;
+        }
+        case 'session.create': {
+          resultPayload = await createSession(save, job.payload);
+          break;
+        }
+        case 'session.import': {
+          resultPayload = await importSession(save, job.payload);
+          break;
+        }
+        case 'session.load': {
+          const { node, result } = await load(job.payload);
+          keyring = node;
+          resultPayload = result;
+          break;
+        }
+        default: {
+          throw TypeError('Action not supported');
+        }
       }
-      case 'session.create': {
-        resultPayload = await createSession(save, event.data.payload);
-        break;
-      }
-      case 'session.import': {
-        resultPayload = await importSession(save, event.data.payload);
-        break;
-      }
-      case 'session.load': {
-        const { node, result } = await load(event.data.payload);
-        session = node;
-        resultPayload = result;
-        break;
-      }
-      default: {
-        throw TypeError('Action not supported');
-      }
+      const errorMessage: JobResultWorkerMessage = {
+        type: WorkerMessageType.RESULT,
+        action: job.action,
+        jobID: jobID,
+        ok: true,
+        payload: resultPayload as never,
+      };
+      self.postMessage([dispatchID, jobID, errorMessage]);
     }
-    const errorMessage: JobResultWorkerMessage = {
-      type: WorkerMessageType.RESULT,
-      action: event.data.action,
-      jobID: event.data.jobID,
-      ok: true,
-      payload: resultPayload as never,
-    };
-    self.postMessage(errorMessage);
   } catch (error) {
     const errorMessage: JobResultWorkerMessage = {
       type: WorkerMessageType.RESULT,
-      action: event.data?.action as never,
-      jobID: event.data?.jobID as never,
+      action: event.data?.[2]?.action as never,
+      jobID: event.data?.[1],
       ok: false,
       error: error instanceof Error ? error.message : 'Unknown error',
     };
-    self.postMessage(errorMessage);
+    self.postMessage([event.data?.[0], event.data?.[1], errorMessage]);
     throw error;
   }
-};
+});
 
 const readyMessage: WorkerMessage<WorkerMessageType.READY> = { type: WorkerMessageType.READY };
 self.postMessage(readyMessage);

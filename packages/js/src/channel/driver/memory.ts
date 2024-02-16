@@ -1,37 +1,32 @@
-import { type HashKey, getHashKey, getHash } from '../functions/hash-key.js';
-import type { Hash } from '../interfaces/hash.js';
-import type { RawData } from '../interfaces/raw-data.js';
-import type { Channel } from '../channel.js';
+import { textDecoder } from '../shared';
+import type { ChannelDriver, SerializedNodeData } from '../types';
 
-export class MemoryChannel implements Channel {
-  private readonly data = new Map<HashKey, RawData>();
-  private readonly namedData = new Map<string, HashKey>();
+/** An in-memory driver for testing and development. */
+export class MemoryDriver implements ChannelDriver {
+  private readonly data: Record<string, [string, Uint8Array]> = {};
+  private readonly named: Record<string, Uint8Array> = {};
 
-  deleteNode(hash: Hash): void {
-    this.data.delete(getHashKey(hash));
+  deleteNode(hash: Uint8Array) {
+    delete this.data[textDecoder.decode(hash)];
   }
 
-  getNode(hash: Hash): RawData | undefined {
-    const data = this.data.get(getHashKey(hash));
-    return data ? structuredClone(data) : undefined;
+  getNode(hash: Uint8Array) {
+    return this.data[textDecoder.decode(hash)];
   }
 
-  putNode(rawData: RawData): void {
-    this.data.set(getHashKey(rawData.hash), structuredClone(rawData));
+  putNode({ hash, mediaType, payload }: SerializedNodeData) {
+    this.data[textDecoder.decode(hash)] = [mediaType, payload];
   }
 
-  unsetAddressedNode(name: string): void {
-    this.namedData.delete(name);
+  unsetAddressedNode(name: string) {
+    delete this.named[name];
   }
 
-  getAddressedNodeHash(name: string): Hash | undefined {
-    const hashKey = this.namedData.get(name);
-    return hashKey ? getHash(hashKey) : undefined;
+  getAddressedNodeHash(name: string) {
+    return this.named[name];
   }
 
-  setAddressedNodeHash(name: string, hash: Hash): void {
-    this.namedData.set(name, getHashKey(hash));
+  setAddressedNodeHash(name: string, hash: Uint8Array) {
+    this.named[name] = hash;
   }
 }
-
-export default MemoryChannel;

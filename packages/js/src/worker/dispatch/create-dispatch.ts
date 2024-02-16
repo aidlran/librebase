@@ -1,51 +1,57 @@
 import { WorkerMessageType } from '../types';
-import type { Action, Request, Result, WorkerMessage } from '../types';
+import type { Action, Result, WorkerMessage } from '../types';
 
 export type JobResultWorkerMessage<T extends Action = Action> =
   WorkerMessage<WorkerMessageType.RESULT> & { jobID: number } & Result<T>;
 
 export type JobCallback<T extends Action = Action> = (result: JobResultWorkerMessage<T>) => void;
 
-export type JobDispatch = <T extends Action>(
-  request: Request<T>,
-  callback?: JobCallback<T>,
-) => void;
+export type Dispatch<T, R> = (payload: T, callback?: DispatchCallback<R>) => void;
+export type DispatchCallback<T> = (response: T) => void;
 
-// TODO: able to batch send job requests in one message
-export function createDispatch(worker: Worker): JobDispatch {
-  const jobCallbacks: Record<number, JobCallback> = {};
+export function createDispatch<T, R>(target: Window | Worker, dispatchID: number): Dispatch<T, R> {
+  const callbacks: Record<number, DispatchCallback<R>> = {};
   let nextJobID = 0;
+  (target as Window).addEventListener('message', (event: MessageEvent<[number, number, R]>) => {
+    if (event.data instanceof Array) {
+      const [originDispatchID, originJobID, response] = event.data;
+      if (originDispatchID == dispatchID) {
+        const callback = callbacks[event.data[1]];
+        delete callbacks[originJobID];
+        if (callback) callback(response);
+      }
+    }
+  });
+  return (payload, callback?) => {
+    const jobID = nextJobID++;
+    if (callback) callbacks[jobID] = callback;
+    target.postMessage([dispatchID, jobID, payload]);
+  };
+}
+
+export function createDeferredDispatch<T, R>(
+  target: Window | Worker,
+  dispatchID: number,
+): Dispatch<T, R> {
+  const dispatch = createDispatch<T, R>(target, dispatchID);
   let readyFired = false;
   const readyHandler = (event: MessageEvent<WorkerMessage>) => {
     if (event.data.type === WorkerMessageType.READY) {
-      worker.removeEventListener('message', readyHandler);
-      worker.dispatchEvent(new Event('ready'));
+      (target as Window).removeEventListener('message', readyHandler);
+      target.dispatchEvent(new Event('ready'));
       readyFired = true;
     }
   };
-  worker.addEventListener('message', readyHandler);
-  worker.addEventListener('message', (event: MessageEvent<WorkerMessage>) => {
-    if (event.data.type !== WorkerMessageType.RESULT) {
-      return;
-    }
-    const message = event.data as JobResultWorkerMessage;
-    const callback = jobCallbacks[message.jobID];
-    delete jobCallbacks[message.jobID];
-    if (callback) {
-      callback(message);
-    }
-  });
+  (target as Window).addEventListener('message', readyHandler);
   return (request, callback?) => {
-    jobCallbacks[++nextJobID] = callback as JobCallback<Action>;
-    // TODO(perf): use array instead of spreading
     if (readyFired) {
-      worker.postMessage({ ...request, jobID: nextJobID });
+      dispatch(request, callback);
     } else {
       const callback = () => {
-        worker.removeEventListener('ready', callback);
-        worker.postMessage({ ...request, jobID: nextJobID });
+        target.removeEventListener('ready', callback);
+        dispatch(request, callback);
       };
-      worker.addEventListener('ready', callback);
+      target.addEventListener('ready', callback);
     }
   };
 }

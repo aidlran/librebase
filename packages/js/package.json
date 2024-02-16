@@ -23,14 +23,6 @@
       "types": "./dist/crypto/index.d.ts",
       "default": "./dist/crypto/index.js"
     },
-    "./identity": {
-      "types": "./dist/identity/index.d.ts",
-      "default": "./dist/identity/index.js"
-    },
-    "./schema": {
-      "types": "./dist/schema/index.d.ts",
-      "default": "./dist/schema/index.js"
-    },
     "./session": {
       "types": "./dist/session/index.d.ts",
       "default": "./dist/session/index.js"
@@ -38,15 +30,16 @@
   },
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/index.ts | gzip | wc -c",
     "lc": "echo LibreBase JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
     "@adamantjs/signals": "^0.1.0",
-    "@bitcoinerlab/secp256k1": "^1.0.5",
+    "@bitcoinerlab/secp256k1": "^1.1.1",
     "base-x": "4.0.0",
     "bip32": "^4.0.0",
-    "buffer": "^6.0.3",
+    "buffer": "6.0.3",
     "tweetnacl": "1.0.3"
   }
 }

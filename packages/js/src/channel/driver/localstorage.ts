@@ -1,34 +1,51 @@
-import { getHash, getHashKey } from '../functions/hash-key.js';
-import type { Hash } from '../interfaces/hash.js';
-import type { RawData } from '../interfaces/raw-data.js';
-import type { Channel } from '../channel.js';
+import { textDecoder, textEncoder } from '../shared';
+import type { ChannelDriver, SerializedNodeData } from '../types';
 
-export class LocalStorageChannel implements Channel {
-  deleteNode(hash: Hash): void {
-    localStorage.removeItem(getHashKey(hash));
+/**
+ * A naïve implementation of a localStorage driver intended only for testing and development. This
+ * will be superceded by an indexedDB driver in the future.
+ */
+export class LocalStorageDriver implements ChannelDriver {
+  deleteNode(hash: Uint8Array) {
+    localStorage.removeItem(textDecoder.decode(hash));
   }
 
-  getNode(hash: Hash): RawData | undefined {
-    const data = localStorage.getItem(getHashKey(hash));
-    return data ? (JSON.parse(data) as RawData) : undefined;
+  getNode(hash: Uint8Array) {
+    try {
+      const data = localStorage.getItem(textDecoder.decode(hash));
+      if (data) {
+        const [mediaType, payload] = JSON.parse(data) as string[];
+        return [mediaType, textEncoder.encode(payload)] as [string, Uint8Array];
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn(error);
+    }
   }
 
-  putNode(rawData: RawData): void {
-    localStorage.setItem(getHashKey(rawData.hash), JSON.stringify(rawData));
+  putNode({ hash, mediaType, payload }: SerializedNodeData) {
+    const key = textDecoder.decode(hash);
+    const value = JSON.stringify([mediaType, textDecoder.decode(payload)]);
+    localStorage.setItem(key, value);
   }
 
-  unsetAddressedNode(name: string): void {
+  unsetAddressedNode(name: string) {
     localStorage.removeItem(name);
   }
 
-  getAddressedNodeHash(name: string): Hash | undefined {
-    const hashKey = localStorage.getItem(name);
-    return hashKey ? getHash(hashKey) : undefined;
+  getAddressedNodeHash(name: string) {
+    try {
+      const encodedHash = localStorage.getItem(name);
+      if (encodedHash) {
+        return textEncoder.encode(encodedHash);
+      }
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.warn(error);
+    }
   }
 
-  setAddressedNodeHash(name: string, hash: Hash): void {
-    localStorage.setItem(name, getHashKey(hash));
+  setAddressedNodeHash(name: string, hash: Uint8Array) {
+    localStorage.setItem(name, textDecoder.decode(hash));
   }
 }
-
-export default LocalStorageChannel;

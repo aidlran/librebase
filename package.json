@@ -11,6 +11,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
+    "cost": "npm run cost --workspaces --if-present",
     "format": "prettier --write .",
     "lc": "npm run lc --workspaces --if-present",
     "lint": "publint packages/js && publint packages/svelte && eslint packages",
@@ -22,9 +23,9 @@
   },
   "devDependencies": {
     "@adamantjs/signals": "file:lib/signals",
-    "@types/node": "^20.11.8",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
+    "@types/node": "^20.11.19",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "@vitest/coverage-v8": "^1.2.2",
     "@vitest/web-worker": "^1.2.2",
     "concurrently": "^8.2.2",
@@ -34,15 +35,15 @@
     "eslint-plugin-prettier": "^5.1.3",
     "eslint-plugin-svelte": "^2.35.1",
     "fake-indexeddb": "^5.0.2",
-    "happy-dom": "^13.3.1",
+    "happy-dom": "^13.3.8",
     "librebase": "file:packages/js",
-    "prettier": "^3.2.4",
+    "prettier": "^3.2.5",
     "prettier-plugin-jsdoc": "^1.3.0",
-    "prettier-plugin-svelte": "^3.1.2",
+    "prettier-plugin-svelte": "^3.2.1",
     "publint": "^0.2.7",
-    "svelte": "^4.2.9",
+    "svelte": "^4.2.11",
     "typescript": "~5.3.3",
-    "vite": "^5.0.12",
+    "vite": "^5.1.3",
     "vitest": "^1.2.2"
   }
 }

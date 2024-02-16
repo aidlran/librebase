@@ -9,7 +9,7 @@ let bip32: BIP32API;
 export const load = async <T>(
   request: LoadSessionRequest,
 ): Promise<{ node: BIP32Interface; result: LoadSessionResult<T> }> => {
-  bip32 ??= BIP32Factory(ecc);
+  if (!bip32) bip32 = BIP32Factory(ecc);
 
   const session = (await get('session', request.id)) as Session<T>;
 

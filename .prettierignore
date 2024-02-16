@@ -1,6 +1,7 @@
 .svelte-kit
 coverage
 dist
+lib
 node_modules
 LICENSE
 package-lock.json
