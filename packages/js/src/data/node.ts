@@ -94,3 +94,33 @@ export function createNode(this: [ChannelDriver[], Serializers]): Node {
 
   return node;
 }
+
+export function getNode(this: [ChannelDriver[], () => Node], hash: Uint8Array) {
+  const [channels, createNode] = this;
+
+  const promises = channels.map((channel) => {
+    return Promise.resolve(channel.getNode(hash))
+      .then((result) => {
+        if (result) {
+          const [mediaType, payload] = result;
+          const node = createNode().setHashAlg(hash[0]).setMediaType(mediaType).setValue(payload);
+          return node.hash().then((vHash) => {
+            const vBinHash = new Uint8Array([vHash.type, ...vHash.value]);
+            if (hash.length !== vBinHash.length) {
+              return;
+            }
+            for (const i in hash) {
+              if (hash[i] !== vBinHash[i]) {
+                return;
+              }
+            }
+            return node;
+          });
+        }
+      })
+      .catch(console.warn);
+  });
+
+  // TODO: this is going to return the first resolved, even if it resolves null or rejects
+  return Promise.race(promises);
+}
