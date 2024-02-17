@@ -1,4 +1,4 @@
-import { textDecoder, textEncoder } from '../shared';
+import { textDecoder, textEncoder } from '../../shared';
 import type { ChannelDriver, SerializedNodeData } from '../types';
 
 /**

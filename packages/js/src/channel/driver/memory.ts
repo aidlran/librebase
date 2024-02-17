@@ -1,4 +1,4 @@
-import { textDecoder } from '../shared';
+import { textDecoder } from '../../shared';
 import type { ChannelDriver, SerializedNodeData } from '../types';
 
 /** An in-memory driver for testing and development. */

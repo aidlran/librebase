@@ -6,6 +6,7 @@ import {
 } from '@adamantjs/signals';
 import type { ChannelDriver, SerializedNodeData } from '../channel/types';
 import { HashType, sha256, type Hash } from '../crypto/hash';
+import type { Serializers } from './data.module';
 
 export interface Node {
   hashAlg: SignalGetter<HashType>;
@@ -23,11 +24,19 @@ export interface Node {
   push: () => Promise<Node>;
 }
 
-function calculateNodePayload(this: [SignalGetter<unknown>, SignalGetter<string>]) {
-  const [value] = this;
-  if (!(value instanceof Uint8Array)) {
-    throw new TypeError('Invalid node value type');
+function calculateNodePayload(this: [SignalGetter<unknown>, SignalGetter<string>, Serializers]) {
+  const [value, mediaType, serializers] = this;
+
+  const serializer = serializers[mediaType()];
+
+  if (serializer) {
+    return serializer.serialize(value());
   }
+
+  if (!(value instanceof Uint8Array)) {
+    throw new TypeError('Unsupported media type - no serializer available');
+  }
+
   return value() as Uint8Array;
 }
 
@@ -59,14 +68,14 @@ async function pushNode(this: [Node, ChannelDriver[]]) {
   return node;
 }
 
-export function createNode(this: ChannelDriver[]): Node {
+export function createNode(this: [ChannelDriver[], Serializers]): Node {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
-  const channels = this;
+  const [channels, serializers] = this;
 
   const [value, setValue] = createSignal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
   const [hashAlg, setHashAlg] = createSignal<HashType>(HashType.SHA256);
   const [mediaType, setMediaType] = createSignal<string>('application/octet-stream');
-  const payload = createDerived(calculateNodePayload.bind([value, mediaType]));
+  const payload = createDerived(calculateNodePayload.bind([value, mediaType, serializers]));
   const hash = createDerived(calculateNodeHash.bind([payload, hashAlg]));
 
   const node: Node = { hash, hashAlg, mediaType, payload, value } as Node;
