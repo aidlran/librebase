@@ -33,11 +33,11 @@ function calculateNodePayload(this: [SignalGetter<unknown>, SignalGetter<string>
     return serializer.serialize(value());
   }
 
-  if (!(value instanceof Uint8Array)) {
-    throw new TypeError('Unsupported media type - no serializer available');
+  if (value() instanceof Uint8Array) {
+    return value() as Uint8Array;
   }
 
-  return value() as Uint8Array;
+  throw new TypeError('Unsupported media type - no serializer available');
 }
 
 function calculateNodeHash(this: [SignalGetter<Uint8Array>, SignalGetter<HashType>]) {
