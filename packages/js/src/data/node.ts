@@ -118,7 +118,10 @@ export function getNode(this: [ChannelDriver[], () => Node], hash: Uint8Array) {
           });
         }
       })
-      .catch(console.warn);
+      .catch((error) => {
+        // eslint-disable-next-line no-console
+        console.warn(error);
+      });
   });
 
   // TODO: this is going to return the first resolved, even if it resolves null or rejects
