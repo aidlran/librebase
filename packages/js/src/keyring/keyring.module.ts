@@ -3,28 +3,34 @@ import { createDerived, createSignal } from '@adamantjs/signals';
 // import { getDataModule } from '../data/data.module';
 import { getAll } from '../indexeddb/indexeddb';
 import { createModule } from '../module/create-module';
-import type { CreateSessionRequest, CreateSessionResult } from '../worker/types';
+import type {
+  CreateSessionRequest,
+  CreateSessionResult,
+  ImportSessionRequest,
+  LoadSessionResult,
+} from '../worker/types';
 import { createJobWorker } from '../worker/worker.module';
 import type { Keyring } from './types';
-
-async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
-  const keyrings = await getAll('session');
-  return keyrings.map((keyring) => ({
-    id: keyring.id as number,
-    metadata: keyring.metadata as T,
-  }));
-}
 
 export const getKeyringModule = createModule((/* key */) => {
   // const channels = getChannels(key);
   // const data = getDataModule(key);
-  const { postToOne } = createJobWorker();
+  const { postToAll, postToOne } = createJobWorker();
 
   const [active, setActive] = createSignal<Keyring<unknown> | undefined>(undefined);
   const exposedActive = createDerived(() => (active() ? { ...active() } : undefined));
 
   return {
     active: exposedActive as <T>() => Keyring<T> | undefined,
+
+    activate<T>(id: number, passphrase: string) {
+      return new Promise<LoadSessionResult<T>>((resolve) => {
+        postToAll({ action: 'session.load', payload: { id, passphrase } }, ([{ payload }]) => {
+          setActive(payload);
+          resolve(payload as Keyring<T>);
+        });
+      });
+    },
     clearActive() {
       setActive(undefined);
     },
@@ -35,6 +41,19 @@ export const getKeyringModule = createModule((/* key */) => {
         });
       });
     },
-    getAll: getAllKeyrings,
+    async getAll<T>(): Promise<Keyring<T>[]> {
+      const keyrings = await getAll('session');
+      return keyrings.map((keyring) => ({
+        id: keyring.id as number,
+        metadata: keyring.metadata as T,
+      }));
+    },
+    import(options: ImportSessionRequest) {
+      return new Promise<number>((resolve) => {
+        postToOne({ action: 'session.import', payload: options }, ({ payload }) => {
+          resolve(payload.id);
+        });
+      });
+    },
   };
 });
