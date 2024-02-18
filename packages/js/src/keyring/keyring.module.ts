@@ -21,11 +21,14 @@ export const getKeyringModule = createModule((/* key */) => {
   // const data = getDataModule(key);
   const worker = createJobWorker();
 
-  const [active, setActive] = createSignal<Keyring<unknown>>(undefined as never);
+  const [active, setActive] = createSignal<Keyring<unknown> | undefined>(undefined);
   const exposedActive = createDerived(() => (active() ? { ...active() } : undefined));
 
   return {
-    active: exposedActive as <T>() => Keyring<T>,
+    active: exposedActive as <T>() => Keyring<T> | undefined,
+    clearActive() {
+      setActive(undefined);
+    },
     create: createKeyring.bind<<T>(options: CreateSessionRequest<T>) => Promise<Keyring<T>>>([
       worker.postToOne,
       setActive,

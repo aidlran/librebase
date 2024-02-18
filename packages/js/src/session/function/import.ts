@@ -3,11 +3,13 @@ import type { WorkerModule } from '../../worker/worker.module';
 import type { AllSessionsSignal, InactiveSession } from '../types';
 import type { SessionLoadFn } from './load';
 
+/** @deprecated */
 export interface SessionImportFn<T = unknown> {
   (options: ImportSessionRequest<T>, callback?: (result: ImportSessionResult) => unknown): void;
   asPromise(options: ImportSessionRequest<T>): Promise<ImportSessionResult>;
 }
 
+/** @deprecated */
 export const construct = <T = unknown>(
   { postToOne }: Pick<WorkerModule, 'postToOne'>,
   load: SessionLoadFn,

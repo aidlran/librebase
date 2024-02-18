@@ -3,6 +3,7 @@ import type { LoadSessionResult } from '../../worker/types';
 import type { WorkerModule } from '../../worker/worker.module';
 import type { ActiveSession, AllSessionsSignal } from '../types';
 
+/** @deprecated */
 export interface SessionLoadFn<T = unknown> {
   (
     sessionID: number,
@@ -12,6 +13,7 @@ export interface SessionLoadFn<T = unknown> {
   asPromise(sessionID: number, passphrase: string): Promise<LoadSessionResult<T>>;
 }
 
+/** @deprecated */
 export const construct = <T = unknown>(
   { postToAll }: Pick<WorkerModule, 'postToAll'>,
   setActiveSession: SignalSetter<ActiveSession>,

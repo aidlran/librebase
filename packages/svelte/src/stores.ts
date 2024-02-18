@@ -10,5 +10,5 @@ function createStore<T>(signal: SignalGetter<T>): Readable<T> {
 }
 
 export function activeSession<T>(appID?: string) {
-  return createStore<Keyring<T>>(keyring(appID).active);
+  return createStore<Keyring<T> | undefined>(keyring(appID).active);
 }
