@@ -15,10 +15,10 @@ export async function entropyToMnemonic(entropy: Uint8Array): Promise<string> {
 
   const CHECKSUM_LENGTH = entropy.length / 4;
 
-  const CHECKSUM = sha256(entropy).then(({ value }) => {
+  const CHECKSUM = sha256(entropy).then((hash) => {
     const SHIFT = 8 - CHECKSUM_LENGTH;
     const BITMASK = CHECKSUM_LENGTH == 8 ? 0xff : (0xff >> SHIFT) << SHIFT;
-    return value[0] & BITMASK;
+    return new Uint8Array(hash)[0] & BITMASK;
   });
 
   let mnemonicInt = 0n;

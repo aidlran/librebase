@@ -1,4 +1,3 @@
-export * from './address';
 export * from './common/buffer-utils';
 export * from './encode/base';
 export * from './hash';
