@@ -3,9 +3,8 @@ import { createDerived, createSignal } from '@adamantjs/signals';
 // import { getDataModule } from '../data/data.module';
 import { getAll } from '../indexeddb/indexeddb';
 import { createModule } from '../module/create-module';
-import type { CreateSessionRequest } from '../worker/types';
+import type { CreateSessionRequest, CreateSessionResult } from '../worker/types';
 import { createJobWorker } from '../worker/worker.module';
-import { createKeyring } from './function/create/create';
 import type { Keyring } from './types';
 
 async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
@@ -19,7 +18,7 @@ async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
 export const getKeyringModule = createModule((/* key */) => {
   // const channels = getChannels(key);
   // const data = getDataModule(key);
-  const worker = createJobWorker();
+  const { postToOne } = createJobWorker();
 
   const [active, setActive] = createSignal<Keyring<unknown> | undefined>(undefined);
   const exposedActive = createDerived(() => (active() ? { ...active() } : undefined));
@@ -29,10 +28,13 @@ export const getKeyringModule = createModule((/* key */) => {
     clearActive() {
       setActive(undefined);
     },
-    create: createKeyring.bind<<T>(options: CreateSessionRequest<T>) => Promise<Keyring<T>>>([
-      worker.postToOne,
-      setActive,
-    ]),
+    create<T>(options: CreateSessionRequest<T>) {
+      return new Promise<CreateSessionResult>((resolve) => {
+        postToOne({ action: 'session.create', payload: options }, ({ payload }) => {
+          resolve(payload);
+        });
+      });
+    },
     getAll: getAllKeyrings,
   };
 });

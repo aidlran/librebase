@@ -30,6 +30,9 @@ export function createJobWorker(): WorkerModule {
     return createDeferredDispatch(worker, 0);
   });
   const getNextDispatch = roundRobin(dispatches);
+
+  // TODO(refactor): make these promises
+
   return {
     postToAll<T extends PostToAllAction>(
       message: Request<T>,
