@@ -56,7 +56,7 @@ function chainedSetter<T>(this: [Node, SignalSetter<T>], value: T) {
   return node;
 }
 
-async function pushNode(this: [Node, ChannelDriver[]]) {
+async function pushNode(this: [Node, Set<ChannelDriver>]) {
   const [node, channels] = this;
   const hash = await node.hash();
   const data: SerializedNodeData = {
@@ -68,7 +68,7 @@ async function pushNode(this: [Node, ChannelDriver[]]) {
   return node;
 }
 
-export function createNode(this: [ChannelDriver[], Serializers]): Node {
+export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const [channels, serializers] = this;
 
@@ -95,10 +95,10 @@ export function createNode(this: [ChannelDriver[], Serializers]): Node {
   return node;
 }
 
-export function getNode(this: [ChannelDriver[], () => Node], hash: Uint8Array) {
+export function getNode(this: [Set<ChannelDriver>, () => Node], hash: Uint8Array) {
   const [channels, createNode] = this;
 
-  const promises = channels.map((channel) => {
+  const promises = [...channels].map((channel) => {
     return Promise.resolve(channel.getNode(hash))
       .then((result) => {
         if (result) {
