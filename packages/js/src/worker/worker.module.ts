@@ -19,7 +19,7 @@ export interface WorkerModule {
   ) => void;
 }
 
-export const getWorkerModule = createModule<WorkerModule>(() => {
+export function createJobWorker(): WorkerModule {
   const length = calculateClusterSize();
   const workers = Array.from({ length }, createWorker);
   const dispatches = workers.map<JobDispatch>((worker) => {
@@ -57,4 +57,7 @@ export const getWorkerModule = createModule<WorkerModule>(() => {
       dispatch(message, callback as never);
     },
   };
-});
+}
+
+/** @deprecated */
+export const getWorkerModule = createModule<WorkerModule>(createJobWorker);

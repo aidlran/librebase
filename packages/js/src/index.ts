@@ -4,9 +4,9 @@ export * from './channel/driver/localstorage';
 export * from './channel/driver/memory';
 export * from './channel/types';
 
-export { getDataModule as node } from './data/data.module';
+export { getDataModule as data } from './data/data.module';
 export * from './data/serializer/json';
 export * from './data/serializer/type';
 
-export { getTypedSessionModule as session } from './session/session.module';
-export type * from './session/types';
+export { getKeyringModule as keyring } from './keyring/keyring.module';
+export * from './keyring/types';
