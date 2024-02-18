@@ -1,4 +1,3 @@
-import { createModule } from '../module/create-module';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { createWorker } from './constructor/create-worker';
 import { createDeferredDispatch } from './dispatch/create-dispatch';
@@ -58,6 +57,3 @@ export function createJobWorker(): WorkerModule {
     },
   };
 }
-
-/** @deprecated */
-export const getWorkerModule = createModule<WorkerModule>(createJobWorker);
