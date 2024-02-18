@@ -48,7 +48,7 @@ export const getKeyringModule = createModule((/* key */) => {
         metadata: keyring.metadata as T,
       }));
     },
-    import(options: ImportSessionRequest) {
+    import<T>(options: ImportSessionRequest<T>) {
       return new Promise<number>((resolve) => {
         postToOne({ action: 'session.import', payload: options }, ({ payload }) => {
           resolve(payload.id);
