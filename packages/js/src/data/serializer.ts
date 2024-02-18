@@ -14,11 +14,16 @@ export const TextSerializer: Serializer<string> = {
   },
 };
 
-export const JsonSerializer: Serializer<any> = {
+type JsonValue = number | string | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+interface JsonSerializer extends Serializer<JsonValue> {
+  deserialize: <T extends JsonValue>(payload: Uint8Array) => T;
+}
+
+export const JsonSerializer: JsonSerializer = {
   serialize(data) {
     return textEncoder.encode(JSON.stringify(data));
   },
-  deserialize(payload) {
-    return JSON.parse(textDecoder.decode(payload));
+  deserialize<T extends JsonValue>(payload: Uint8Array): T {
+    return JSON.parse(textDecoder.decode(payload)) as T;
   },
 };
