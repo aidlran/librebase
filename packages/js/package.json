@@ -14,18 +14,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./channel": {
-      "types": "./dist/channel/index.d.ts",
-      "default": "./dist/channel/index.js"
-    },
-    "./crypto": {
-      "types": "./dist/crypto/index.d.ts",
-      "default": "./dist/crypto/index.js"
-    },
-    "./session": {
-      "types": "./dist/session/index.d.ts",
-      "default": "./dist/session/index.js"
     }
   },
   "scripts": {
