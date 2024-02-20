@@ -1,4 +1,4 @@
-export interface LoadSessionRequest {
+export interface LoadKeyringRequest {
   /** The ID of the target session. */
   id: number;
 

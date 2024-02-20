@@ -2,13 +2,13 @@ import ecc from '@bitcoinerlab/secp256k1';
 import { type BIP32API, BIP32Factory, type BIP32Interface } from 'bip32';
 import { entropyToMnemonic, mnemonicToSeed } from '../../../../crypto/mnemonic/bip39';
 import { get, type Session } from '../../../../indexeddb/indexeddb';
-import type { LoadSessionRequest, LoadSessionResult } from '../../../types';
+import type { LoadKeyringRequest, LoadKeyringResult } from '../../../types';
 
 let bip32: BIP32API;
 
 export const load = async <T>(
-  request: LoadSessionRequest,
-): Promise<{ node: BIP32Interface; result: LoadSessionResult<T> }> => {
+  request: LoadKeyringRequest,
+): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> => {
   if (!bip32) bip32 = BIP32Factory(ecc);
 
   const session = (await get('session', request.id)) as Session<T>;

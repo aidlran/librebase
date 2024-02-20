@@ -8,9 +8,9 @@ export type Result<T extends Action> = {
   error?: string;
   ok: boolean;
 } & (
-  | { action: 'node.root.get'; payload: string }
-  | { action: 'session.clear' }
-  | { action: 'session.create'; payload: Payload.CreateSessionResult }
-  | { action: 'session.import'; payload: Payload.ImportSessionResult }
-  | { action: 'session.load'; payload: Payload.LoadSessionResult }
+  | { action: 'identity.get'; payload: string }
+  | { action: 'keyring.clear' }
+  | { action: 'keyring.create'; payload: Payload.CreateKeyringResult }
+  | { action: 'keyring.import'; payload: Payload.ImportKeyringResult }
+  | { action: 'keyring.load'; payload: Payload.LoadKeyringResult }
 );

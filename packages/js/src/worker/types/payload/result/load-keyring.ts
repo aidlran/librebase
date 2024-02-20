@@ -1,4 +1,4 @@
-export interface LoadSessionResult<T = unknown> {
+export interface LoadKeyringResult<T = unknown> {
   /** The ID of the session. */
   id: number;
 

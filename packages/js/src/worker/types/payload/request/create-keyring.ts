@@ -1,4 +1,4 @@
-export interface CreateSessionRequest<T = unknown> {
+export interface CreateKeyringRequest<T = unknown> {
   /** The passphrase used to protect the session payload. */
   passphrase: string;
 

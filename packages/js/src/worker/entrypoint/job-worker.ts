@@ -29,7 +29,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
       let resultPayload: unknown;
 
       switch (job.action) {
-        case 'node.root.get': {
+        case 'identity.get': {
           resultPayload = '';
           const indexIdentity = keyring!.deriveHardened(0);
           const indexNodeRequest: WorkerDataRequest = [
@@ -44,19 +44,19 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           });
           break;
         }
-        case 'session.clear': {
+        case 'keyring.clear': {
           keyring = undefined;
           break;
         }
-        case 'session.create': {
+        case 'keyring.create': {
           resultPayload = await createSession(save, job.payload);
           break;
         }
-        case 'session.import': {
+        case 'keyring.import': {
           resultPayload = await importSession(save, job.payload);
           break;
         }
-        case 'session.load': {
+        case 'keyring.load': {
           const { node, result } = await load(job.payload);
           keyring = node;
           resultPayload = result;

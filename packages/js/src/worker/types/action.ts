@@ -1,5 +1,5 @@
 export type Action = PostToAllAction | PostToOneAction;
 
-export type PostToAllAction = 'session.clear' | 'session.load';
+export type PostToAllAction = 'keyring.clear' | 'keyring.load';
 
-export type PostToOneAction = 'node.root.get' | 'session.create' | 'session.import';
+export type PostToOneAction = 'identity.get' | 'keyring.create' | 'keyring.import';

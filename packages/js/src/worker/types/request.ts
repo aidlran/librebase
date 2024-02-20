@@ -5,9 +5,9 @@ import type * as Payload from './payload/index';
 export type Request<T extends Action> = {
   action: T;
 } & (
-  | { action: 'node.root.get'; payload: string }
-  | { action: 'session.clear' }
-  | { action: 'session.create'; payload: Payload.CreateSessionRequest }
-  | { action: 'session.import'; payload: Payload.ImportSessionRequest }
-  | { action: 'session.load'; payload: Payload.LoadSessionRequest }
+  | { action: 'identity.get'; payload: string }
+  | { action: 'keyring.clear' }
+  | { action: 'keyring.create'; payload: Payload.CreateKeyringRequest }
+  | { action: 'keyring.import'; payload: Payload.ImportKeyringRequest }
+  | { action: 'keyring.load'; payload: Payload.LoadKeyringRequest }
 );
