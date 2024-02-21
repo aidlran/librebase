@@ -2,6 +2,7 @@ import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { createWorker } from './constructor/create-worker';
 import { createDeferredDispatch } from './dispatch/create-dispatch';
 import type { Dispatch, JobResultWorkerMessage } from './dispatch/create-dispatch';
+import { handleMessage } from './handler/handler';
 import { roundRobin } from './load-balancer/round-robin';
 import type { Action, PostToAllAction, PostToOneAction, Request } from './types';
 
@@ -22,11 +23,7 @@ export function createJobWorker(): WorkerModule {
   const length = calculateClusterSize();
   const workers = Array.from({ length }, createWorker);
   const dispatches = workers.map<JobDispatch>((worker) => {
-    worker.addEventListener('message', (m: MessageEvent<[number, number, ...unknown[]]>) => {
-      if (m.data[0] == 1) {
-        worker.postMessage([m.data[0], m.data[1], 'test']);
-      }
-    });
+    worker.addEventListener('message', handleMessage);
     return createDeferredDispatch(worker, 0);
   });
   const getNextDispatch = roundRobin(dispatches);

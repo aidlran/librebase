@@ -2,8 +2,8 @@ import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { KdfType } from '../../crypto/kdf/types';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
+import type { GetNodeRequest, Job, WorkerMessage } from '../types';
 import { WorkerDataRequestType, WorkerMessageType } from '../types';
-import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { createSession } from './jobs/session/create';
 import { importSession } from './jobs/session/import';
 import { load } from './jobs/session/load';
@@ -32,13 +32,13 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'identity.get': {
           resultPayload = '';
           const indexIdentity = keyring!.deriveHardened(0);
-          const indexNodeRequest: WorkerDataRequest = [
+          const indexRequest: GetNodeRequest = [
             WorkerMessageType.DATA,
-            WorkerDataRequestType.IDENTITY_ROOT_NODE,
+            WorkerDataRequestType.GET_ROOT_NODE,
             KdfType.secp256k1_hd,
             new Uint8Array(indexIdentity.publicKey),
           ];
-          dispatch(indexNodeRequest, (response) => {
+          dispatch(indexRequest, (response) => {
             // eslint-disable-next-line no-console
             console.log('received a response!', response);
           });

@@ -1,3 +1,4 @@
+import type { SerializedNodeData } from '../../channel/types';
 import type { KdfType } from '../../crypto/kdf/types';
 
 export enum WorkerMessageType {
@@ -14,12 +15,22 @@ export interface WorkerMessage<T extends WorkerMessageType = WorkerMessageType> 
 }
 
 export enum WorkerDataRequestType {
-  IDENTITY_ROOT_NODE,
+  GET_ROOT_NODE,
 }
 
-export type WorkerDataRequest = [
+export type GetNodeRequest = [
   WorkerMessageType.DATA,
-  WorkerDataRequestType.IDENTITY_ROOT_NODE,
+  WorkerDataRequestType.GET_ROOT_NODE,
   KdfType,
   publicKey: Uint8Array,
 ];
+
+export type WorkerDataRequest = GetNodeRequest;
+
+export type GetNodeResponse = [
+  WorkerMessageType.DATA,
+  WorkerDataRequestType.GET_ROOT_NODE,
+  SerializedNodeData,
+];
+
+export type WorkerDataResponse = GetNodeResponse;
