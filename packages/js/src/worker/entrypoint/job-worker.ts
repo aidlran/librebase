@@ -1,18 +1,18 @@
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
-import { KdfType } from '../../crypto/kdf/types';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type { GetNodeRequest, Job, WorkerMessage } from '../types';
-import { WorkerDataRequestType, WorkerMessageType } from '../types';
-import { createSession } from './jobs/session/create';
-import { importSession } from './jobs/session/import';
-import { load } from './jobs/session/load';
-import { save } from './jobs/session/save';
+import type { GetNodeRequest, GetNodeResponse, Job, WorkerMessage } from '../types';
+import { WorkerMessageType } from '../types';
+import { getIdentity } from './jobs/identity/get';
+import { createKeyring } from './jobs/keyring/create';
+import { importKeyring } from './jobs/keyring/import';
+import { loadKeyring } from './jobs/keyring/load';
+import { saveKeyring } from './jobs/keyring/save';
 
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
 
-const dispatch = createDispatch(self, 1);
+const dispatch = createDispatch<GetNodeRequest, GetNodeResponse>(self, 1);
 
 let keyring: BIP32Interface | undefined;
 
@@ -30,18 +30,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
 
       switch (job.action) {
         case 'identity.get': {
-          resultPayload = '';
-          const indexIdentity = keyring!.deriveHardened(0);
-          const indexRequest: GetNodeRequest = [
-            WorkerMessageType.DATA,
-            WorkerDataRequestType.GET_ROOT_NODE,
-            KdfType.secp256k1_hd,
-            new Uint8Array(indexIdentity.publicKey),
-          ];
-          dispatch(indexRequest, (response) => {
-            // eslint-disable-next-line no-console
-            console.log('received a response!', response);
-          });
+          resultPayload = await getIdentity(dispatch, job.payload, keyring);
           break;
         }
         case 'keyring.clear': {
@@ -49,15 +38,15 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           break;
         }
         case 'keyring.create': {
-          resultPayload = await createSession(save, job.payload);
+          resultPayload = await createKeyring(saveKeyring, job.payload);
           break;
         }
         case 'keyring.import': {
-          resultPayload = await importSession(save, job.payload);
+          resultPayload = await importKeyring(saveKeyring, job.payload);
           break;
         }
         case 'keyring.load': {
-          const { node, result } = await load(job.payload);
+          const { node, result } = await loadKeyring(job.payload);
           keyring = node;
           resultPayload = result;
           break;

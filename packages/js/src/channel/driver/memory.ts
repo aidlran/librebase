@@ -4,7 +4,7 @@ import type { ChannelDriver, SerializedNodeData } from '../types';
 /** An in-memory driver for testing and development. */
 export class MemoryDriver implements ChannelDriver {
   private readonly data: Record<string, [string, Uint8Array]> = {};
-  private readonly named: Record<string, Uint8Array> = {};
+  private readonly addresses: Record<string, Uint8Array> = {};
 
   deleteNode(hash: Uint8Array) {
     delete this.data[textDecoder.decode(hash)];
@@ -18,15 +18,15 @@ export class MemoryDriver implements ChannelDriver {
     this.data[textDecoder.decode(hash)] = [mediaType, payload];
   }
 
-  unsetAddressedNode(name: string) {
-    delete this.named[name];
+  unsetAddressedNode(address: Uint8Array) {
+    delete this.addresses[textDecoder.decode(address)];
   }
 
-  getAddressedNodeHash(name: string) {
-    return this.named[name];
+  getAddressedNodeHash(address: Uint8Array) {
+    return this.addresses[textDecoder.decode(address)];
   }
 
-  setAddressedNodeHash(name: string, hash: Uint8Array) {
-    this.named[name] = hash;
+  setAddressedNodeHash(address: Uint8Array, hash: Uint8Array) {
+    this.addresses[textDecoder.decode(address)] = hash;
   }
 }

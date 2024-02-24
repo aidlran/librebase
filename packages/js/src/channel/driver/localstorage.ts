@@ -29,13 +29,13 @@ export class LocalStorageDriver implements ChannelDriver {
     localStorage.setItem(key, value);
   }
 
-  unsetAddressedNode(name: string) {
-    localStorage.removeItem(name);
+  unsetAddressedNode(address: Uint8Array) {
+    localStorage.removeItem(textDecoder.decode(address));
   }
 
-  getAddressedNodeHash(name: string) {
+  getAddressedNodeHash(address: Uint8Array) {
     try {
-      const encodedHash = localStorage.getItem(name);
+      const encodedHash = localStorage.getItem(textDecoder.decode(address));
       if (encodedHash) {
         return textEncoder.encode(encodedHash);
       }
@@ -45,7 +45,7 @@ export class LocalStorageDriver implements ChannelDriver {
     }
   }
 
-  setAddressedNodeHash(name: string, hash: Uint8Array) {
-    localStorage.setItem(name, textDecoder.decode(hash));
+  setAddressedNodeHash(address: Uint8Array, hash: Uint8Array) {
+    localStorage.setItem(textDecoder.decode(address), textDecoder.decode(hash));
   }
 }

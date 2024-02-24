@@ -1,11 +1,11 @@
 import { create, put } from '../../../../indexeddb/indexeddb';
 
-export const save = async (
+export async function saveKeyring(
   payload: Uint8Array,
   passphrase: string,
   metadata: unknown,
   id?: number,
-): Promise<number> => {
+): Promise<number> {
   // TODO: move crypto functions to crypto module
   const nonce = crypto.getRandomValues(new Uint8Array(12));
   const salt = crypto.getRandomValues(new Uint8Array(16));
@@ -54,4 +54,4 @@ export const save = async (
       metadata,
     }) as Promise<number>;
   }
-};
+}

@@ -1,8 +1,11 @@
+import { getChannels } from '../channel/channel.module';
+import { getDataModule } from '../data/data.module';
+import { createModule } from '../module/create-module';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { createWorker } from './constructor/create-worker';
 import { createDeferredDispatch } from './dispatch/create-dispatch';
 import type { Dispatch, JobResultWorkerMessage } from './dispatch/create-dispatch';
-import { handleMessage } from './handler/handler';
+import { buildMessageHandler } from './handler/handler';
 import { roundRobin } from './load-balancer/round-robin';
 import type { Action, PostToAllAction, PostToOneAction, Request } from './types';
 
@@ -19,11 +22,13 @@ export interface WorkerModule {
   ) => void;
 }
 
-export function createJobWorker(): WorkerModule {
+export const getJobWorker = createModule<WorkerModule>((key) => {
+  const channels = getChannels(key);
+  const data = getDataModule(key);
   const length = calculateClusterSize();
   const workers = Array.from({ length }, createWorker);
   const dispatches = workers.map<JobDispatch>((worker) => {
-    worker.addEventListener('message', handleMessage);
+    worker.addEventListener('message', buildMessageHandler(channels, data));
     return createDeferredDispatch(worker, 0);
   });
   const getNextDispatch = roundRobin(dispatches);
@@ -56,4 +61,4 @@ export function createJobWorker(): WorkerModule {
       dispatch(message, callback as never);
     },
   };
-}
+});

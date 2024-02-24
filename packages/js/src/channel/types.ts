@@ -6,9 +6,9 @@ export interface ChannelDriver {
   deleteNode: (hash: Uint8Array) => MaybePromise<void>;
   getNode: (hash: Uint8Array) => GetResult<[mediaType: string, payload: Uint8Array]>;
   putNode: (node: SerializedNodeData) => MaybePromise<void>;
-  unsetAddressedNode: (name: string) => MaybePromise<void>;
-  getAddressedNodeHash: (name: string) => GetResult<Uint8Array>;
-  setAddressedNodeHash: (name: string, hash: Uint8Array) => MaybePromise<void>;
+  unsetAddressedNode: (address: Uint8Array) => MaybePromise<void>;
+  getAddressedNodeHash: (address: Uint8Array) => GetResult<Uint8Array>;
+  setAddressedNodeHash: (address: Uint8Array, hash: Uint8Array) => MaybePromise<void>;
 }
 
 /**

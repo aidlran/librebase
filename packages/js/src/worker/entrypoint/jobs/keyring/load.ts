@@ -6,9 +6,9 @@ import type { LoadKeyringRequest, LoadKeyringResult } from '../../../types';
 
 let bip32: BIP32API;
 
-export const load = async <T>(
+export async function loadKeyring<T>(
   request: LoadKeyringRequest,
-): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> => {
+): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> {
   if (!bip32) bip32 = BIP32Factory(ecc);
 
   const session = (await get('session', request.id)) as Session<T>;
@@ -54,4 +54,4 @@ export const load = async <T>(
       metadata: session.metadata,
     },
   };
-};
+}

@@ -9,6 +9,8 @@ export type JobCallback<T extends Action = Action> = (result: JobResultWorkerMes
 export type Dispatch<T, R> = (payload: T, callback?: DispatchCallback<R>) => void;
 export type DispatchCallback<T> = (response: T) => void;
 
+// TODO: convert to promises
+
 export function createDispatch<T, R>(target: Window | Worker, dispatchID: number): Dispatch<T, R> {
   const callbacks: Record<number, DispatchCallback<R>> = {};
   let nextJobID = 0;

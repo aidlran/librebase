@@ -1,5 +1,5 @@
 import { type SignalGetter, signalToStore } from '@adamantjs/signals/svelte';
-import { keyring, type Keyring } from 'librebase';
+import { keyring, type ActiveKeyring } from 'librebase';
 import { readable, type Readable } from 'svelte/store';
 
 // TODO: lazy create stores by appID, cache and re-return them
@@ -10,5 +10,5 @@ function createStore<T>(signal: SignalGetter<T>): Readable<T> {
 }
 
 export function activeSession<T>(appID?: string) {
-  return createStore<Keyring<T> | undefined>(keyring(appID).active);
+  return createStore<ActiveKeyring<T> | undefined>(keyring(appID).active);
 }

@@ -6,8 +6,8 @@ import type {
   CreateKeyringResult,
   ImportKeyringRequest,
 } from '../worker/types';
-import { createJobWorker } from '../worker/worker.module';
-import { getIdentity } from './identity';
+import { getJobWorker } from '../worker/worker.module';
+import { getIdentity, type Identity } from './identity';
 
 export interface Keyring<T = unknown> {
   id: number;
@@ -15,11 +15,11 @@ export interface Keyring<T = unknown> {
 }
 
 export interface ActiveKeyring<T = unknown> extends Keyring<T> {
-  getIdentity(id: string): void;
+  getIdentity(id: string): Identity;
 }
 
-export const getKeyringModule = createModule(() => {
-  const { postToAll, postToOne } = createJobWorker();
+export const getKeyringModule = createModule((key) => {
+  const { postToAll, postToOne } = getJobWorker(key);
 
   const [active, setActive] = createSignal<ActiveKeyring | undefined>(undefined);
   const exposedActive = createDerived(() => (active() ? { ...active() } : undefined));

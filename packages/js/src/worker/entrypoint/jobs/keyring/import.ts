@@ -1,7 +1,7 @@
 import { mnemonicToEntropy } from '../../../../crypto/mnemonic/bip39';
 import type { ImportKeyringRequest, ImportKeyringResult } from '../../../types';
 
-export const importSession = async (
+export async function importKeyring(
   save: (
     payload: Uint8Array,
     passphrase: string,
@@ -9,9 +9,9 @@ export const importSession = async (
     id?: number,
   ) => Promise<number>,
   request: ImportKeyringRequest,
-): Promise<ImportKeyringResult> => {
+): Promise<ImportKeyringResult> {
   if (!request.passphrase) throw new TypeError('passphrase cannot be blank');
   const entropy = mnemonicToEntropy(request.mnemonic);
   const id = await save(entropy, request.passphrase, request.metadata);
   return { id };
-};
+}
