@@ -8,7 +8,7 @@ export type Result<T extends Action> = {
   error?: string;
   ok: boolean;
 } & (
-  | { action: 'identity.get'; payload: string }
+  | { action: 'identity.get'; payload: Uint8Array }
   | { action: 'keyring.clear' }
   | { action: 'keyring.create'; payload: Payload.CreateKeyringResult }
   | { action: 'keyring.import'; payload: Payload.ImportKeyringResult }

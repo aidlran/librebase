@@ -38,6 +38,10 @@ function calculateNodePayload(this: [SignalGetter<unknown>, SignalGetter<string>
     return value() as Uint8Array;
   }
 
+  if (value() === undefined) {
+    return new Uint8Array();
+  }
+
   throw new TypeError('Unsupported media type - no serializer available');
 }
 
@@ -57,7 +61,7 @@ async function pushNode(this: [Node, Set<ChannelDriver>]) {
   const data: SerializedNodeData = {
     hash: await node.hash(),
     mediaType: node.mediaType(),
-    payload: node.value(),
+    payload: node.payload(),
   };
   channels.forEach((channel) => void channel.putNode(data));
   return node;
@@ -93,6 +97,7 @@ export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
 export function getNode(this: [Set<ChannelDriver>, () => Node], hash: Uint8Array) {
   const [channels, createNode] = this;
 
+  // TODO(refactor): move this onto ChannelModule
   const promises = [...channels].map((channel) => {
     return Promise.resolve(channel.getNode(hash))
       .then((result) => {

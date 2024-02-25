@@ -1,4 +1,6 @@
 import { createDerived, createSignal } from '@adamantjs/signals';
+import { getChannels } from '../channel/channel.module';
+import { getDataModule } from '../data/data.module';
 import { getAll, type Session } from '../indexeddb/indexeddb';
 import { createModule } from '../module/create-module';
 import type {
@@ -19,6 +21,8 @@ export interface ActiveKeyring<T = unknown> extends Keyring<T> {
 }
 
 export const getKeyringModule = createModule((key) => {
+  const channels = getChannels(key);
+  const dataModule = getDataModule(key);
   const { postToAll, postToOne } = getJobWorker(key);
 
   const [active, setActive] = createSignal<ActiveKeyring | undefined>(undefined);
@@ -31,7 +35,7 @@ export const getKeyringModule = createModule((key) => {
       return new Promise<ActiveKeyring<T>>((resolve) => {
         postToAll({ action: 'keyring.load', payload: { id, passphrase } }, ([{ payload }]) => {
           const keyring = payload as ActiveKeyring<T>;
-          keyring.getIdentity = getIdentity.bind([postToOne]);
+          keyring.getIdentity = getIdentity.bind([postToOne, channels, dataModule]);
           setActive(keyring);
           resolve(keyring);
         });

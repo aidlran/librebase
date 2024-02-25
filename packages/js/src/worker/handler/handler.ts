@@ -15,6 +15,7 @@ export function buildMessageHandler(channels: Set<ChannelDriver>, dataModule: Da
       requestType === WorkerDataRequestType.GET_ROOT_NODE
     ) {
       const [kdfType, publicKey] = params;
+      // TODO: move this method to ChannelModule
       void Promise.race(
         [...channels].map((channel) =>
           Promise.resolve(channel.getAddressedNodeHash(new Uint8Array([kdfType, ...publicKey]))),

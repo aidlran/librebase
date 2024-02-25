@@ -5,6 +5,7 @@ export * from './channel/driver/memory';
 export * from './channel/types';
 
 export { getDataModule as data, type DataModule } from './data/data.module';
+export type { Node } from './data/node';
 export * from './data/serializer';
 
 export type * from './keyring/identity';
