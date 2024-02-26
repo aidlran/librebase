@@ -1,9 +1,11 @@
 import {
   createDerived,
   createSignal,
+  tick,
   type SignalGetter,
   type SignalSetter,
 } from '@adamantjs/signals';
+import type { ChannelModule } from '../channel/channel.module';
 import type { ChannelDriver, SerializedNodeData } from '../channel/types';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
@@ -16,10 +18,12 @@ export interface Node {
   mediaType: SignalGetter<string>;
   setMediaType: (type: string) => Node;
 
+  payload: SignalGetter<Uint8Array>;
+  setPayload: (payload: Uint8Array) => Node;
+
   value: <T>() => T;
   setValue: <T>(value: T) => Node;
 
-  payload: SignalGetter<Uint8Array>;
   hash: SignalGetter<Promise<Uint8Array>>;
 
   push: () => Promise<Node>;
@@ -67,6 +71,14 @@ async function pushNode(this: [Node, Set<ChannelDriver>]) {
   return node;
 }
 
+function setPayload(this: [Node, Serializers], payload: Uint8Array) {
+  const [node, serializers] = this;
+  const mediaType = node.mediaType();
+  const serializer = serializers[mediaType];
+  if (!serializer) throw new TypeError('Unsupported media type - no serializer available');
+  return node.setValue(serializer.deserialize(payload));
+}
+
 export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const [channels, serializers] = this;
@@ -89,40 +101,23 @@ export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
     (this: [Node, SignalSetter<string>], type: string) => Node
   >([node, setMediaType]);
 
+  node.setPayload = setPayload.bind([node, serializers]);
+
   node.setValue = chainedSetter.bind([node, setValue]);
 
   return node;
 }
 
-export function getNode(this: [Set<ChannelDriver>, () => Node], hash: Uint8Array) {
+export async function getNode(this: [ChannelModule, () => Node], hash: Uint8Array) {
   const [channels, createNode] = this;
-
-  // TODO(refactor): move this onto ChannelModule
-  const promises = [...channels].map((channel) => {
-    return Promise.resolve(channel.getNode(hash))
-      .then((result) => {
-        if (result) {
-          const [mediaType, payload] = result;
-          const node = createNode().setHashAlg(hash[0]).setMediaType(mediaType).setValue(payload);
-          return node.hash().then((vHash) => {
-            if (hash.length !== vHash.length) {
-              return;
-            }
-            for (const i in hash) {
-              if (hash[i] !== vHash[i]) {
-                return;
-              }
-            }
-            return node;
-          });
-        }
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-console
-        console.warn(error);
-      });
-  });
-
-  // TODO: this is going to return the first resolved, even if it resolves null or rejects
-  return Promise.race(promises);
+  const result = await channels.getNode(hash);
+  if (!result) return;
+  const [mediaType, payload] = result;
+  const node = createNode().setHashAlg(hash[0]).setMediaType(mediaType).setPayload(payload);
+  await tick();
+  // TODO(fix): do this per channel
+  const checkHash = await node.hash();
+  if (hash.length !== checkHash.length) return;
+  for (const i in hash) if (hash[i] !== checkHash[i]) return;
+  return node;
 }

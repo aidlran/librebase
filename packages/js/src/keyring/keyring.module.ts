@@ -1,5 +1,5 @@
 import { createDerived, createSignal } from '@adamantjs/signals';
-import { getChannels } from '../channel/channel.module';
+import { getChannelModule } from '../channel/channel.module';
 import { getDataModule } from '../data/data.module';
 import { getAll, type Session } from '../indexeddb/indexeddb';
 import { createModule } from '../module/create-module';
@@ -21,7 +21,7 @@ export interface ActiveKeyring<T = unknown> extends Keyring<T> {
 }
 
 export const getKeyringModule = createModule((key) => {
-  const channels = getChannels(key);
+  const channels = getChannelModule(key);
   const dataModule = getDataModule(key);
   const { postToAll, postToOne } = getJobWorker(key);
 
