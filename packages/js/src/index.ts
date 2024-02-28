@@ -1,8 +1,5 @@
+export * from './channel';
 export * from './crypto';
-
-export * from './channel/driver/localstorage';
-export * from './channel/driver/memory';
-export * from './channel/types';
 
 export { getDataModule as data, type DataModule } from './data/data.module';
 export type { Node } from './data/node';

@@ -2,8 +2,10 @@ import { textDecoder, textEncoder } from '../../shared';
 import type { ChannelDriver, SerializedNodeData } from '../types';
 
 /**
- * A naïve implementation of a localStorage driver intended only for testing and development. This
- * will be superceded by an indexedDB driver in the future.
+ * A naïve implementation of a localStorage driver intended only for testing and development.
+ *
+ * @deprecated Byte arrays do not encode/decode well. This driver will be removed in favour of an
+ *   IndexedDB driver.
  */
 export class LocalStorageDriver implements ChannelDriver {
   deleteNode(hash: Uint8Array) {
