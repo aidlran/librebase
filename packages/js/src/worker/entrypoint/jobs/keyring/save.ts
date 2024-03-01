@@ -1,4 +1,5 @@
-import { create, put } from '../../../../indexeddb/indexeddb';
+import { putObject } from '../../../../indexeddb/indexeddb';
+import type { IndexedDBKeyring } from '../../../../keyring/keyring.module';
 
 export async function saveKeyring(
   payload: Uint8Array,
@@ -38,20 +39,14 @@ export async function saveKeyring(
     payload,
   );
 
-  if (id) {
-    return put('session', {
-      id,
-      salt,
-      nonce,
-      payload: encryptedPayload,
-      metadata,
-    }) as Promise<number>;
-  } else {
-    return create('session', {
-      salt,
-      nonce,
-      payload: encryptedPayload,
-      metadata,
-    }) as Promise<number>;
-  }
+  const keyring: Partial<IndexedDBKeyring> = {
+    salt,
+    nonce,
+    payload: encryptedPayload,
+    metadata,
+  };
+
+  if (id) keyring.id = id;
+
+  return putObject('keyring', keyring);
 }

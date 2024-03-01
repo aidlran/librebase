@@ -1,7 +1,8 @@
 import ecc from '@bitcoinerlab/secp256k1';
 import { type BIP32API, BIP32Factory, type BIP32Interface } from 'bip32';
 import { entropyToMnemonic, mnemonicToSeed } from '../../../../crypto/mnemonic/bip39';
-import { get, type Session } from '../../../../indexeddb/indexeddb';
+import { getObject } from '../../../../indexeddb/indexeddb';
+import type { IndexedDBKeyring } from '../../../../keyring/keyring.module';
 import type { LoadKeyringRequest, LoadKeyringResult } from '../../../types';
 
 let bip32: BIP32API;
@@ -11,7 +12,7 @@ export async function loadKeyring<T>(
 ): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> {
   if (!bip32) bip32 = BIP32Factory(ecc);
 
-  const session = (await get('session', request.id)) as Session<T>;
+  const keyring = await getObject<IndexedDBKeyring<T>>('keyring', request.id);
 
   const passphraseKey = await crypto.subtle.importKey(
     'raw',
@@ -26,7 +27,7 @@ export async function loadKeyring<T>(
       name: 'PBKDF2',
       hash: 'SHA-256',
       iterations: 100000,
-      salt: session.salt,
+      salt: keyring.salt,
     },
     passphraseKey,
     { name: 'AES-GCM', length: 256 },
@@ -37,10 +38,10 @@ export async function loadKeyring<T>(
   const decryptedPayload = await crypto.subtle.decrypt(
     {
       name: 'AES-GCM',
-      iv: session.nonce,
+      iv: keyring.nonce,
     },
     derivedKey,
-    session.payload,
+    keyring.payload,
   );
 
   const mnemonic = await entropyToMnemonic(new Uint8Array(decryptedPayload));
@@ -50,8 +51,8 @@ export async function loadKeyring<T>(
   return {
     node,
     result: {
-      id: session.id as number,
-      metadata: session.metadata,
+      id: keyring.id,
+      metadata: keyring.metadata,
     },
   };
 }

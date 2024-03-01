@@ -1,134 +1,74 @@
-export interface Session<T = unknown> {
-  id: IDBValidKey;
-  nonce: ArrayBuffer;
-  salt: ArrayBuffer;
-  payload: ArrayBuffer;
-  metadata?: T;
-  // TODO: `createdAt` & `updatedAt`?
+let connection: Promise<IDBDatabase>;
+
+let objectStores: undefined | Record<string, IDBObjectStoreParameters> = {};
+
+export function registerObjectStore(name: string, options: IDBObjectStoreParameters) {
+  if (objectStores) {
+    objectStores[name] = options;
+  } else {
+    throw new Error('Connection was already opened');
+  }
 }
 
-export type ObjectStoreName = 'session';
-
-type ObjectStoreEntryUnion<T extends ObjectStoreName> = { kind: T; value: unknown } & {
-  kind: 'session';
-  value: Session;
-};
-
-export const SESSION_OBJECT_STORE_NAME = 'session';
-
-const getConnection = (() => {
-  let connection: IDBDatabase;
-  return async () =>
-    (connection ??= await new Promise<IDBDatabase>((resolve, reject) => {
-      const dbOpenRequest = indexedDB.open('librebase', 1);
-
-      dbOpenRequest.onupgradeneeded = () => {
-        dbOpenRequest.result.createObjectStore(SESSION_OBJECT_STORE_NAME, {
-          autoIncrement: true,
-          keyPath: 'id',
-        });
-      };
-
-      dbOpenRequest.onerror = () => {
-        reject(dbOpenRequest.error ?? new Error());
-      };
-
-      dbOpenRequest.onsuccess = () => {
-        resolve(dbOpenRequest.result);
-      };
-    }));
-})();
-
-// TODO: consider using callbacks for better performance
-// Manipulating sessions is not something we do much, so this is fine
-
-export function create<T extends ObjectStoreName>(
-  objectStoreName: T,
-  value: Omit<ObjectStoreEntryUnion<T>['value'], 'id'>,
-): Promise<IDBValidKey> {
-  return getConnection().then(
-    (database) =>
-      new Promise<IDBValidKey>((resolve, reject) => {
-        const request = database
-          .transaction(objectStoreName, 'readwrite')
-          .objectStore(objectStoreName)
-          .put(value);
-
-        request.onerror = () => {
-          reject(request.error ?? new Error());
-        };
-
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
-      }),
-  );
+function onUpgradeNeeded(this: IDBOpenDBRequest) {
+  for (const [name, params] of Object.entries(objectStores!)) {
+    this.result.createObjectStore(name, params);
+  }
+  objectStores = undefined;
 }
 
-export function get<T extends ObjectStoreName>(
-  objectStoreName: T,
-  key: IDBValidKey,
-): Promise<ObjectStoreEntryUnion<T>['value']> {
-  return getConnection().then(
-    (database) =>
-      new Promise<ObjectStoreEntryUnion<T>['value']>((resolve, reject) => {
-        const request = database
-          .transaction(objectStoreName, 'readwrite')
-          .objectStore(objectStoreName)
-          .get(key) as IDBRequest<ObjectStoreEntryUnion<T>['value']>;
-
-        request.onerror = () => {
-          reject(request.error ?? new Error());
-        };
-
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
-      }),
-  );
+function wrapOnError(reject: (reason: unknown) => void) {
+  return function (this: IDBRequest) {
+    reject(this.error);
+  };
 }
 
-export function getAll<T extends ObjectStoreName>(
-  objectStoreName: T,
-): Promise<ObjectStoreEntryUnion<T>['value'][]> {
-  return getConnection().then(
-    (database) =>
-      new Promise<ObjectStoreEntryUnion<T>['value'][]>((resolve, reject) => {
-        const request = database
-          .transaction(objectStoreName, 'readwrite')
-          .objectStore(objectStoreName)
-          .getAll() as IDBRequest<ObjectStoreEntryUnion<T>['value'][]>;
-
-        request.onerror = () => {
-          reject(request.error ?? new Error());
-        };
-
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
-      }),
-  );
+function wrapOnSuccess<T>(resolve: (value: T) => void) {
+  return function (this: IDBRequest) {
+    resolve(this.result as T);
+  };
 }
 
-export function put<T extends ObjectStoreName>(
-  objectStoreName: T,
-  value: ObjectStoreEntryUnion<T>['value'],
-): Promise<IDBValidKey> {
-  return getConnection().then(
-    (database) =>
-      new Promise<IDBValidKey>((resolve, reject) => {
-        const request = database
-          .transaction(objectStoreName, 'readwrite')
-          .objectStore(objectStoreName)
-          .put(value);
+function getConnection() {
+  return (connection ??= new Promise<IDBDatabase>((resolve, reject) => {
+    const dbOpenRequest = indexedDB.open('librebase');
+    dbOpenRequest.onupgradeneeded = onUpgradeNeeded;
+    dbOpenRequest.onerror = wrapOnError(reject);
+    dbOpenRequest.onsuccess = wrapOnSuccess(resolve);
+  }));
+}
 
-        request.onerror = () => {
-          reject(request.error ?? new Error());
-        };
+export async function getObject<T>(name: string, key: IDBValidKey | IDBKeyRange) {
+  const db = await getConnection();
+  return new Promise<T>((resolve, reject) => {
+    const request = db.transaction(name, 'readonly').objectStore(name).get(key);
+    request.onerror = wrapOnError(reject);
+    request.onsuccess = wrapOnSuccess(resolve);
+  });
+}
 
-        request.onsuccess = () => {
-          resolve(request.result);
-        };
-      }),
-  );
+export async function getAllObjects<T>(
+  name: string,
+  query?: IDBValidKey | IDBKeyRange,
+  count?: number,
+) {
+  const db = await getConnection();
+  return new Promise<T[]>((resolve, reject) => {
+    const request = db.transaction(name, 'readonly').objectStore(name).getAll(query, count);
+    request.onerror = wrapOnError(reject);
+    request.onsuccess = wrapOnSuccess(resolve);
+  });
+}
+
+export async function putObject<T extends IDBValidKey>(
+  name: string,
+  value: unknown,
+  key?: IDBValidKey,
+) {
+  const db = await getConnection();
+  return new Promise<T>((resolve, reject) => {
+    const request = db.transaction(name, 'readwrite').objectStore(name).put(value, key);
+    request.onerror = wrapOnError(reject);
+    request.onsuccess = wrapOnSuccess(resolve);
+  });
 }

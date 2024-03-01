@@ -1,4 +1,8 @@
+import { registerObjectStore } from '../../indexeddb/indexeddb';
 import type { ChannelDriver, SerializedNodeData } from '../types';
+
+registerObjectStore('address', { keyPath: 'address' });
+registerObjectStore('data', { keyPath: 'hash' });
 
 function deleteNode(_hash: Uint8Array) {
   // TODO(feat)
@@ -43,10 +47,7 @@ const driver: ChannelDriver = {
   unsetAddressedNode,
 };
 
-// Exporting a function allows us to add configuration parameters in the future
-// without introducing breaking changes.
-
-/** @returns {ChannelDriver} A `ChannelDriver` interface for local indexedDB. */
+/** @returns A `ChannelDriver` interface for local indexedDB. */
 export function indexedDBDriver() {
   return driver;
 }

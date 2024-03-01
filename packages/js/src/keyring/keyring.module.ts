@@ -1,7 +1,7 @@
 import { createDerived, createSignal } from '@adamantjs/signals';
 import { getChannelModule } from '../channel/channel.module';
 import { getDataModule } from '../data/data.module';
-import { getAll, type Session } from '../indexeddb/indexeddb';
+import { getAllObjects, registerObjectStore } from '../indexeddb/indexeddb';
 import { createModule } from '../module/create-module';
 import type {
   CreateKeyringRequest,
@@ -10,6 +10,16 @@ import type {
 } from '../worker/types';
 import { getJobWorker } from '../worker/worker.module';
 import { getIdentity, type Identity } from './identity';
+
+registerObjectStore('keyring', { autoIncrement: true, keyPath: 'id' });
+
+export interface IndexedDBKeyring<T = unknown> {
+  id: number;
+  nonce: ArrayBuffer;
+  salt: ArrayBuffer;
+  payload: ArrayBuffer;
+  metadata?: T;
+}
 
 export interface Keyring<T = unknown> {
   id: number;
@@ -52,9 +62,9 @@ export const getKeyringModule = createModule((key) => {
       });
     },
     async getAll<T = unknown>(): Promise<Keyring<T>[]> {
-      const keyrings = (await getAll('session')) as Session<T>[];
+      const keyrings = await getAllObjects<IndexedDBKeyring<T>>('keyring');
       return keyrings.map((keyring) => ({
-        id: keyring.id as number,
+        id: keyring.id,
         metadata: keyring.metadata,
       }));
     },
