@@ -19,7 +19,7 @@ async function putNode(node: SerializedNodeData) {
 
 async function getAddressedNodeHash(address: Uint8Array) {
   const data = await getObject<{ address: Uint8Array; hash: Uint8Array }>('address', address);
-  return data.hash;
+  return data?.hash;
 }
 
 function setAddressedNodeHash(address: Uint8Array, hash: Uint8Array) {
