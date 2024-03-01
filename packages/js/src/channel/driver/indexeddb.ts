@@ -1,37 +1,33 @@
-import { registerObjectStore } from '../../indexeddb/indexeddb';
+import { deleteObject, getObject, putObject, registerObjectStore } from '../../indexeddb/indexeddb';
 import type { ChannelDriver, SerializedNodeData } from '../types';
 
 registerObjectStore('address', { keyPath: 'address' });
 registerObjectStore('data', { keyPath: 'hash' });
 
-function deleteNode(_hash: Uint8Array) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+function deleteNode(hash: Uint8Array) {
+  return deleteObject('data', hash);
 }
 
-function getNode(_hash: Uint8Array) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+async function getNode(hash: Uint8Array) {
+  const data = await getObject<SerializedNodeData>('data', hash);
+  return [data.mediaType, data.payload] as [string, Uint8Array];
 }
 
-function putNode(_node: SerializedNodeData) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+async function putNode(node: SerializedNodeData) {
+  await putObject('data', node);
 }
 
-function getAddressedNodeHash(_address: Uint8Array) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+async function getAddressedNodeHash(address: Uint8Array) {
+  const data = await getObject<{ address: Uint8Array; hash: Uint8Array }>('address', address);
+  return data.hash;
 }
 
-function setAddressedNodeHash(_address: Uint8Array, _hash: Uint8Array) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+function setAddressedNodeHash(address: Uint8Array, hash: Uint8Array) {
+  return putObject('address', { address, hash });
 }
 
-function unsetAddressedNode(_address: Uint8Array) {
-  // TODO(feat)
-  throw new Error('Not implemented');
+function unsetAddressedNode(address: Uint8Array) {
+  return deleteObject('address', address);
 }
 
 /**

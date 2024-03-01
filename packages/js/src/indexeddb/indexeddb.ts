@@ -38,6 +38,15 @@ function getConnection() {
   }));
 }
 
+export async function deleteObject(name: string, key: IDBValidKey) {
+  const db = await getConnection();
+  return new Promise<undefined>((resolve, reject) => {
+    const request = db.transaction(name, 'readwrite').objectStore(name).delete(key);
+    request.onerror = wrapOnError(reject);
+    request.onsuccess = wrapOnSuccess(resolve);
+  });
+}
+
 export async function getObject<T>(name: string, key: IDBValidKey | IDBKeyRange) {
   const db = await getConnection();
   return new Promise<T>((resolve, reject) => {
