@@ -1,5 +1,5 @@
 import { deleteObject, getObject, putObject, registerObjectStore } from '../../indexeddb/indexeddb';
-import type { ChannelDriver, SerializedNodeData } from '../types';
+import type { ChannelDriver, RetrievedNodeData, SerializedNodeData } from '../types';
 
 registerObjectStore('address', { keyPath: 'address' });
 registerObjectStore('data', { keyPath: 'hash' });
@@ -11,7 +11,7 @@ function deleteNode(hash: Uint8Array) {
 async function getNode(hash: Uint8Array) {
   const data = await getObject<SerializedNodeData>('data', hash);
   if (!data) return;
-  return [data.mediaType, data.payload] as [string, Uint8Array];
+  return [data.mediaType, data.payload] as RetrievedNodeData;
 }
 
 async function putNode(node: SerializedNodeData) {

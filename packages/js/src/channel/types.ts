@@ -4,7 +4,7 @@ type GetResult<T> = MaybePromise<T | null | undefined | void>;
 /** Interface for a channel implementation. */
 export interface ChannelDriver {
   deleteNode(hash: Uint8Array): MaybePromise<unknown>;
-  getNode(hash: Uint8Array): GetResult<[mediaType: string, payload: Uint8Array]>;
+  getNode(hash: Uint8Array): GetResult<RetrievedNodeData>;
   putNode(node: SerializedNodeData): MaybePromise<unknown>;
   getAddressedNodeHash(address: Uint8Array): GetResult<Uint8Array>;
   setAddressedNodeHash(address: Uint8Array, hash: Uint8Array): MaybePromise<unknown>;
@@ -30,3 +30,5 @@ export interface SerializedNodeData {
   /** The binary data payload. */
   payload: Uint8Array;
 }
+
+export type RetrievedNodeData = [mediaType: string, payload: Uint8Array];

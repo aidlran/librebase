@@ -6,7 +6,7 @@ import {
   type SignalSetter,
 } from '@adamantjs/signals';
 import type { ChannelModule } from '../channel/channel.module';
-import type { ChannelDriver, SerializedNodeData } from '../channel/types';
+import type { ChannelDriver, RetrievedNodeData, SerializedNodeData } from '../channel/types';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
 import { dataHash } from './data-hash';
@@ -111,12 +111,17 @@ export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
 
 export async function getNode(this: [ChannelModule, () => Node], hash: Uint8Array) {
   const [channels, createNode] = this;
-  const result = await channels.getNode(hash);
-  if (!result) return;
-  const [mediaType, payload] = result;
+  return channels.getNode(hash, validateNode.bind([createNode, hash]));
+}
+
+export async function validateNode(
+  this: [createNode: () => Node, hash: Uint8Array],
+  data: RetrievedNodeData,
+) {
+  const [createNode, hash] = this;
+  const [mediaType, payload] = data;
   const node = createNode().setHashAlg(hash[0]).setMediaType(mediaType).setPayload(payload);
   await tick();
-  // TODO(fix): do this per channel
   const checkHash = await node.hash();
   if (hash.length !== checkHash.length) return;
   for (const i in hash) if (hash[i] !== checkHash[i]) return;
