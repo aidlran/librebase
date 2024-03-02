@@ -22,7 +22,7 @@ async function getNode(
         .then((node) => {
           if (!resolved) {
             if (node) {
-              validator(node).then((validNode) => {
+              void validator(node).then((validNode) => {
                 if (!resolved) {
                   if (validNode) {
                     resolved = true;
