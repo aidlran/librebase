@@ -62,6 +62,7 @@ function chainedSetter<T>(this: [Node, SignalSetter<T>], value: T) {
 
 async function pushNode(this: [Node, Set<ChannelDriver>]) {
   const [node, channels] = this;
+  await tick();
   const data: SerializedNodeData = {
     hash: await node.hash(),
     mediaType: node.mediaType(),

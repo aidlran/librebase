@@ -10,6 +10,7 @@ function deleteNode(hash: Uint8Array) {
 
 async function getNode(hash: Uint8Array) {
   const data = await getObject<SerializedNodeData>('data', hash);
+  if (!data) return;
   return [data.mediaType, data.payload] as [string, Uint8Array];
 }
 
@@ -18,7 +19,10 @@ async function putNode(node: SerializedNodeData) {
 }
 
 async function getAddressedNodeHash(address: Uint8Array) {
-  const data = await getObject<{ address: Uint8Array; hash: Uint8Array }>('address', address);
+  const data = await getObject<{
+    address: Uint8Array;
+    hash: Uint8Array;
+  }>('address', address);
   return data?.hash;
 }
 

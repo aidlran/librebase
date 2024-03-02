@@ -1,3 +1,4 @@
+import { tick } from '@adamantjs/signals';
 import type { ChannelDriver } from '../channel/types';
 import type { DataModule } from '../data/data.module';
 import type { Node } from '../data/node';
@@ -12,6 +13,7 @@ async function pushRootNode(
   this: [Uint8Array, Node, () => Promise<Node>, ChannelDriver[]],
 ): Promise<Node> {
   const [address, node, push, channels] = this;
+  await tick();
   // TODO: move this method to ChannelModule
   const setAddressedHashPromise = node
     .hash()
