@@ -1,2 +1,3 @@
+export { getChannelModule as channel, type ChannelModule } from './channel.module';
 export * from './driver/indexeddb';
-export * from './types';
+export type { ChannelDriver, SerializedNodeData, RetrievedNodeData } from './types';

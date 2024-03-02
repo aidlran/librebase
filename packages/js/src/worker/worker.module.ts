@@ -1,4 +1,4 @@
-import { getChannelModule } from '../channel/channel.module';
+import { channel } from '../channel';
 import { getDataModule } from '../data/data.module';
 import { createModule } from '../module/create-module';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
@@ -23,12 +23,12 @@ export interface WorkerModule {
 }
 
 export const getJobWorker = createModule<WorkerModule>((key) => {
-  const channels = getChannelModule(key);
+  const channelModule = channel(key);
   const data = getDataModule(key);
   const length = calculateClusterSize();
   const workers = Array.from({ length }, createWorker);
   const dispatches = workers.map<JobDispatch>((worker) => {
-    worker.addEventListener('message', buildMessageHandler(channels, data));
+    worker.addEventListener('message', buildMessageHandler(channelModule, data));
     return createDeferredDispatch(worker, 0);
   });
   const getNextDispatch = roundRobin(dispatches);

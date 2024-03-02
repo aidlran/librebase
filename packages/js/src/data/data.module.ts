@@ -1,20 +1,18 @@
-import { getChannelModule } from '../channel/channel.module';
-import type { ChannelDriver } from '../channel/types';
+import { channel } from '../channel';
 import { createModule } from '../module/create-module';
 import { createNode, getNode, type Node } from './node';
 import { JsonSerializer, TextSerializer, type Serializer } from './serializer';
 
-export type Serializers = Record<string, Serializer<unknown>>;
+export type Serializers = Partial<Record<string, Serializer<unknown>>>;
 
 export interface DataModule {
   createNode(): Node;
   getNode(hash: Uint8Array): Promise<Node | void>;
-  registerChannelDriver(driver: ChannelDriver): void;
-  registerSerializer<T>(mediaType: string, serializer: Serializer<T>): void;
+  registerSerializer(mediaType: string, serializer?: Serializer<unknown>): void;
 }
 
 export const getDataModule = createModule<DataModule>((key) => {
-  const channels = getChannelModule(key);
+  const channels = channel(key);
   const serializers: Serializers = {
     'application/json': JsonSerializer,
     'text/plain': TextSerializer,
@@ -23,10 +21,7 @@ export const getDataModule = createModule<DataModule>((key) => {
   return {
     createNode: boundCreateNode,
     getNode: getNode.bind([channels, boundCreateNode]),
-    registerChannelDriver(driver: ChannelDriver) {
-      channels.add(driver);
-    },
-    registerSerializer<T>(mediaType: string, serializer: Serializer<T>) {
+    registerSerializer(mediaType: string, serializer?: Serializer<unknown>) {
       serializers[mediaType] = serializer;
     },
   };

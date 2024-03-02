@@ -1,7 +1,7 @@
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type { GetNodeRequest, GetNodeResponse, Job, WorkerMessage } from '../types';
+import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
 import { getIdentity } from './jobs/identity/get';
 import { createKeyring } from './jobs/keyring/create';
@@ -12,7 +12,7 @@ import { saveKeyring } from './jobs/keyring/save';
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
 
-const dispatch = createDispatch<GetNodeRequest, GetNodeResponse>(self, 1);
+const dispatch = createDispatch<WorkerDataRequest, unknown>(self, 1);
 
 let keyring: BIP32Interface | undefined;
 

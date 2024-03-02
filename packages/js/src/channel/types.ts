@@ -1,5 +1,5 @@
 type MaybePromise<T> = T | Promise<T>;
-type GetResult<T> = MaybePromise<T | null | undefined | void>;
+export type GetResult<T> = MaybePromise<T | null | undefined | void>;
 
 /** Interface for a channel implementation. */
 export interface ChannelDriver {

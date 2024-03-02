@@ -5,8 +5,7 @@ import {
   type SignalGetter,
   type SignalSetter,
 } from '@adamantjs/signals';
-import type { ChannelModule } from '../channel/channel.module';
-import type { ChannelDriver, RetrievedNodeData, SerializedNodeData } from '../channel/types';
+import type { ChannelModule, RetrievedNodeData, SerializedNodeData } from '../channel';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
 import { dataHash } from './data-hash';
@@ -60,7 +59,7 @@ function chainedSetter<T>(this: [Node, SignalSetter<T>], value: T) {
   return node;
 }
 
-async function pushNode(this: [Node, Set<ChannelDriver>]) {
+async function pushNode(this: [Node, ChannelModule]) {
   const [node, channels] = this;
   await tick();
   const data: SerializedNodeData = {
@@ -68,7 +67,7 @@ async function pushNode(this: [Node, Set<ChannelDriver>]) {
     mediaType: node.mediaType(),
     payload: node.payload(),
   };
-  channels.forEach((channel) => void channel.putNode(data));
+  await channels.putNode(data);
   return node;
 }
 
@@ -80,7 +79,7 @@ function setPayload(this: [Node, Serializers], payload: Uint8Array) {
   return node.setValue(serializer.deserialize(payload));
 }
 
-export function createNode(this: [Set<ChannelDriver>, Serializers]): Node {
+export function createNode(this: [ChannelModule, Serializers]): Node {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const [channels, serializers] = this;
 

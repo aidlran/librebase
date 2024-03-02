@@ -15,17 +15,23 @@ export interface WorkerMessage<T extends WorkerMessageType = WorkerMessageType> 
 
 export enum WorkerDataRequestType {
   GET_ROOT_NODE,
+  SET_ROOT_NODE,
 }
 
-export type GetNodeRequest = [
+export type GetRootNodeRequest = [
   WorkerMessageType.DATA,
   WorkerDataRequestType.GET_ROOT_NODE,
   KdfType,
   publicKey: Uint8Array,
 ];
 
-export type WorkerDataRequest = GetNodeRequest;
+export type SetRootNodeRequest = [
+  WorkerMessageType.DATA,
+  WorkerDataRequestType.SET_ROOT_NODE,
+  KdfType,
+  publicKey: Uint8Array,
+  mediaType: string,
+  payload: unknown,
+];
 
-export type GetNodeResponse<T = unknown> = T;
-
-export type WorkerDataResponse = GetNodeResponse;
+export type WorkerDataRequest = GetRootNodeRequest | SetRootNodeRequest;
