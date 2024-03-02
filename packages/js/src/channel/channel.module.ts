@@ -74,7 +74,11 @@ export const getChannelModule = createModule<ChannelModule>(() => {
         [...channels].map((channel) => channel.setAddressedNodeHash(address, hash)),
       );
     },
-    registerDriver: (driver) => channels.add(driver),
-    unregisterDriver: (driver) => channels.delete(driver),
+    registerDriver(driver) {
+      channels.add(driver);
+    },
+    unregisterDriver(driver) {
+      channels.delete(driver);
+    },
   };
 });
