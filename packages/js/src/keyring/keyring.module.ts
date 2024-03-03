@@ -1,4 +1,4 @@
-import { createDerived, createSignal } from '@adamantjs/signals';
+import { derived, signal } from '@adamantjs/signals';
 import { channel } from '../channel';
 import { getDataModule } from '../data/data.module';
 import { getAllObjects, registerObjectStore } from '../indexeddb/indexeddb';
@@ -35,8 +35,8 @@ export const getKeyringModule = createModule((key) => {
   const dataModule = getDataModule(key);
   const { postToAll, postToOne } = getJobWorker(key);
 
-  const [active, setActive] = createSignal<ActiveKeyring | undefined>(undefined);
-  const exposedActive = createDerived(() => (active() ? { ...active() } : undefined));
+  const [active, setActive] = signal<ActiveKeyring | undefined>(undefined);
+  const exposedActive = derived(() => (active() ? { ...active() } : undefined));
 
   return {
     active: exposedActive as <T>() => ActiveKeyring<T> | undefined,

@@ -1,10 +1,4 @@
-import {
-  createDerived,
-  createSignal,
-  tick,
-  type SignalGetter,
-  type SignalSetter,
-} from '@adamantjs/signals';
+import { derived, signal, tick, type SignalGetter, type SignalSetter } from '@adamantjs/signals';
 import type { ChannelModule, RetrievedNodeData, SerializedNodeData } from '../channel';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
@@ -83,11 +77,11 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const [channels, serializers] = this;
 
-  const [value, setValue] = createSignal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
-  const [hashAlg, setHashAlg] = createSignal<HashAlgorithm>(HashAlgorithm.SHA256);
-  const [mediaType, setMediaType] = createSignal<string>('application/octet-stream');
-  const payload = createDerived(calculateNodePayload.bind([value, mediaType, serializers]));
-  const hash = createDerived(calculateNodeHash.bind([payload, hashAlg]));
+  const [value, setValue] = signal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
+  const [hashAlg, setHashAlg] = signal<HashAlgorithm>(HashAlgorithm.SHA256);
+  const [mediaType, setMediaType] = signal<string>('application/octet-stream');
+  const payload = derived(calculateNodePayload.bind([value, mediaType, serializers]));
+  const hash = derived(calculateNodeHash.bind([payload, hashAlg]));
 
   const node: Node = { hash, hashAlg, mediaType, payload, value } as Node;
 
