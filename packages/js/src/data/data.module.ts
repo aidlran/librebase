@@ -1,3 +1,4 @@
+import { parse, type MediaType } from 'content-type';
 import { channel } from '../channel';
 import { createModule } from '../module/create-module';
 import { createNode, getNode, type Node } from './node';
@@ -8,7 +9,11 @@ export type Serializers = Partial<Record<string, Serializer<unknown>>>;
 export interface DataModule {
   createNode(): Node;
   getNode(hash: Uint8Array): Promise<Node | void>;
-  registerSerializer(mediaType: string, serializer?: Serializer<unknown>): void;
+  /**
+   * Registers a serializer for a given media type. Omitting the serializer parameter will clear the
+   * media type's registered serializer instead.
+   */
+  registerSerializer(mediaType: string | MediaType, serializer?: Serializer<unknown>): void;
 }
 
 export const getDataModule = createModule<DataModule>((key) => {
@@ -21,8 +26,9 @@ export const getDataModule = createModule<DataModule>((key) => {
   return {
     createNode: boundCreateNode,
     getNode: getNode.bind([channels, boundCreateNode]),
-    registerSerializer(mediaType: string, serializer?: Serializer<unknown>) {
-      serializers[mediaType] = serializer;
+    registerSerializer(mediaType: string | MediaType, serializer?: Serializer<unknown>) {
+      const type = (typeof mediaType === 'string' ? parse(mediaType) : mediaType).type;
+      serializers[type] = serializer;
     },
   };
 });

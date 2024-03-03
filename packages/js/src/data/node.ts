@@ -1,4 +1,5 @@
 import { derived, signal, tick, type SignalGetter, type SignalSetter } from '@adamantjs/signals';
+import { format, parse, type MediaType } from 'content-type';
 import type { ChannelModule, RetrievedNodeData, SerializedNodeData } from '../channel';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
@@ -8,8 +9,8 @@ export interface Node {
   hashAlg: SignalGetter<HashAlgorithm>;
   setHashAlg: (alg: HashAlgorithm) => Node;
 
-  mediaType: SignalGetter<string>;
-  setMediaType: (type: string) => Node;
+  mediaType: SignalGetter<MediaType>;
+  setMediaType: (type: string | MediaType) => Node;
 
   payload: SignalGetter<Uint8Array>;
   setPayload: (payload: Uint8Array) => Node;
@@ -22,13 +23,13 @@ export interface Node {
   push: () => Promise<Node>;
 }
 
-function calculateNodePayload(this: [SignalGetter<unknown>, SignalGetter<string>, Serializers]) {
+function calculateNodePayload(this: [() => unknown, () => MediaType, Serializers]) {
   const [value, mediaType, serializers] = this;
 
-  const serializer = serializers[mediaType()];
+  const serializer = serializers[mediaType().type];
 
   if (serializer) {
-    return serializer.serialize(value());
+    return serializer.serialize(value(), mediaType());
   }
 
   if (value() instanceof Uint8Array) {
@@ -58,7 +59,7 @@ async function pushNode(this: [Node, ChannelModule]) {
   await tick();
   const data: SerializedNodeData = {
     hash: await node.hash(),
-    mediaType: node.mediaType(),
+    mediaType: format(node.mediaType()),
     payload: node.payload(),
   };
   await channels.putNode(data);
@@ -68,9 +69,9 @@ async function pushNode(this: [Node, ChannelModule]) {
 function setPayload(this: [Node, Serializers], payload: Uint8Array) {
   const [node, serializers] = this;
   const mediaType = node.mediaType();
-  const serializer = serializers[mediaType];
+  const serializer = serializers[mediaType.type];
   if (!serializer) throw new TypeError('Unsupported media type - no serializer available');
-  return node.setValue(serializer.deserialize(payload));
+  return node.setValue(serializer.deserialize(payload, mediaType));
 }
 
 export function createNode(this: [ChannelModule, Serializers]): Node {
@@ -79,7 +80,7 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
 
   const [value, setValue] = signal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
   const [hashAlg, setHashAlg] = signal<HashAlgorithm>(HashAlgorithm.SHA256);
-  const [mediaType, setMediaType] = signal<string>('application/octet-stream');
+  const [mediaType, setMediaType] = signal<MediaType>({ type: 'application/octet-stream' });
   const payload = derived(calculateNodePayload.bind([value, mediaType, serializers]));
   const hash = derived(calculateNodeHash.bind([payload, hashAlg]));
 
@@ -91,9 +92,10 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
     (this: [Node, SignalSetter<HashAlgorithm>], alg: HashAlgorithm) => Node
   >([node, setHashAlg]);
 
-  node.setMediaType = chainedSetter.bind<
-    (this: [Node, SignalSetter<string>], type: string) => Node
-  >([node, setMediaType]);
+  node.setMediaType = (mediaType: string | MediaType) => {
+    setMediaType(typeof mediaType === 'string' ? parse(mediaType) : mediaType);
+    return node;
+  };
 
   node.setPayload = setPayload.bind([node, serializers]);
 

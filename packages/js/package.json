@@ -24,10 +24,11 @@
   },
   "dependencies": {
     "@adamantjs/signals": "~0.2.0",
-    "@bitcoinerlab/secp256k1": "^1.1.1",
+    "@bitcoinerlab/secp256k1": "1.1.1",
     "base-x": "4.0.0",
-    "bip32": "^4.0.0",
+    "bip32": "4.0.0",
     "buffer": "6.0.3",
+    "content-type": "1.0.5",
     "tweetnacl": "1.0.3"
   }
 }

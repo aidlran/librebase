@@ -1,8 +1,9 @@
+import type { MediaType } from 'content-type';
 import { textDecoder, textEncoder } from '../shared';
 
 export interface Serializer<T> {
-  serialize(data: T): Uint8Array;
-  deserialize(payload: Uint8Array): T;
+  serialize(data: T, mediaType: MediaType): Uint8Array;
+  deserialize(payload: Uint8Array, mediaType: MediaType): T;
 }
 
 export const TextSerializer: Serializer<string> = {
