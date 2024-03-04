@@ -1,9 +1,10 @@
 import { derived, signal, tick, type SignalGetter, type SignalSetter } from '@adamantjs/signals';
-import { format, parse, type MediaType } from 'content-type';
+import { format, type MediaType } from 'content-type';
 import type { ChannelModule, RetrievedNodeData, SerializedNodeData } from '../channel';
 import { HashAlgorithm } from '../crypto/hash';
 import type { Serializers } from './data.module';
 import { dataHash } from './data-hash';
+import { mediaTypeSignal } from './media-type-signal';
 
 export interface Node {
   hashAlg: SignalGetter<HashAlgorithm>;
@@ -75,31 +76,29 @@ function setPayload(this: [Node, Serializers], payload: Uint8Array) {
 }
 
 export function createNode(this: [ChannelModule, Serializers]): Node {
-  // eslint-disable-next-line @typescript-eslint/no-this-alias
   const [channels, serializers] = this;
 
-  const [value, setValue] = signal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
-  const [hashAlg, setHashAlg] = signal<HashAlgorithm>(HashAlgorithm.SHA256);
-  const [mediaType, setMediaType] = signal<MediaType>({ type: 'application/octet-stream' });
-  const payload = derived(calculateNodePayload.bind([value, mediaType, serializers]));
-  const hash = derived(calculateNodeHash.bind([payload, hashAlg]));
-
-  const node: Node = { hash, hashAlg, mediaType, payload, value } as Node;
+  const node = {} as Node;
 
   node.push = pushNode.bind([node, channels]);
 
-  node.setHashAlg = chainedSetter.bind<
-    (this: [Node, SignalSetter<HashAlgorithm>], alg: HashAlgorithm) => Node
-  >([node, setHashAlg]);
+  const [hashAlg, setHashAlg] = signal<HashAlgorithm>(HashAlgorithm.SHA256);
+  node.hashAlg = hashAlg;
+  node.setHashAlg = chainedSetter.bind<(alg: HashAlgorithm) => Node>([node, setHashAlg]);
 
-  node.setMediaType = (mediaType: string | MediaType) => {
-    setMediaType(typeof mediaType === 'string' ? parse(mediaType) : mediaType);
-    return node;
-  };
+  const [mediaType, setMediaType] = mediaTypeSignal(node);
+  node.mediaType = mediaType;
+  node.setMediaType = setMediaType;
 
+  const [value, setValue] = signal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
+  node.value = value;
+  node.setValue = chainedSetter.bind([node, setValue]);
+
+  const payload = derived(calculateNodePayload.bind([value, mediaType, serializers]));
+  node.payload = payload;
   node.setPayload = setPayload.bind([node, serializers]);
 
-  node.setValue = chainedSetter.bind([node, setValue]);
+  node.hash = derived(calculateNodeHash.bind([payload, hashAlg]));
 
   return node;
 }
