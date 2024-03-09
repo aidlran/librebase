@@ -1,0 +1,43 @@
+:root {
+  --bg: #1a1c22;
+  --txt: #e0e0e0;
+  --brd: #c0c0c0;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #e0e0e0;
+    --txt: #1a1c22;
+    --brd: #303030;
+  }
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--txt);
+  fill: var(--txt);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 1.6em;
+}
+
+a,
+a:visited {
+  color: rgb(80, 172, 247);
+  fill: var(--txt);
+}
+
+p,
+li {
+  font-size: 0.72em;
+  color: var(--brd);
+}
+
+ul {
+  padding: 0;
+}
