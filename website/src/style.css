@@ -1,43 +1,46 @@
 :root {
-  --bg: #1a1c22;
-  --txt: #e0e0e0;
-  --brd: #c0c0c0;
-}
-
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #e0e0e0;
-    --txt: #1a1c22;
-    --brd: #303030;
-  }
+  --bg: #04020e;
+  --txt: #ffffff;
+  --brd: #2c3e50;
+  --acc1: #ffd700;
+  --acc2: #00ffff;
+  --acc3: #8a6bff;
+  --grd: var(--acc1), var(--acc2), var(--acc3);
+  --margin: 24px;
 }
 
 body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   margin: 0;
-  padding: 0;
-  min-height: 100vh;
   background: var(--bg);
   color: var(--txt);
   fill: var(--txt);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 1.6em;
 }
 
 a,
 a:visited {
-  color: rgb(80, 172, 247);
+  color: var(--acc3);
+  fill: var(--acc3);
+}
+
+a.button {
+  border-radius: var(--margin);
+  border: 2px solid var(--brd);
+  height: 44px;
+  padding: 0 14px;
+  gap: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--txt);
   fill: var(--txt);
+  text-decoration: none;
 }
 
-p,
-li {
-  font-size: 0.72em;
-  color: var(--brd);
-}
-
-ul {
-  padding: 0;
+.accent {
+  background: -webkit-linear-gradient(var(--grd));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 900;
 }
