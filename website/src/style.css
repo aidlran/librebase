@@ -7,6 +7,13 @@
   --acc3: #8a6bff;
   --grd: var(--acc1), var(--acc2), var(--acc3);
   --margin: 24px;
+  font-family: 'Inter', sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+  :root {
+    font-family: 'Inter var', sans-serif;
+  }
 }
 
 body {
@@ -14,7 +21,6 @@ body {
   background: var(--bg);
   color: var(--txt);
   fill: var(--txt);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 a,
@@ -32,6 +38,7 @@ a.button {
   display: flex;
   justify-content: center;
   align-items: center;
+  background: #000;
   color: var(--txt);
   fill: var(--txt);
   text-decoration: none;
