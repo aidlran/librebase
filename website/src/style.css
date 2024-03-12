@@ -3,10 +3,13 @@
   --txt: #ffffff;
   --brd: #2c3e50;
   --acc1: #ffd700;
-  --acc2: #00ffff;
+  --acc2: #0ff;
   --acc3: #8a6bff;
+  --valid: #0f0;
+  --warn: #f00;
   --grd: var(--acc1), var(--acc2), var(--acc3);
   --margin: 24px;
+  --border: 2px solid var(--brd);
   font-family: 'Inter', sans-serif;
 }
 
@@ -23,6 +26,10 @@ body {
   fill: var(--txt);
 }
 
+h1 {
+  font-size: 48px;
+}
+
 a,
 a:visited {
   color: var(--acc3);
@@ -31,7 +38,7 @@ a:visited {
 
 a.button {
   border-radius: var(--margin);
-  border: 2px solid var(--brd);
+  border: var(--border);
   height: 44px;
   padding: 0 14px;
   gap: 10px;
