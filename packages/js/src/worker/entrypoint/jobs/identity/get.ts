@@ -17,7 +17,7 @@ export function getIdentity(
   keyring?: BIP32Interface,
 ) {
   if (!keyring) throw new TypeError('No active keyring');
-  return new Promise<Uint8Array>((resolve) => {
+  return new Promise<BIP32Interface>((resolve) => {
     const indexKey = keyring.deriveHardened(0);
     const indexRequest: GetRootNodeRequest = [
       WorkerMessageType.DATA,
@@ -35,7 +35,7 @@ export function getIdentity(
         keyIndex = orderedIDs.length ? orderedIDs.pop()! + 1 : 0;
         indexData[id] = keyIndex;
       }
-      const res = () => resolve(keyring.deriveHardened(1).deriveHardened(keyIndex).publicKey);
+      const res = () => resolve(keyring.deriveHardened(1).deriveHardened(keyIndex));
       if (needPush) {
         const indexUpdate: SetRootNodeRequest = [
           WorkerMessageType.DATA,

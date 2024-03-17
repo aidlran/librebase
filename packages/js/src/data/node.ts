@@ -49,7 +49,7 @@ function calculateNodeHash(this: [SignalGetter<Uint8Array>, SignalGetter<HashAlg
   return dataHash(hashAlg(), payload());
 }
 
-function chainedSetter<T>(this: [Node, SignalSetter<T>], value: T) {
+export function chainedNodeSetter<T>(this: [Node, SignalSetter<T>], value: T) {
   const [node, set] = this;
   set(value);
   return node;
@@ -84,7 +84,7 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
 
   const [hashAlg, setHashAlg] = signal<HashAlgorithm>(HashAlgorithm.SHA256);
   node.hashAlg = hashAlg;
-  node.setHashAlg = chainedSetter.bind<(alg: HashAlgorithm) => Node>([node, setHashAlg]);
+  node.setHashAlg = chainedNodeSetter.bind<(alg: HashAlgorithm) => Node>([node, setHashAlg]);
 
   const [mediaType, setMediaType] = mediaTypeSignal(node);
   node.mediaType = mediaType;
@@ -92,7 +92,7 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
 
   const [value, setValue] = signal<unknown>(undefined) as [<T>() => T, SignalSetter<unknown>];
   node.value = value;
-  node.setValue = chainedSetter.bind([node, setValue]);
+  node.setValue = chainedNodeSetter.bind([node, setValue]);
 
   const payload = derived(calculateNodePayload.bind([value, mediaType, serializers]));
   node.payload = payload;
@@ -103,21 +103,27 @@ export function createNode(this: [ChannelModule, Serializers]): Node {
   return node;
 }
 
-export async function getNode(this: [ChannelModule, () => Node], hash: Uint8Array) {
-  const [channels, createNode] = this;
-  return channels.getNode(hash, validateNode.bind([createNode, hash]));
+export async function getNode(
+  this: [ChannelModule, (data: RetrievedNodeData, hash: Uint8Array) => Promise<Node | void>],
+  hash: Uint8Array,
+) {
+  const [channels, parseSerializedNode] = this;
+  return channels.getNode(hash, (data) => parseSerializedNode(data, hash));
 }
 
-export async function validateNode(
-  this: [createNode: () => Node, hash: Uint8Array],
+export async function parseSerializedNode(
+  this: [createNode: () => Node],
   data: RetrievedNodeData,
+  hash: Uint8Array,
 ) {
-  const [createNode, hash] = this;
+  const [createNode] = this;
   const [mediaType, payload] = data;
   const node = createNode().setHashAlg(hash[0]).setMediaType(mediaType).setPayload(payload);
   await tick();
   const checkHash = await node.hash();
   if (hash.length !== checkHash.length) return;
   for (const i in hash) if (hash[i] !== checkHash[i]) return;
+  // TODO: parse the wrapped data and return an extended Node API with verriden
+  // if (node.mediaType().type !== 'application/lb-data') return node;
   return node;
 }

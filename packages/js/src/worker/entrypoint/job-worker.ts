@@ -1,3 +1,4 @@
+import { sign, verify } from '@noble/secp256k1';
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
@@ -29,8 +30,20 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
       let resultPayload: unknown;
 
       switch (job.action) {
+        // TODO: move signature algorithms to crypto module
+        case 'identity.sign': {
+          const identity = await getIdentity(dispatch, job.payload.identityID, keyring);
+          if (!identity.privateKey) throw new TypeError('No private key available');
+          resultPayload = await sign(job.payload.hash, identity.privateKey);
+          break;
+        }
+        case 'identity.verify': {
+          const identity = await getIdentity(dispatch, job.payload.identityID, keyring);
+          resultPayload = verify(job.payload.signature, job.payload.hash, identity.publicKey);
+          break;
+        }
         case 'identity.get': {
-          resultPayload = await getIdentity(dispatch, job.payload, keyring);
+          resultPayload = (await getIdentity(dispatch, job.payload, keyring)).publicKey;
           break;
         }
         case 'keyring.clear': {
@@ -55,12 +68,13 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           throw TypeError('Action not supported');
         }
       }
-      const errorMessage: JobResultWorkerMessage = {
+      // TODO(lint): odd typescript error after introducing `identity.verify`
+      const errorMessage /* : JobResultWorkerMessage */ = {
         type: WorkerMessageType.RESULT,
         action: job.action,
         jobID: jobID,
         ok: true,
-        payload: resultPayload as never,
+        payload: resultPayload,
       };
       self.postMessage([dispatchID, jobID, errorMessage]);
     }

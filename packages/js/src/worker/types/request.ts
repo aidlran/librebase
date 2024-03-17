@@ -6,6 +6,8 @@ export type Request<T extends Action> = {
   action: T;
 } & (
   | { action: 'identity.get'; payload: string }
+  | { action: 'identity.sign'; payload: Payload.SignatureRequest }
+  | { action: 'identity.verify'; payload: Payload.VerifySignatureRequest }
   | { action: 'keyring.clear' }
   | { action: 'keyring.create'; payload: Payload.CreateKeyringRequest }
   | { action: 'keyring.import'; payload: Payload.ImportKeyringRequest }
