@@ -1,4 +1,3 @@
-import { createModule } from '../module/create-module';
 import type { ChannelDriver, GetResult, RetrievedNodeData, SerializedNodeData } from './types';
 
 export interface ChannelModule {
@@ -57,7 +56,7 @@ function awaitAll(channels: Set<ChannelDriver>, fn: (channel: ChannelDriver) => 
   return Promise.allSettled([...channels].map(fn));
 }
 
-export const getChannelModule = createModule<ChannelModule>(() => {
+export function channelModule(): ChannelModule {
   const channels = new Set<ChannelDriver>();
   return {
     getNode(hash, validator) {
@@ -81,4 +80,4 @@ export const getChannelModule = createModule<ChannelModule>(() => {
       channels.delete(driver);
     },
   };
-});
+}

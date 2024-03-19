@@ -1,6 +1,6 @@
 import { parse, type MediaType } from 'content-type';
-import { channel } from '../channel';
-import { createModule } from '../module/create-module';
+import { channelModule } from '../channel/channel.module';
+import { type Injector } from '../modules/modules';
 import { createNode, getNode, parseSerializedNode, type Node } from './node';
 import { JsonSerializer, TextSerializer, type Serializer } from './serializer';
 
@@ -16,8 +16,8 @@ export interface DataModule {
   registerSerializer(mediaType: string | MediaType, serializer?: Serializer<unknown>): void;
 }
 
-export const getDataModule = createModule<DataModule>((key) => {
-  const channels = channel(key);
+export function dataModule(this: Injector) {
+  const channels = this(channelModule);
   const serializers: Serializers = {
     'application/json': JsonSerializer,
     'text/plain': TextSerializer,
@@ -31,4 +31,4 @@ export const getDataModule = createModule<DataModule>((key) => {
       serializers[type] = serializer;
     },
   };
-});
+}

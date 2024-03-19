@@ -1,3 +1,7 @@
-export { getChannelModule as channel, type ChannelModule } from './channel.module';
+import { getModule } from '../modules/modules';
+import { channelModule } from './channel.module';
+
+export const channel = (instanceID?: string) => getModule(channelModule, instanceID);
 export * from './driver/indexeddb';
-export type { ChannelDriver, SerializedNodeData, RetrievedNodeData } from './types';
+export type * from './channel.module';
+export type * from './types';
