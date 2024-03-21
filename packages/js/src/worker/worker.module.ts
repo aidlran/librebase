@@ -1,12 +1,10 @@
-import { channelModule } from '../channel/channel.module';
-import { dataModule } from '../data/data.module';
-import type { Injector } from '../modules/modules';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { createWorker } from './constructor/create-worker';
 import { createDeferredDispatch } from './dispatch/create-dispatch';
 import type { Dispatch, JobResultWorkerMessage } from './dispatch/create-dispatch';
-import { buildMessageHandler } from './handler/handler';
+import { handleMessageFromWorker } from './handler/handler';
 import { roundRobin } from './load-balancer/round-robin';
+import type { Injector } from '../modules/modules';
 import type { Action, PostToAllAction, PostToOneAction, Request } from './types';
 
 type JobDispatch<T extends Action = Action> = Dispatch<Request<T>, JobResultWorkerMessage<T>>;
@@ -23,12 +21,10 @@ export interface WorkerModule {
 }
 
 export function jobWorker(this: Injector) {
-  const channels = this(channelModule);
-  const data = this(dataModule);
   const length = calculateClusterSize();
   const workers = Array.from({ length }, createWorker);
   const dispatches = workers.map<JobDispatch>((worker) => {
-    worker.addEventListener('message', buildMessageHandler(channels, data));
+    worker.addEventListener('message', this(handleMessageFromWorker));
     return createDeferredDispatch(worker, 0);
   });
   const getNextDispatch = roundRobin(dispatches);
