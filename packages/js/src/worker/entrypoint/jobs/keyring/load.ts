@@ -12,7 +12,7 @@ export async function loadKeyring<T>(
 ): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> {
   if (!bip32) bip32 = BIP32Factory(ecc);
 
-  const keyring = await getObject<PersistedKeyring<T>>('keyring', request.id);
+  const keyring = await getObject<PersistedKeyring<T>>('lbkeyrings', 'keyring', request.id);
 
   const passphraseKey = await crypto.subtle.importKey(
     'raw',

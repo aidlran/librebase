@@ -8,7 +8,7 @@ import { createNode } from './create-node';
 import { HashAlgorithm } from '..';
 
 const testHash = new Uint8Array(Array.from({ length: 32 }));
-channel().registerDriver(indexedDBDriver());
+channel().registerDriver(await indexedDBDriver());
 
 describe('getNode (module)', () => {
   it('is a module function', () => {

@@ -1,83 +1,76 @@
-let connection: Promise<IDBDatabase>;
+const connections: Record<string, IDBDatabase> = {};
 
-let objectStores: undefined | Record<string, IDBObjectStoreParameters> = {};
-
-export function registerObjectStore(name: string, options: IDBObjectStoreParameters) {
-  if (objectStores) {
-    objectStores[name] = options;
-  } else {
-    throw new Error('Connection was already opened');
-  }
-}
-
-function onUpgradeNeeded(this: IDBOpenDBRequest) {
-  for (const [name, params] of Object.entries(objectStores!)) {
-    this.result.createObjectStore(name, params);
-  }
-  objectStores = undefined;
-}
-
-function wrapOnError(reject: (reason: unknown) => void) {
-  return function (this: IDBRequest) {
-    reject(this.error);
-  };
-}
-
-function wrapOnSuccess<T>(resolve: (value: T) => void) {
-  return function (this: IDBRequest) {
-    resolve(this.result as T);
-  };
-}
-
-function getConnection() {
-  return (connection ??= new Promise<IDBDatabase>((resolve, reject) => {
-    const dbOpenRequest = indexedDB.open('librebase');
-    dbOpenRequest.onupgradeneeded = onUpgradeNeeded;
-    dbOpenRequest.onerror = wrapOnError(reject);
-    dbOpenRequest.onsuccess = wrapOnSuccess(resolve);
-  }));
-}
-
-export async function deleteObject(name: string, key: IDBValidKey) {
-  const db = await getConnection();
-  return new Promise<undefined>((resolve, reject) => {
-    const request = db.transaction(name, 'readwrite').objectStore(name).delete(key);
-    request.onerror = wrapOnError(reject);
-    request.onsuccess = wrapOnSuccess(resolve);
+export function open(
+  name: string,
+  objectStores: [string, IDBObjectStoreParameters?][],
+  version?: number,
+) {
+  return new Promise<void>((resolve, reject) => {
+    const request = indexedDB.open(name, version);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => {
+      connections[name] = request.result;
+      resolve();
+    };
+    request.onupgradeneeded = () => {
+      for (const [name, params] of objectStores) {
+        request.result.createObjectStore(name, params);
+      }
+    };
   });
 }
 
-export async function getObject<T>(name: string, key: IDBValidKey | IDBKeyRange) {
-  const db = await getConnection();
+function getConnection(name: string) {
+  const connection = connections[name];
+  if (!connection) throw ReferenceError(`Database '${name}' not open`);
+  return connection;
+}
+
+export function deleteObject(db: string, store: string, key: IDBValidKey) {
+  const connection = getConnection(db);
+  return new Promise<void>((resolve, reject) => {
+    const request = connection.transaction(store, 'readwrite').objectStore(store).delete(key);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve();
+  });
+}
+
+export function getObject<T>(db: string, store: string, key: IDBValidKey | IDBKeyRange) {
+  const connection = getConnection(db);
   return new Promise<T>((resolve, reject) => {
-    const request = db.transaction(name, 'readonly').objectStore(name).get(key);
-    request.onerror = wrapOnError(reject);
-    request.onsuccess = wrapOnSuccess(resolve);
+    const request = connection.transaction(store, 'readonly').objectStore(store).get(key);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result as T);
   });
 }
 
 export async function getAllObjects<T>(
-  name: string,
+  db: string,
+  store: string,
   query?: IDBValidKey | IDBKeyRange,
   count?: number,
 ) {
-  const db = await getConnection();
+  const connection = getConnection(db);
   return new Promise<T[]>((resolve, reject) => {
-    const request = db.transaction(name, 'readonly').objectStore(name).getAll(query, count);
-    request.onerror = wrapOnError(reject);
-    request.onsuccess = wrapOnSuccess(resolve);
+    const request = connection
+      .transaction(store, 'readonly')
+      .objectStore(store)
+      .getAll(query, count);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result);
   });
 }
 
-export async function putObject<T extends IDBValidKey>(
+export async function putObject<T extends IDBValidKey = IDBValidKey>(
+  db: string,
   name: string,
   value: unknown,
-  key?: IDBValidKey,
+  key?: T,
 ) {
-  const db = await getConnection();
+  const connection = getConnection(db);
   return new Promise<T>((resolve, reject) => {
-    const request = db.transaction(name, 'readwrite').objectStore(name).put(value, key);
-    request.onerror = wrapOnError(reject);
-    request.onsuccess = wrapOnSuccess(resolve);
+    const request = connection.transaction(name, 'readwrite').objectStore(name).put(value, key);
+    request.onerror = () => reject(request.error);
+    request.onsuccess = () => resolve(request.result as T);
   });
 }

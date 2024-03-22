@@ -48,5 +48,5 @@ export async function saveKeyring(
 
   if (id) keyring.id = id;
 
-  return putObject('keyring', keyring);
+  return putObject('lbkeyrings', 'keyring', keyring);
 }

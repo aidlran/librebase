@@ -1,4 +1,4 @@
-import { getAllObjects, registerObjectStore } from '../indexeddb/indexeddb';
+import { getAllObjects } from '../indexeddb/indexeddb';
 import { getModule } from '../modules/modules';
 import type {
   CreateKeyringRequest,
@@ -7,9 +7,10 @@ import type {
 } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
 import { activeKeyring } from './active';
+import { openKeyringDB } from './init-db';
 import type { PersistedKeyring, Keyring } from './types';
 
-registerObjectStore('keyring', { autoIncrement: true, keyPath: 'id' });
+let dbOpen = false;
 
 /**
  * Unlocks a keyring and makes it the active keyring.
@@ -87,7 +88,11 @@ export function getActiveKeyring<T>(instanceID?: string) {
  * @returns A promise that resolves with an array of `Keyring` objects.
  */
 export async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
-  const keyrings = await getAllObjects<PersistedKeyring<T>>('keyring');
+  if (!dbOpen) {
+    await openKeyringDB();
+    dbOpen = true;
+  }
+  const keyrings = await getAllObjects<PersistedKeyring<T>>('lbkeyrings', 'keyring');
   return keyrings.map((keyring) => ({ id: keyring.id, metadata: keyring.metadata }));
 }
 

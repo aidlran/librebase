@@ -2,6 +2,7 @@ import { sign, verify } from '@noble/secp256k1';
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { shred } from '../../crypto';
+import { openKeyringDB } from '../../keyring/init-db';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
@@ -93,5 +94,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
   }
 });
 
-const readyMessage: WorkerMessage<WorkerMessageType.READY> = { type: WorkerMessageType.READY };
-self.postMessage(readyMessage);
+void openKeyringDB().then(() => {
+  const readyMessage: WorkerMessage<WorkerMessageType.READY> = { type: WorkerMessageType.READY };
+  self.postMessage(readyMessage);
+});
