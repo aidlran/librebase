@@ -1,6 +1,7 @@
 import { sign, verify } from '@noble/secp256k1';
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
+import { shred } from '../../crypto';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
@@ -47,6 +48,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           break;
         }
         case 'keyring.clear': {
+          if (keyring?.privateKey) shred(keyring.privateKey);
           keyring = undefined;
           break;
         }

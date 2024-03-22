@@ -25,3 +25,9 @@ export function concatenateByteArray(...arrays: Uint8Array[]): Uint8Array {
   }
   return concatenatedArray;
 }
+
+export function shred(buffer: Uint8Array) {
+  for (let i = 0; i < buffer.length; i++) {
+    buffer[i] = 0;
+  }
+}
