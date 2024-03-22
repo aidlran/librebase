@@ -1,12 +1,17 @@
 import { signal, type SignalGetter } from '@adamantjs/signals';
-import { parse, type MediaType } from 'content-type';
+import { format, parse, type MediaType } from 'content-type';
 
 function setter<T>(
   this: [chainedReturn: T, set: (mediaType: MediaType) => void],
   mediaType: string | MediaType,
 ) {
   const [chainedReturn, set] = this;
-  set(typeof mediaType === 'string' ? parse(mediaType) : mediaType);
+  if (typeof mediaType === 'string') {
+    set(parse(mediaType));
+  } else {
+    format(mediaType);
+    set(mediaType);
+  }
   return chainedReturn;
 }
 

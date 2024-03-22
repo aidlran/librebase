@@ -21,8 +21,9 @@ function race<T, R>(
   validator: (data: T) => Promise<R | void>,
 ) {
   return new Promise<R | void>((resolve) => {
-    let resolved = false;
     let todo = channels.size;
+    if (!todo) throw new Error('No channels registered');
+    let resolved = false;
     for (const channel of channels) {
       void Promise.resolve(query(channel))
         .then((data) => {

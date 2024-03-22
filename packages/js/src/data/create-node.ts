@@ -5,8 +5,8 @@ import { channelModule } from '../channel/channel.module';
 import { HashAlgorithm, hash, type SignatureType } from '../crypto';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
-import { serializerMap } from '../seralizer/serializer-map';
-import type { SerializerMap } from '../seralizer/types';
+import type { Serializer } from '../seralizer/types';
+import { getSerializer } from '../seralizer/get';
 
 export interface Node {
   hashAlg: () => HashAlgorithm;
@@ -39,8 +39,8 @@ export function createNode(this: Injector) {
     const [mediaType, setMediaType] = mediaTypeSignal(node);
     node.mediaType = mediaType;
     node.setMediaType = setMediaType;
-    node.payload = derived(calculatePayload.bind([value, mediaType, this(serializerMap)]));
-    node.setPayload = setPayload.bind([node, this(serializerMap)]);
+    node.payload = derived(calculatePayload.bind([value, mediaType, this(getSerializer)]));
+    node.setPayload = setPayload.bind([node, this(getSerializer)]);
     node.hash = derived(calculateHash.bind([hashAlg, node.payload]));
     node.push = pushNode.bind([node, this(channelModule)]);
     node.addWrapper = addWrapper.bind([node, wrappers]);
@@ -54,19 +54,10 @@ function chainedSetter<T, R>(this: [chainedReturn: R, setter: (v: T) => void], v
 }
 
 function calculatePayload(
-  this: [getValue: () => unknown, getMediaType: () => MediaType, SerializerMap],
+  this: [getValue: () => unknown, getMediaType: () => MediaType, (mediaType: string) => Serializer],
 ) {
-  const serializer = this[2][this[1]().type];
-  if (serializer) {
-    return serializer.serialize(this[0](), this[1]());
-  }
-  if (this[0]() instanceof Uint8Array) {
-    return this[0]() as Uint8Array;
-  }
-  if (this[0]() === undefined) {
-    return new Uint8Array();
-  }
-  throw new TypeError('Unsupported media type - no serializer available');
+  const [value, mediaType, getSerializer] = this;
+  return getSerializer(mediaType().type).serialize(value(), mediaType());
 }
 
 function calculateHash(this: [hashAlg: () => HashAlgorithm, payload: () => Uint8Array]) {
@@ -75,11 +66,11 @@ function calculateHash(this: [hashAlg: () => HashAlgorithm, payload: () => Uint8
   });
 }
 
-function setPayload(this: [Node, SerializerMap], payload: Uint8Array) {
-  const mediaType = this[0].mediaType();
-  const serializer = this[1][mediaType.type];
-  if (!serializer) throw new TypeError('Unsupported media type - no serializer available');
-  return this[0].setValue(serializer.deserialize(payload, mediaType));
+function setPayload(this: [Node, (mediaType: string) => Serializer], payload: Uint8Array) {
+  const [node, getSerializer] = this;
+  const mediaType = node.mediaType();
+  const serializer = getSerializer(mediaType.type);
+  return node.setValue(serializer.deserialize(payload, mediaType));
 }
 
 async function pushNode(this: [Node, ChannelModule]) {

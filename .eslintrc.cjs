@@ -51,6 +51,7 @@ module.exports = {
       rules: {
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',
+        '@typescript-eslint/no-floating-promises': 'off',
         '@typescript-eslint/no-unsafe-argument': 'off',
         '@typescript-eslint/no-unsafe-call': 'off',
         '@typescript-eslint/no-unsafe-return': 'off',
@@ -64,7 +65,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
-    'deprecation/deprecation': 'warn',
+    'deprecation/deprecation': 'error',
     'no-console': 'error',
     'no-debugger': 'error',
   },
