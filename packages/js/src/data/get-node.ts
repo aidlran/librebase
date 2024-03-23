@@ -24,20 +24,7 @@ export function getAddressedNode(this: Injector) {
 
 export function parseSerializedNode(this: Injector) {
   return async (data: RetrievedNodeData, hash: Uint8Array) => {
-    const node = this(createNode)().setMediaType(data[0]);
-
-    // if (node.mediaType().type === 'application/lb-data') {
-    //   switch (node.mediaType().parameters?.['enc']) {
-    //     case 'json':
-    //     case undefined:
-    //       const data: LBDataValue = JsonSerializer.deserialize(payload);
-    //       break;
-    //     default:
-    //       throw new TypeError('Unsupported encoding');
-    //   }
-    // }
-
-    node.setHashAlg(hash[0]).setMediaType(data[0]).setPayload(data[1]);
+    const node = this(createNode)().setHashAlg(hash[0]).setMediaType(data[0]).setPayload(data[1]);
     await tick();
     const checkHash = await node.hash();
     if (hash.length != checkHash.length) return;

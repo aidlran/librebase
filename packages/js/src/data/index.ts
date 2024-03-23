@@ -2,7 +2,7 @@ import { getModule } from '../modules/modules';
 import { createNode as createNodeFn } from './create-node';
 import { getNode as getNodeFn } from './get-node';
 
-export type { Node, WrapperConfig } from './create-node';
+export type { Node, WrapConfig } from './create-node';
 
 export function createNode(instanceID?: string) {
   return getModule(createNodeFn, instanceID)();

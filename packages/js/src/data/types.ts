@@ -1,9 +1,18 @@
 import type { SignatureType } from '../crypto/sign/types';
 
-export interface LBDataValue {
+export type WrapValue = {
   type: SignatureType;
+  /** The hash of the unwrapped payload. */
   hash: Uint8Array;
+  /** The media type of the unwrapped payload. */
   mediaType: string;
-  metadata: Uint8Array;
+  /** The wrapped payload. */
   payload: Uint8Array;
+} & WrapValueUnion;
+
+export interface WrapValueUnion {
+  type: SignatureType.ECDSA;
+
+  /** The public key. */
+  metadata: Uint8Array;
 }

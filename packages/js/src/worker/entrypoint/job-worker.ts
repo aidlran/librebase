@@ -3,6 +3,7 @@ import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { shred } from '../../crypto';
 import { openKeyringDB } from '../../keyring/init-db';
+import { textDecoder } from '../../shared';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
@@ -19,6 +20,9 @@ const dispatch = createDispatch<WorkerDataRequest, unknown>(self, 1);
 
 let keyring: BIP32Interface | undefined;
 
+/** A map of text encoded public keys to their identity ID. */
+let publicKeys: Record<string, string> | undefined;
+
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 self.addEventListener('message', async (event: MessageEvent<[number, number, Job]>) => {
   try {
@@ -32,25 +36,15 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
       let resultPayload: unknown;
 
       switch (job.action) {
-        // TODO: move signature algorithms to crypto module
-        case 'identity.sign': {
-          const identity = await getIdentity(dispatch, job.payload.identityID, keyring);
-          if (!identity.privateKey) throw new TypeError('No private key available');
-          resultPayload = await sign(job.payload.hash, identity.privateKey);
-          break;
-        }
-        case 'identity.verify': {
-          const identity = await getIdentity(dispatch, job.payload.identityID, keyring);
-          resultPayload = verify(job.payload.signature, job.payload.hash, identity.publicKey);
-          break;
-        }
         case 'identity.get': {
-          resultPayload = (await getIdentity(dispatch, job.payload, keyring)).publicKey;
+          const publicKey = (await getIdentity(dispatch, job.payload, keyring)).publicKey;
+          resultPayload = publicKey;
+          publicKeys![new TextDecoder().decode(publicKey)] = job.payload;
           break;
         }
         case 'keyring.clear': {
           if (keyring?.privateKey) shred(keyring.privateKey);
-          keyring = undefined;
+          keyring = publicKeys = undefined;
           break;
         }
         case 'keyring.create': {
@@ -64,7 +58,22 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'keyring.load': {
           const { node, result } = await loadKeyring(job.payload);
           keyring = node;
+          publicKeys = {};
           resultPayload = result;
+          break;
+        }
+        // TODO: move signature algorithms to crypto module
+        case 'sign': {
+          const identityID = publicKeys![textDecoder.decode(job.payload.publicKey)];
+          const identity = await getIdentity(dispatch, identityID, keyring);
+          if (!identity.privateKey) throw new TypeError('No private key available');
+          resultPayload = await sign(job.payload.hash, identity.privateKey);
+          break;
+        }
+        case 'verify': {
+          const identityID = publicKeys![textDecoder.decode(job.payload.publicKey)];
+          const identity = await getIdentity(dispatch, identityID, keyring);
+          resultPayload = verify(job.payload.signature, job.payload.hash, identity.publicKey);
           break;
         }
         default: {

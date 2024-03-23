@@ -41,7 +41,7 @@ describe('getNode (module)', () => {
     expect(retrievedNode?.hashAlg()).toEqual(hashAlg);
     expect(retrievedNode?.mediaType().type).toEqual(mediaType);
     expect(retrievedNode?.value()).toEqual(value);
-    expect(retrievedNode?.payload()).toEqual(createdNode.payload());
+    expect(retrievedNode?.payload()).resolves.toEqual(await createdNode.payload());
     expect(await retrievedNode?.hash()).toEqual(await createdNode.hash());
   });
 });
@@ -81,7 +81,7 @@ describe('parseSerializedNode', () => {
     expect(node?.hashAlg()).toEqual(hash[0]);
     expect(node?.mediaType().type).toEqual(mediaType);
     expect(node?.value()).toEqual('Test');
-    expect(node?.payload()).toEqual(payload);
+    expect(node?.payload()).resolves.toEqual(payload);
     expect(await node?.hash()).toEqual(hash);
   });
 });

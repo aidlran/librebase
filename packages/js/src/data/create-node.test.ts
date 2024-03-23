@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { createNode as createNodeFn, type Node } from './create-node';
+import { HashAlgorithm } from '../crypto/hash/algorithm';
 import { getModule } from '../modules/modules';
-import { HashAlgorithm } from '..';
+import { createNode as createNodeFn, type Node } from './create-node';
 
 describe('createNode (module)', () => {
   const createNode = getModule(createNodeFn);
@@ -21,7 +21,7 @@ describe('createNode (module)', () => {
     });
 
     it('has expected number of properties', () => {
-      expect(Object.keys(node)).toHaveLength(11);
+      expect(Object.keys(node)).toHaveLength(12);
     });
 
     describe('hashAlg', () => {
@@ -96,8 +96,10 @@ describe('createNode (module)', () => {
 
       it('returns a byte array', () => {
         node.setMediaType('text/plain').setValue('test');
-        expect(node.payload()).toBeInstanceOf(Uint8Array);
+        expect(node.payload()).resolves.toBeInstanceOf(Uint8Array);
       });
+
+      it.todo('wraps and returns a byte array');
     });
 
     describe('setPayload', () => {
@@ -110,13 +112,23 @@ describe('createNode (module)', () => {
       });
     });
 
-    describe('addWrapper', () => {
+    describe('popWrapper', () => {
       it('is a function', () => {
-        expect(node.addWrapper).toBeTypeOf('function');
+        expect(node.popWrapper).toBeTypeOf('function');
       });
 
       it('uses method chaining', () => {
-        expect(node.addWrapper({ type: 0, metadata: {} })).toBe(node);
+        expect(node.popWrapper()).toBe(node);
+      });
+    });
+
+    describe('pushWrapper', () => {
+      it('is a function', () => {
+        expect(node.pushWrapper).toBeTypeOf('function');
+      });
+
+      it('uses method chaining', () => {
+        expect(node.pushWrapper({ type: 0, metadata: new Uint8Array() })).toBe(node);
       });
     });
 
