@@ -1,4 +1,8 @@
+import type { MediaType } from 'content-type';
+import type { LBDataValue } from '../data/types';
+import type { Injector } from '../modules/modules';
 import { textDecoder, textEncoder } from '../shared';
+import { getSerializer } from './get';
 
 export const BinarySerializer = {
   serialize(data: Uint8Array) {
@@ -32,3 +36,18 @@ export const TextSerializer = {
     return textDecoder.decode(payload);
   },
 };
+
+export function wrappedDataSerializer(inject: Injector) {
+  return {
+    serialize(data: LBDataValue, mediaType: MediaType) {
+      const encoding = mediaType.parameters?.enc ?? 'application/json';
+      const serializer = inject(getSerializer)(encoding);
+      return serializer.serialize(data, mediaType);
+    },
+    deserialize(payload: Uint8Array, mediaType: MediaType) {
+      const encoding = mediaType.parameters?.enc ?? 'application/json';
+      const serializer = inject(getSerializer)(encoding);
+      return serializer.deserialize(payload, mediaType) as LBDataValue;
+    },
+  };
+}
