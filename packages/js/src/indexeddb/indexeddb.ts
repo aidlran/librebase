@@ -27,8 +27,8 @@ function getConnection(name: string) {
 }
 
 export function deleteObject(db: string, store: string, key: IDBValidKey) {
-  const connection = getConnection(db);
   return new Promise<void>((resolve, reject) => {
+    const connection = getConnection(db);
     const request = connection.transaction(store, 'readwrite').objectStore(store).delete(key);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve();
@@ -36,8 +36,8 @@ export function deleteObject(db: string, store: string, key: IDBValidKey) {
 }
 
 export function getObject<T>(db: string, store: string, key: IDBValidKey | IDBKeyRange) {
-  const connection = getConnection(db);
   return new Promise<T>((resolve, reject) => {
+    const connection = getConnection(db);
     const request = connection.transaction(store, 'readonly').objectStore(store).get(key);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result as T);
@@ -50,8 +50,8 @@ export async function getAllObjects<T>(
   query?: IDBValidKey | IDBKeyRange,
   count?: number,
 ) {
-  const connection = getConnection(db);
   return new Promise<T[]>((resolve, reject) => {
+    const connection = getConnection(db);
     const request = connection
       .transaction(store, 'readonly')
       .objectStore(store)
@@ -67,8 +67,8 @@ export async function putObject<T extends IDBValidKey = IDBValidKey>(
   value: unknown,
   key?: T,
 ) {
-  const connection = getConnection(db);
   return new Promise<T>((resolve, reject) => {
+    const connection = getConnection(db);
     const request = connection.transaction(name, 'readwrite').objectStore(name).put(value, key);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result as T);
