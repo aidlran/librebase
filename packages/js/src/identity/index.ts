@@ -1,9 +1,9 @@
 import { derived, tick } from '@adamantjs/signals';
 import { format, type MediaType } from 'content-type';
-import { channelModule } from '../channel/channel.module';
+import { channelSet } from '../channel/channel-set';
 import { type HashAlgorithm, SignatureType } from '../crypto';
 import { createNode, type Node } from '../data/create-node';
-import { getNode } from '../data/get-node';
+import { getAddressedNode } from '../data/get-node';
 import { getModule } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 
@@ -34,10 +34,8 @@ export async function getIdentity(identityID: string, instanceID?: string) {
     );
   });
 
-  const identity = ((await getModule(channelModule, instanceID).getAddressedNodeHash(
-    address,
-    getModule(getNode, instanceID),
-  )) ?? getModule(createNode, instanceID)()) as Identity;
+  const identity = ((await getModule(getAddressedNode, instanceID)(address)) ??
+    getModule(createNode, instanceID)()) as Identity;
 
   identity.address = address;
   identity.id = identityID;
@@ -73,9 +71,13 @@ async function pushIdentityNode(this: [Identity, instanceID?: string]) {
       metadata: await this[0].signature(),
       payload: this[0].payload(),
     });
-  const setAddressedHashPromise = wrappedNode
-    .hash()
-    .then((hash) => getModule(channelModule, this[1]).setAddressedNodeHash(this[0].address, hash));
+  const setAddressedHashPromise = wrappedNode.hash().then((hash) => {
+    return Promise.all(
+      [...getModule(channelSet, this[1])].map((channel) => {
+        return channel.setAddressedNodeHash(this[0].address, hash);
+      }),
+    );
+  });
   await Promise.all([wrappedNode.push(), setAddressedHashPromise]);
   return this[0];
 }

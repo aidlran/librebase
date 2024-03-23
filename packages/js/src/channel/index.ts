@@ -1,7 +1,14 @@
 import { getModule } from '../modules/modules';
-import { channelModule } from './channel.module';
+import { channelSet } from './channel-set';
+import type { ChannelDriver } from './types';
 
-export const channel = (instanceID?: string) => getModule(channelModule, instanceID);
 export * from './driver/indexeddb';
-export type * from './channel.module';
 export type * from './types';
+
+export function registerDriver(driver: ChannelDriver, instanceID?: string) {
+  return getModule(channelSet, instanceID).add(driver);
+}
+
+export function unregisterDriver(driver: ChannelDriver, instanceID?: string) {
+  return getModule(channelSet, instanceID).delete(driver);
+}

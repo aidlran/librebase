@@ -1,7 +1,7 @@
 import { derived, signal, tick } from '@adamantjs/signals';
 import { format, type MediaType } from 'content-type';
-import type { ChannelModule, SerializedNodeData } from '../channel';
-import { channelModule } from '../channel/channel.module';
+import type { ChannelDriver, SerializedNodeData } from '../channel';
+import { channelSet } from '../channel/channel-set';
 import { HashAlgorithm, hash, type SignatureType } from '../crypto';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
@@ -42,7 +42,7 @@ export function createNode(this: Injector) {
     node.payload = derived(calculatePayload.bind([value, mediaType, this(getSerializer)]));
     node.setPayload = setPayload.bind([node, this(getSerializer)]);
     node.hash = derived(calculateHash.bind([hashAlg, node.payload]));
-    node.push = pushNode.bind([node, this(channelModule)]);
+    node.push = pushNode.bind([node, this(channelSet)]);
     node.addWrapper = addWrapper.bind([node, wrappers]);
     return node;
   };
@@ -73,14 +73,15 @@ function setPayload(this: [Node, (mediaType: string) => Serializer], payload: Ui
   return node.setValue(serializer.deserialize(payload, mediaType));
 }
 
-async function pushNode(this: [Node, ChannelModule]) {
+async function pushNode(this: [Node, Set<ChannelDriver>]) {
+  const [node, channels] = this;
   await tick();
   const data: SerializedNodeData = {
-    hash: await this[0].hash(),
-    mediaType: format(this[0].mediaType()),
-    payload: this[0].payload(),
+    hash: await node.hash(),
+    mediaType: format(node.mediaType()),
+    payload: node.payload(),
   };
-  await this[1].putNode(data);
+  await Promise.all([...channels].map((channel) => channel.putNode(data)));
   return this[0];
 }
 

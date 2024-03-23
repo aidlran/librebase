@@ -1,12 +1,24 @@
 import { tick } from '@adamantjs/signals';
-import { channelModule } from '../channel/channel.module';
-import type { RetrievedNodeData } from '../channel/types';
+import type { RetrievedNodeData } from '../channel';
+import { raceChannels } from '../channel/race';
 import type { Injector } from '../modules/modules';
 import { createNode } from './create-node';
 
 export function getNode(this: Injector) {
   return (hash: Uint8Array) => {
-    return this(channelModule).getNode(hash, (data) => this(parseSerializedNode)(data, hash));
+    return this(raceChannels)(
+      (channel) => channel.getNode(hash),
+      (data) => this(parseSerializedNode)(data, hash),
+    );
+  };
+}
+
+export function getAddressedNode(this: Injector) {
+  return (address: Uint8Array) => {
+    return this(raceChannels)(
+      (channel) => channel.getAddressedNodeHash(address),
+      (hash) => this(getNode)(hash),
+    );
   };
 }
 

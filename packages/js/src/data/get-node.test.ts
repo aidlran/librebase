@@ -1,14 +1,14 @@
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
 import { resolveBeforeTimeout } from '../../testing/utils';
-import { channel, indexedDBDriver, type RetrievedNodeData } from '../channel';
+import { indexedDBDriver, registerDriver, type RetrievedNodeData } from '../channel';
+import { HashAlgorithm } from '../crypto/hash/algorithm';
 import { getModule } from '../modules/modules';
 import { getNode, parseSerializedNode } from './get-node';
 import { createNode } from './create-node';
-import { HashAlgorithm } from '..';
 
 const testHash = new Uint8Array(Array.from({ length: 32 }));
-channel().registerDriver(await indexedDBDriver());
+registerDriver(await indexedDBDriver());
 
 describe('getNode (module)', () => {
   it('is a module function', () => {

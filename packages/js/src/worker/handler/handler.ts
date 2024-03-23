@@ -1,7 +1,7 @@
 import { tick } from '@adamantjs/signals';
-import { channelModule } from '../../channel/channel.module';
+import { channelSet } from '../../channel/channel-set';
 import { createNode } from '../../data/create-node';
-import { getNode } from '../../data/get-node';
+import { getAddressedNode } from '../../data/get-node';
 import type { Injector } from '../../modules/modules';
 import type { GetRootNodeRequest, SetRootNodeRequest, WorkerDataRequest } from '../types';
 import { WorkerDataRequestType, WorkerMessageType } from '../types';
@@ -32,10 +32,8 @@ async function getRootNode(
   next: (response: unknown) => void,
 ) {
   const [, , kdfType, publicKey] = request;
-  const node = await inject(channelModule).getAddressedNodeHash(
-    new Uint8Array([kdfType, ...publicKey]),
-    (hash) => inject(getNode)(hash),
-  );
+  const address = new Uint8Array([kdfType, ...publicKey]);
+  const node = await inject(getAddressedNode)(address);
   next(node?.value());
 }
 
@@ -46,9 +44,9 @@ async function setRootNode(inject: Injector, request: SetRootNodeRequest, next: 
   await Promise.all([
     node.push(),
     node.hash().then((hash) => {
-      return inject(channelModule).setAddressedNodeHash(
-        new Uint8Array([kdfType, ...publicKey]),
-        hash,
+      const address = new Uint8Array([kdfType, ...publicKey]);
+      return Promise.all(
+        [...inject(channelSet)].map((channel) => channel.setAddressedNodeHash(address, hash)),
       );
     }),
   ]);
