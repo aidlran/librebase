@@ -72,14 +72,14 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         }
       }
       // TODO(lint): odd typescript error after introducing `identity.verify`
-      const errorMessage /* : JobResultWorkerMessage */ = {
+      const message /* : JobResultWorkerMessage */ = {
         type: WorkerMessageType.RESULT,
         action: job.action,
         jobID: jobID,
         ok: true,
         payload: resultPayload,
       };
-      self.postMessage([dispatchID, jobID, errorMessage]);
+      self.postMessage([dispatchID, jobID, message]);
     }
   } catch (error) {
     const errorMessage: JobResultWorkerMessage = {

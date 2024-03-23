@@ -49,11 +49,11 @@ export function createDeferredDispatch<T, R>(
     if (readyFired) {
       dispatch(request, callback);
     } else {
-      const callback = () => {
-        target.removeEventListener('ready', callback);
+      const deferredRequestCallback = () => {
+        target.removeEventListener('ready', deferredRequestCallback);
         dispatch(request, callback);
       };
-      target.addEventListener('ready', callback);
+      target.addEventListener('ready', deferredRequestCallback);
     }
   };
 }
