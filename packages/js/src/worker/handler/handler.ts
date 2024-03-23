@@ -1,6 +1,7 @@
 import { tick } from '@adamantjs/signals';
 import { channelModule } from '../../channel/channel.module';
-import { dataModule } from '../../data/data.module';
+import { createNode } from '../../data/create-node';
+import { getNode } from '../../data/get-node';
 import type { Injector } from '../../modules/modules';
 import type { GetRootNodeRequest, SetRootNodeRequest, WorkerDataRequest } from '../types';
 import { WorkerDataRequestType, WorkerMessageType } from '../types';
@@ -33,14 +34,14 @@ async function getRootNode(
   const [, , kdfType, publicKey] = request;
   const node = await inject(channelModule).getAddressedNodeHash(
     new Uint8Array([kdfType, ...publicKey]),
-    (hash) => inject(dataModule).getNode(hash),
+    (hash) => inject(getNode)(hash),
   );
   next(node?.value());
 }
 
 async function setRootNode(inject: Injector, request: SetRootNodeRequest, next: () => void) {
   const [, , kdfType, publicKey, mediaType, value] = request;
-  const node = inject(dataModule).createNode().setMediaType(mediaType).setValue(value);
+  const node = inject(createNode)().setMediaType(mediaType).setValue(value);
   await tick();
   await Promise.all([
     node.push(),

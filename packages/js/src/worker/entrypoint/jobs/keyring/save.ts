@@ -1,5 +1,5 @@
 import { putObject } from '../../../../indexeddb/indexeddb';
-import type { IndexedDBKeyring } from '../../../../keyring/keyring.module';
+import type { PersistedKeyring } from '../../../../keyring/types';
 
 export async function saveKeyring(
   payload: Uint8Array,
@@ -39,7 +39,7 @@ export async function saveKeyring(
     payload,
   );
 
-  const keyring: Partial<IndexedDBKeyring> = {
+  const keyring: Partial<PersistedKeyring> = {
     salt,
     nonce,
     payload: encryptedPayload,

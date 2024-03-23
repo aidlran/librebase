@@ -2,8 +2,8 @@ import ecc from '@bitcoinerlab/secp256k1';
 import { type BIP32API, BIP32Factory, type BIP32Interface } from 'bip32';
 import { entropyToMnemonic, mnemonicToSeed } from '../../../../crypto/mnemonic/bip39';
 import { getObject } from '../../../../indexeddb/indexeddb';
-import type { IndexedDBKeyring } from '../../../../keyring/keyring.module';
 import type { LoadKeyringRequest, LoadKeyringResult } from '../../../types';
+import type { PersistedKeyring } from '../../../../keyring/types';
 
 let bip32: BIP32API;
 
@@ -12,7 +12,7 @@ export async function loadKeyring<T>(
 ): Promise<{ node: BIP32Interface; result: LoadKeyringResult<T> }> {
   if (!bip32) bip32 = BIP32Factory(ecc);
 
-  const keyring = await getObject<IndexedDBKeyring<T>>('keyring', request.id);
+  const keyring = await getObject<PersistedKeyring<T>>('keyring', request.id);
 
   const passphraseKey = await crypto.subtle.importKey(
     'raw',
