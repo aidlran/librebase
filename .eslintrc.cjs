@@ -47,7 +47,7 @@ module.exports = {
       },
     },
     {
-      files: ['*.test.*'],
+      files: ['*.test.*', '**/testing/**/*'],
       rules: {
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/no-explicit-any': 'off',

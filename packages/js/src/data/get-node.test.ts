@@ -11,7 +11,7 @@ const testHash = new Uint8Array(Array.from({ length: 32 }));
 registerDriver(await indexedDBDriver());
 
 describe('getNode (module)', () => {
-  it('is a module function', () => {
+  it('is a function module', () => {
     expect(getModule(getNode)).toBeTypeOf('function');
   });
 
@@ -47,7 +47,7 @@ describe('getNode (module)', () => {
 });
 
 describe('parseSerializedNode', () => {
-  it('is a module function', () => {
+  it('is a function module', () => {
     expect(getModule(parseSerializedNode)).toBeTypeOf('function');
   });
 
