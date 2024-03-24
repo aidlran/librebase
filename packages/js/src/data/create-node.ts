@@ -6,10 +6,9 @@ import { HashAlgorithm, hash } from '../crypto/hash';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
 import { getSerializer } from '../seralizer/get';
-import { jobWorker } from '../worker/worker.module';
-import { WrapType } from '../wrap/enum';
 import type { WrapConfig, WrapValue } from '../wrap/types';
 import { wrap } from '../wrap/wrap';
+import { unwrap } from '../wrap/unwrap';
 
 export interface Node {
   hashAlg(): HashAlgorithm;
@@ -102,36 +101,9 @@ async function setPayload(this: [Node, Injector], payload: Uint8Array) {
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const wrapValue = value as WrapValue;
-
-    // TODO: move wrap processing to own function
-
-    switch (wrapValue.type) {
-      case WrapType.ECDSA: {
-        node.pushWrapper({
-          hashAlg: wrapValue.hash[0],
-          metadata: wrapValue.metadata.publicKey,
-          type: wrapValue.type,
-        });
-        currentPayload = wrapValue.payload;
-        const validateHash = await hash(wrapValue.hash[0], currentPayload);
-        const valid = await new Promise<boolean>((resolve) => {
-          inject(jobWorker).postToOne(
-            {
-              action: 'verify',
-              payload: {
-                hash: new Uint8Array(validateHash),
-                ...wrapValue.metadata,
-              },
-            },
-            ({ payload }) => resolve(payload),
-          );
-        });
-        if (!valid) {
-          throw new Error('Invalid signature');
-        }
-      }
-    }
-
+    const unwrapped = await inject(unwrap)(wrapValue);
+    currentPayload = unwrapped[0];
+    node.pushWrapper(unwrapped[1]);
     if (wrapValue.mediaType !== 'application/lb-wrap') {
       node.setMediaType(wrapValue.mediaType);
       node.setValue(
