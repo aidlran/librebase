@@ -1,7 +1,7 @@
 import type { MediaType } from 'content-type';
-import type { WrapValue } from '../data/types';
 import type { Injector } from '../modules/modules';
 import { textDecoder, textEncoder } from '../shared';
+import type { WrapValue } from '../wrap/types';
 import { getSerializer } from './get';
 
 export const BinarySerializer = {

@@ -3,11 +3,12 @@
 import { derived, tick } from '@adamantjs/signals';
 import type { MediaType } from 'content-type';
 import { channelSet } from '../channel/channel-set';
-import { type HashAlgorithm, SignatureType } from '../crypto';
+import { type HashAlgorithm } from '../crypto';
 import { createNode, type Node } from '../data/create-node';
 import { getAddressedNode } from '../data/get-node';
 import { getModule } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
+import { WrapType } from '../wrap/enum';
 
 export interface Identity extends Node {
   id: string;
@@ -47,7 +48,7 @@ export async function getIdentity(identityID: string, instanceID?: string) {
 
   function appendWrappers() {
     if (!wrappersAdded) {
-      identity.pushWrapper({ type: SignatureType.ECDSA, metadata: publicKey });
+      identity.pushWrapper({ type: WrapType.ECDSA, metadata: publicKey });
       wrappersAdded = true;
     }
   }

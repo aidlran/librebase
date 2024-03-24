@@ -14,13 +14,15 @@
     "build": "npm run build --workspaces",
     "ci": "npm run build && npm run lint && npm run test",
     "cost": "npm run cost --workspaces --if-present",
+    "coverage": "vitest run --coverage",
     "format": "prettier --write .",
     "lc": "npm run lc --workspaces --if-present",
     "lint": "publint packages/js && publint packages/svelte && eslint packages",
     "start": "conc -k npm:start:*",
     "start:js": "npm start -w packages/js",
     "start:svelte": "npm start -w packages/svelte",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:dev": "vitest --coverage"
   },
   "devDependencies": {
     "@adamantjs/signals": "file:lib/signals",

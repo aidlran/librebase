@@ -1,3 +1,5 @@
+import { WrapType } from '../../wrap/enum';
+
 export enum SignatureType {
-  ECDSA = 0x00,
+  ECDSA = WrapType.ECDSA,
 }
