@@ -13,6 +13,8 @@ export type WrapValue = {
 export interface WrapValueUnion {
   type: SignatureType.ECDSA;
 
-  /** The public key. */
-  metadata: Uint8Array;
+  metadata: {
+    publicKey: Uint8Array;
+    signature: Uint8Array;
+  };
 }

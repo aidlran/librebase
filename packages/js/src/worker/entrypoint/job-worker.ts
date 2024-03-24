@@ -3,7 +3,6 @@ import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { shred } from '../../crypto';
 import { openKeyringDB } from '../../keyring/init-db';
-import { textDecoder } from '../../shared';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
@@ -39,7 +38,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'identity.get': {
           const publicKey = (await getIdentity(dispatch, job.payload, keyring)).publicKey;
           resultPayload = publicKey;
-          publicKeys![new TextDecoder().decode(publicKey)] = job.payload;
+          publicKeys![JSON.stringify(Array.from(publicKey))] = job.payload;
           break;
         }
         case 'keyring.clear': {
@@ -64,16 +63,15 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         }
         // TODO: move signature algorithms to crypto module
         case 'sign': {
-          const identityID = publicKeys![textDecoder.decode(job.payload.publicKey)];
+          const identityID = publicKeys![JSON.stringify(Array.from(job.payload.publicKey))];
+          if (!identityID) throw new TypeError('No private key available');
           const identity = await getIdentity(dispatch, identityID, keyring);
           if (!identity.privateKey) throw new TypeError('No private key available');
           resultPayload = await sign(job.payload.hash, identity.privateKey);
           break;
         }
         case 'verify': {
-          const identityID = publicKeys![textDecoder.decode(job.payload.publicKey)];
-          const identity = await getIdentity(dispatch, identityID, keyring);
-          resultPayload = verify(job.payload.signature, job.payload.hash, identity.publicKey);
+          resultPayload = verify(job.payload.signature, job.payload.hash, job.payload.publicKey);
           break;
         }
         default: {

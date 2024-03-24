@@ -18,10 +18,25 @@ export const BinarySerializer = {
 
 export const JsonSerializer = {
   serialize(data: unknown) {
-    return textEncoder.encode(JSON.stringify(data));
+    return textEncoder.encode(
+      JSON.stringify(data, (_, value) => {
+        if (value instanceof Uint8Array) {
+          return ['b', Array.from(value)];
+        } else return value as unknown;
+      }),
+    );
   },
   deserialize<T>(payload: Uint8Array): T {
-    return JSON.parse(textDecoder.decode(payload)) as T;
+    return JSON.parse(textDecoder.decode(payload), (_, value) => {
+      if (
+        Array.isArray(value) &&
+        value.length === 2 &&
+        value[0] === 'b' &&
+        Array.isArray(value[1])
+      ) {
+        return new Uint8Array(value[1]);
+      } else return value as unknown;
+    }) as T;
   },
 };
 

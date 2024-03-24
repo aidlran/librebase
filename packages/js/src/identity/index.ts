@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/unbound-method */
+
 import { derived, tick } from '@adamantjs/signals';
 import type { MediaType } from 'content-type';
 import { channelSet } from '../channel/channel-set';
@@ -13,7 +15,7 @@ export interface Identity extends Node {
   push: () => Promise<Identity>;
   setHashAlg: (alg: HashAlgorithm) => Identity;
   setMediaType: (type: string | MediaType) => Identity;
-  setPayload: (payload: Uint8Array) => Identity;
+  setPayload: (payload: Uint8Array) => Promise<Identity>;
   setValue: <T>(value: T) => Identity;
   signature: () => Promise<Uint8Array>;
 }
@@ -40,33 +42,47 @@ export async function getIdentity(identityID: string, instanceID?: string) {
   identity.publicKey = publicKey;
   identity.id = identityID;
 
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const getPayload = identity.payload;
-  identity.payload = derived(async () => {
-    identity.pushWrapper({ type: SignatureType.ECDSA, metadata: publicKey });
-    const payload = await getPayload();
-    identity.popWrapper();
-    return payload;
-  });
+  let wrappersAdded = false;
+  let pushing = false;
 
-  identity.push = pushIdentityNode.bind([identity, identity.push, instanceID]);
+  function appendWrappers() {
+    if (!wrappersAdded) {
+      identity.pushWrapper({ type: SignatureType.ECDSA, metadata: publicKey });
+      wrappersAdded = true;
+    }
+  }
 
-  return identity;
-}
+  function removeWrappers() {
+    if (wrappersAdded) {
+      identity.popWrapper();
+      wrappersAdded = false;
+    }
+  }
 
-/** This function is bound and attached to the `Identity`, overriding the base `node.push` function. */
-async function pushIdentityNode(this: [Identity, () => Promise<Identity>, string?]) {
-  const [identity, push, instanceID] = this;
-  await tick();
-  const setAddressedHashPromise = identity.hash().then((hash) => {
-    return Promise.all(
-      [...getModule(channelSet, instanceID)].map((channel) => {
-        return channel.setAddressedNodeHash(identity.publicKey, hash);
-      }),
-    );
-  });
-  identity.pushWrapper({ type: SignatureType.ECDSA, metadata: identity.publicKey });
-  await Promise.all([push(), setAddressedHashPromise]);
-  identity.popWrapper();
+  identity.payload = derived(
+    async function (this: () => Promise<Uint8Array>) {
+      appendWrappers();
+      const payload = await this();
+      if (!pushing) removeWrappers();
+      return payload;
+    }.bind(identity.payload),
+  );
+
+  identity.push = async function (this: () => Promise<Identity>) {
+    await tick();
+    const setAddressedHashPromise = identity.hash().then((hash) => {
+      return Promise.all(
+        [...getModule(channelSet, instanceID)].map((channel) => {
+          return channel.setAddressedNodeHash(identity.publicKey, hash);
+        }),
+      );
+    });
+    appendWrappers();
+    pushing = true;
+    await Promise.all([this(), setAddressedHashPromise]);
+    removeWrappers();
+    return identity;
+  }.bind(identity.push);
+
   return identity;
 }

@@ -108,7 +108,7 @@ describe('createNode (module)', () => {
       });
 
       it('uses method chaining', () => {
-        expect(node.setPayload(new Uint8Array())).toBe(node);
+        expect(node.setPayload(new Uint8Array())).resolves.toBe(node);
       });
     });
 

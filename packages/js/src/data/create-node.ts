@@ -7,7 +7,7 @@ import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
 import { getSerializer } from '../seralizer/get';
 import { jobWorker } from '../worker/worker.module';
-import type { WrapValue, WrapValueUnion } from './types';
+import type { WrapValue } from './types';
 
 export interface Node {
   hashAlg(): HashAlgorithm;
@@ -17,7 +17,7 @@ export interface Node {
   value<T>(): T;
   setValue(value: unknown): Node;
   payload(): Promise<Uint8Array>;
-  setPayload(payload: Uint8Array): Node;
+  setPayload(payload: Uint8Array): Promise<Node>;
   popWrapper(): void;
   pushWrapper(config: WrapConfig): Node;
   hash(): Promise<Uint8Array>;
@@ -27,7 +27,14 @@ export interface Node {
 export type WrapConfig = {
   hashAlg?: HashAlgorithm;
   type: SignatureType;
-} & WrapValueUnion;
+} & WrapConfigUnion;
+
+export interface WrapConfigUnion {
+  type: SignatureType.ECDSA;
+
+  /** The publicKey */
+  metadata: Uint8Array;
+}
 
 export function createNode(this: Injector) {
   return () => {
@@ -45,7 +52,7 @@ export function createNode(this: Injector) {
     node.popWrapper = popWrapper.bind([node, wrappers]);
     node.pushWrapper = pushWrapper.bind([node, wrappers]);
     node.hash = derived(calculateHash.bind(node));
-    node.push = pushNode.bind([node, () => !!wrappers.length, this]);
+    node.push = pushNode.bind([node, wrappers, this]);
     return node;
   };
 }
@@ -81,26 +88,30 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
         (hash) => new Uint8Array([hashAlg, ...new Uint8Array(hash)]),
       );
 
-      let payload: Uint8Array;
+      // TODO: move wrap processing to own function
 
       switch (type) {
         case SignatureType.ECDSA: {
-          payload = await new Promise((resolve) => {
-            inject(jobWorker).postToOne(
-              { action: 'sign', payload: { publicKey: metadata, hash: wrappedPayloadHash } },
-              ({ payload }) => resolve(payload),
-            );
+          wrapValues.push({
+            mediaType: format(wrappedMediaType),
+            metadata: {
+              publicKey: metadata,
+              signature: await new Promise((resolve) => {
+                inject(jobWorker).postToOne(
+                  {
+                    action: 'sign',
+                    payload: { publicKey: metadata, hash: wrappedPayloadHash.subarray(1) },
+                  },
+                  ({ payload }) => resolve(payload),
+                );
+              }),
+            },
+            type,
+            payload: wrappedPayload,
+            hash: wrappedPayloadHash,
           });
         }
       }
-
-      wrapValues.push({
-        mediaType: format(wrappedMediaType),
-        metadata,
-        type,
-        payload,
-        hash: wrappedPayloadHash,
-      });
     }
 
     const final = wrapValues.pop()!;
@@ -119,23 +130,66 @@ function calculateHash(this: Node) {
     });
 }
 
-function setPayload(this: [Node, Injector], payload: Uint8Array) {
+async function setPayload(this: [Node, Injector], payload: Uint8Array) {
   const [node, inject] = this;
   const mediaType = node.mediaType();
-  if (mediaType.type === 'application/lb-wrap') {
-    throw new Error('Not implemented'); // TODO
-  } else {
-    const serializer = inject(getSerializer)(mediaType.type);
-    return node.setValue(serializer.deserialize(payload, mediaType));
+  const serializer = inject(getSerializer)(mediaType.type);
+  const value = serializer.deserialize(payload, mediaType);
+  if (mediaType.type !== 'application/lb-wrap') {
+    return node.setValue(value);
+  }
+
+  let currentPayload = payload;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const wrapValue = value as WrapValue;
+
+    // TODO: move wrap processing to own function
+
+    switch (wrapValue.type) {
+      case SignatureType.ECDSA: {
+        node.pushWrapper({
+          hashAlg: wrapValue.hash[0],
+          metadata: wrapValue.metadata.publicKey,
+          type: wrapValue.type,
+        });
+        currentPayload = wrapValue.payload;
+        const validateHash = await hash(wrapValue.hash[0], currentPayload);
+        const valid = await new Promise<boolean>((resolve) => {
+          inject(jobWorker).postToOne(
+            {
+              action: 'verify',
+              payload: {
+                hash: new Uint8Array(validateHash),
+                ...wrapValue.metadata,
+              },
+            },
+            ({ payload }) => resolve(payload),
+          );
+        });
+        if (!valid) {
+          throw new Error('Invalid signature');
+        }
+      }
+    }
+
+    if (wrapValue.mediaType !== 'application/lb-wrap') {
+      node.setMediaType(wrapValue.mediaType);
+      node.setValue(
+        inject(getSerializer)(node.mediaType().type).deserialize(currentPayload, node.mediaType()),
+      );
+      return node;
+    }
   }
 }
 
-async function pushNode(this: [Node, () => boolean, Injector]) {
-  const [node, isWrapped, inject] = this;
+async function pushNode(this: [Node, WrapConfig[], Injector]) {
+  const [node, wrappers, inject] = this;
   await tick();
   const data: SerializedNodeData = {
     hash: await node.hash(),
-    mediaType: isWrapped() ? 'application/lb-wrap' : format(node.mediaType()),
+    mediaType: wrappers.length ? 'application/lb-wrap' : format(node.mediaType()),
     payload: await node.payload(),
   };
   await Promise.all([...inject(channelSet)].map((channel) => channel.putNode(data)));
