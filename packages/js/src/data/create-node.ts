@@ -2,10 +2,10 @@ import { derived, signal, tick } from '@adamantjs/signals';
 import { format, type MediaType } from 'content-type';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
+import { getCodec } from '../codec/get';
 import { HashAlgorithm, hash } from '../crypto/hash';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
-import { getSerializer } from '../seralizer/get';
 import type { WrapConfig, WrapValue } from '../wrap/types';
 import { wrap } from '../wrap/wrap';
 import { unwrap } from '../wrap/unwrap';
@@ -56,7 +56,7 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
   const [node, wrapConfigs, inject] = this;
   const mediaType = node.mediaType();
   function serialize(mediaType: MediaType, value: unknown) {
-    return inject(getSerializer)(mediaType.type).serialize(value, mediaType);
+    return inject(getCodec)(mediaType.type).encode(value, mediaType);
   }
   if (wrapConfigs.length) {
     const wrapValues = new Array<WrapValue>();
@@ -90,8 +90,8 @@ function calculateHash(this: Node) {
 async function setPayload(this: [Node, Injector], payload: Uint8Array) {
   const [node, inject] = this;
   const mediaType = node.mediaType();
-  const serializer = inject(getSerializer)(mediaType.type);
-  const value = serializer.deserialize(payload, mediaType);
+  const serializer = inject(getCodec)(mediaType.type);
+  const value = serializer.decode(payload, mediaType);
   if (mediaType.type !== 'application/lb-wrap') {
     return node.setValue(value);
   }
@@ -107,7 +107,7 @@ async function setPayload(this: [Node, Injector], payload: Uint8Array) {
     if (wrapValue.mediaType !== 'application/lb-wrap') {
       node.setMediaType(wrapValue.mediaType);
       node.setValue(
-        inject(getSerializer)(node.mediaType().type).deserialize(currentPayload, node.mediaType()),
+        inject(getCodec)(node.mediaType().type).decode(currentPayload, node.mediaType()),
       );
       return node;
     }

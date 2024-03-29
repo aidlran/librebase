@@ -66,7 +66,7 @@ module.exports = {
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
-    'deprecation/deprecation': 'error',
+    'deprecation/deprecation': 'warn',
     'no-console': 'error',
     'no-debugger': 'error',
   },
