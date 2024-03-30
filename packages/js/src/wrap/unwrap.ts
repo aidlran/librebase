@@ -9,12 +9,12 @@ export function unwrap(this: Injector) {
     switch (wrap.type) {
       case WrapType.ECDSA: {
         const config: WrapConfig = {
-          hashAlg: wrap.hash[0],
+          hashAlg: wrap.hash.algorithm,
           metadata: wrap.metadata.publicKey,
           type: wrap.type,
         };
         const payload = wrap.payload;
-        const payloadHash = await hash(wrap.hash[0], payload);
+        const payloadHash = await hash(wrap.hash.algorithm, payload);
         const valid = await new Promise<boolean>((resolve) => {
           this(jobWorker).postToOne(
             {

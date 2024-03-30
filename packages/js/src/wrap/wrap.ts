@@ -27,7 +27,7 @@ export function wrap(this: Injector) {
           },
           type: config.type,
           payload,
-          hash: payloadHash.toBytes(),
+          hash: payloadHash,
         };
       }
       default: {

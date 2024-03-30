@@ -1,4 +1,4 @@
-import type { HashAlgorithm } from '../hash/algorithm.enum';
+import type { Hash, HashAlgorithm } from '../hash';
 import type { WrapType } from './enum';
 
 export type WrapConfig = {
@@ -13,7 +13,7 @@ export type WrapConfig = {
 export type WrapValue = {
   type: WrapType;
   /** The hash of the unwrapped payload. */
-  hash: Uint8Array;
+  hash: Hash;
   /** The media type of the unwrapped payload. */
   mediaType: string;
   /** The wrapped payload. */
