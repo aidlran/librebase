@@ -30,7 +30,8 @@
     "bip32": "4.0.0",
     "buffer": "6.0.3",
     "content-type": "1.0.5",
-    "tweetnacl": "1.0.3"
+    "tweetnacl": "1.0.3",
+    "valibot": "^0.30.0"
   },
   "devDependencies": {
     "@types/content-type": "^1.1.8"
