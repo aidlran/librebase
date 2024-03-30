@@ -3,7 +3,7 @@ import { format, type MediaType } from 'content-type';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
 import { getCodec } from '../codec/get';
-import { HashAlgorithm, hash } from '../crypto/hash';
+import { HashAlgorithm, hash } from '../hash';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
 import type { WrapConfig, WrapValue } from '../wrap/types';
@@ -79,12 +79,9 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
 }
 
 function calculateHash(this: Node) {
-  const algorithm = this.hashAlg();
   return this.payload()
-    .then((payload) => hash(algorithm, payload))
-    .then((hash) => {
-      return new Uint8Array([algorithm, ...new Uint8Array(hash)]);
-    });
+    .then((payload) => hash(this.hashAlg(), payload))
+    .then((hash) => hash.toBytes());
 }
 
 async function setPayload(this: [Node, Injector], payload: Uint8Array) {

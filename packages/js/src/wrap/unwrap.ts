@@ -1,4 +1,4 @@
-import { hash } from '../crypto/hash';
+import { hash } from '../hash';
 import type { Injector } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 import { WrapType } from './enum';
@@ -14,13 +14,13 @@ export function unwrap(this: Injector) {
           type: wrap.type,
         };
         const payload = wrap.payload;
-        const payloadHash = new Uint8Array(await hash(wrap.hash[0], payload));
+        const payloadHash = await hash(wrap.hash[0], payload);
         const valid = await new Promise<boolean>((resolve) => {
           this(jobWorker).postToOne(
             {
               action: 'verify',
               payload: {
-                hash: payloadHash,
+                hash: payloadHash.value,
                 ...wrap.metadata,
               },
             },

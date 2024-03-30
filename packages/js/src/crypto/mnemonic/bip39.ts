@@ -1,4 +1,4 @@
-import { sha256 } from '../hash/sha256.js';
+import { sha256 } from '../../hash/sha256';
 import WORDLIST from './bip39-wordlist-english.json';
 
 /**

@@ -4,7 +4,15 @@ export function toBufferSource(input: string | BufferSource): BufferSource {
   return typeof input === 'string' ? encoder.encode(input) : input;
 }
 
-export function encodeByteArrayString(input: Uint8Array): string {
+export function stringToBytes(input: string): Uint8Array {
+  const output = new Uint8Array(input.length);
+  for (let i = 0; i < input.length; i++) {
+    output[i] = input.charCodeAt(i);
+  }
+  return output;
+}
+
+export function bytesToString(input: Uint8Array): string {
   let output = '';
   for (const index in input) {
     output += String.fromCharCode(input[index]);

@@ -2,7 +2,7 @@ import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
 import { resolveBeforeTimeout } from '../../testing/utils';
 import { indexedDBDriver, registerDriver, type RetrievedNodeData } from '../channel';
-import { HashAlgorithm } from '../crypto/hash/algorithm';
+import { HashAlgorithm } from '../hash/algorithm.enum';
 import { getModule } from '../modules/modules';
 import { getNode, parseSerializedNode } from './get-node';
 import { createNode } from './create-node';

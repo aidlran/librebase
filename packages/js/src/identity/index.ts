@@ -3,9 +3,9 @@
 import { derived, tick } from '@adamantjs/signals';
 import type { MediaType } from 'content-type';
 import { channelSet } from '../channel/channel-set';
-import { type HashAlgorithm } from '../crypto';
 import { createNode, type Node } from '../data/create-node';
 import { getAddressedNode } from '../data/get-node';
+import type { HashAlgorithm } from '../hash';
 import { getModule } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 import { WrapType } from '../wrap/enum';

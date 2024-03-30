@@ -1,3 +1,5 @@
+import { base58, base64 } from '../crypto/encode/base';
+import { Hash } from '../hash/hash.class';
 import { textDecoder, textEncoder } from '../shared';
 import type { Codec } from './types';
 
@@ -55,3 +57,48 @@ function encode(this: JsonCodecPlugin[], data: unknown): Uint8Array {
     }),
   );
 }
+
+/** JSON codec plugin for storing byte arrays as base64 strings. */
+export const binaryPlugin: JsonCodecPlugin = {
+  replacer(_, value) {
+    return value instanceof Uint8Array
+      ? {
+          $: 'bytes:b64',
+          v: base64.encode(value),
+        }
+      : value;
+  },
+  reviver(_, v) {
+    const value = v as { $: string; v: string };
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      Object.keys(value).length == 2 &&
+      value.$ === 'bytes:b64' &&
+      typeof value.v === 'string'
+    ) {
+      return base64.decode(value.v);
+    }
+    return value;
+  },
+};
+
+/** JSON codec plugin for storing Hash instances as base58 strings. */
+export const hashPlugin: JsonCodecPlugin = {
+  replacer(_, value) {
+    return value instanceof Hash ? { '#': value.toBase58() } : value;
+  },
+  reviver(_, v) {
+    const value = v as { '#': string };
+    if (
+      value !== null &&
+      typeof value === 'object' &&
+      Object.keys(value).length == 1 &&
+      typeof value['#'] === 'string'
+    ) {
+      const hash = base58.decode(value['#']);
+      return new Hash(hash[0], hash.subarray(1));
+    }
+    return value;
+  },
+};

@@ -1,4 +1,4 @@
-import type { HashAlgorithm } from '../crypto/hash/algorithm';
+import type { HashAlgorithm } from '../hash/algorithm.enum';
 import type { WrapType } from './enum';
 
 export type WrapConfig = {

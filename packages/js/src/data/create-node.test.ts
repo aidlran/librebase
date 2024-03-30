@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { HashAlgorithm } from '../crypto/hash/algorithm';
+import { HashAlgorithm } from '../hash/algorithm.enum';
 import { getModule } from '../modules/modules';
 import { createNode as createNodeFn, type Node } from './create-node';
 
