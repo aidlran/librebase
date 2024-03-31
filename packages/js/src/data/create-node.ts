@@ -2,14 +2,14 @@ import { derived, signal, tick } from '@adamantjs/signals';
 import { format, parse, type MediaType } from 'content-type';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
-import { getCodec } from '../codec/get';
-import { HashAlgorithm, hash } from '../hash';
+import { getCodec as getCodecFn } from '../codec/get';
+import { Hash, HashAlgorithm, hash } from '../hash';
 import { mediaTypeSignal } from './media-type-signal';
 import type { Injector } from '../modules/modules';
+import { jobWorker } from '../worker/worker.module';
+import type { UnwrapResult, WrapResult } from '../worker/types';
 import { isWrap } from '../wrap/is-wrap';
 import type { WrapConfig, WrapValue } from '../wrap/types';
-import { unwrap as unwrapFn } from '../wrap/unwrap';
-import { wrap } from '../wrap/wrap';
 
 export interface Node {
   hashAlg(): HashAlgorithm;
@@ -55,11 +55,13 @@ function chainedSetter<T, R>(this: [R, (v: T) => void], value: T) {
 
 async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
   const [node, wrapConfigs, inject] = this;
+  const getCodec = inject(getCodecFn);
   const mediaType = node.mediaType();
   function serialize(mediaType: MediaType, value: unknown) {
-    return inject(getCodec)(mediaType.type).encode(value, mediaType);
+    return getCodec(mediaType.type).encode(value, mediaType);
   }
   if (wrapConfigs.length) {
+    const worker = inject(jobWorker);
     const wrapValues = new Array<WrapValue>();
 
     for (let i = 0; i < wrapConfigs.length; i++) {
@@ -67,9 +69,24 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
       const wrappedMediaType = first ? mediaType : { type: 'application/json' };
       const value = first ? node.value() : wrapValues[i - 1];
       const wrappedPayload = serialize(wrappedMediaType, value);
-      const wrapValue = (await inject(wrap)(wrapConfigs[i], wrappedPayload)) as WrapValue;
-      wrapValues.push(wrapValue);
-      wrapValue.mediaType = format(wrappedMediaType);
+      const { hash, ...wrapValue } = await new Promise<WrapResult>((resolve) => {
+        worker.postToOne(
+          {
+            action: 'wrap',
+            payload: {
+              ...wrapConfigs[i],
+              payload: wrappedPayload,
+            },
+          },
+          ({ payload }) => resolve(payload),
+        );
+      });
+      const realWrapValue = {
+        hash: new Hash(hash[0], hash.subarray(1)),
+        mediaType: format(wrappedMediaType),
+        ...wrapValue,
+      };
+      wrapValues.push(realWrapValue);
     }
 
     const final = wrapValues.pop()!;
@@ -87,7 +104,7 @@ function calculateHash(this: Node) {
 
 async function setPayload(this: [Node, WrapConfig[], Injector], payload: Uint8Array) {
   const [node, wrappers, inject] = this;
-  const unwrap = inject(unwrapFn);
+  const getCodec = inject(getCodecFn);
 
   wrappers.length = 0;
   let mediaType = node.mediaType();
@@ -95,11 +112,23 @@ async function setPayload(this: [Node, WrapConfig[], Injector], payload: Uint8Ar
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
-    const serializer = inject(getCodec)(mediaType.type);
+    const serializer = getCodec(mediaType.type);
     const value = serializer.decode(currentPayload, mediaType);
 
     if (isWrap(value)) {
-      const [payload, config] = await unwrap(value as WrapValue);
+      const { hash, ...request } = value as WrapValue;
+      const { config, payload } = await new Promise<UnwrapResult>((resolve) => {
+        inject(jobWorker).postToOne(
+          {
+            action: 'unwrap',
+            payload: {
+              ...request,
+              hash: hash.toBytes(),
+            },
+          },
+          ({ payload }) => resolve(payload),
+        );
+      });
       currentPayload = payload;
       mediaType = parse((value as WrapValue).mediaType);
       wrappers.push(config);

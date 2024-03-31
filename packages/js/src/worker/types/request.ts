@@ -10,6 +10,6 @@ export type Request<T extends Action> = {
   | { action: 'keyring.create'; payload: Payload.CreateKeyringRequest }
   | { action: 'keyring.import'; payload: Payload.ImportKeyringRequest }
   | { action: 'keyring.load'; payload: Payload.LoadKeyringRequest }
-  | { action: 'sign'; payload: Payload.SignatureRequest }
-  | { action: 'verify'; payload: Payload.VerifySignatureRequest }
+  | { action: 'unwrap'; payload: Payload.UnwrapRequest }
+  | { action: 'wrap'; payload: Payload.WrapRequest }
 );

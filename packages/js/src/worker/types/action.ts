@@ -6,5 +6,5 @@ export type PostToOneAction =
   | 'identity.get'
   | 'keyring.create'
   | 'keyring.import'
-  | 'sign'
-  | 'verify';
+  | 'unwrap'
+  | 'wrap';

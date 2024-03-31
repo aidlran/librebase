@@ -2,7 +2,9 @@ import { sign, verify } from '@noble/secp256k1';
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
 import { shred } from '../../crypto';
+import { HashAlgorithm, hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
+import { WrapType } from '../../wrap';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
@@ -62,16 +64,52 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           break;
         }
         // TODO: move signature algorithms to crypto module
-        case 'sign': {
-          const identityID = publicKeys![JSON.stringify(Array.from(job.payload.publicKey))];
-          if (!identityID) throw new TypeError('No private key available');
-          const identity = await getIdentity(dispatch, identityID, keyring);
-          if (!identity.privateKey) throw new TypeError('No private key available');
-          resultPayload = await sign(job.payload.hash, identity.privateKey);
+        case 'unwrap': {
+          switch (job.payload.type) {
+            case WrapType.ECDSA: {
+              if (
+                !verify(
+                  job.payload.metadata.signature,
+                  (await hash(job.payload.hash[0], job.payload.payload)).value,
+                  job.payload.metadata.publicKey,
+                )
+              ) {
+                throw new Error('Invalid signature');
+              }
+              resultPayload = {
+                config: {
+                  hashAlg: job.payload.hash[0],
+                  metadata: job.payload.metadata.publicKey,
+                  type: job.payload.type,
+                },
+                payload: job.payload.payload,
+              };
+              break;
+            }
+          }
           break;
         }
-        case 'verify': {
-          resultPayload = verify(job.payload.signature, job.payload.hash, job.payload.publicKey);
+        case 'wrap': {
+          const hashAlg = job.payload.hashAlg ?? HashAlgorithm.SHA256;
+          const payloadHash = await hash(hashAlg, job.payload.payload);
+          switch (job.payload.type) {
+            case WrapType.ECDSA: {
+              const identityID = publicKeys![JSON.stringify(Array.from(job.payload.metadata))];
+              if (!identityID) throw new TypeError('No private key available');
+              const identity = await getIdentity(dispatch, identityID, keyring);
+              if (!identity.privateKey) throw new TypeError('No private key available');
+              resultPayload = {
+                hash: payloadHash.toBytes(),
+                metadata: {
+                  publicKey: job.payload.metadata,
+                  signature: await sign(payloadHash.value, identity.privateKey),
+                },
+                payload: job.payload.payload,
+                type: job.payload.type,
+              };
+              break;
+            }
+          }
           break;
         }
         default: {
