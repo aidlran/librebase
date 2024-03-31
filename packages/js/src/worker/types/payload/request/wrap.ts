@@ -1,5 +1,5 @@
 import type { WrapConfig } from '../../../../wrap';
 
-export interface WrapRequest extends WrapConfig {
+export type WrapRequest = WrapConfig & {
   payload: Uint8Array;
-}
+};

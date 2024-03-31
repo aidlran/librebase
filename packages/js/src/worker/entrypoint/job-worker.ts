@@ -5,8 +5,16 @@ import { shred } from '../../crypto';
 import { HashAlgorithm, hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
 import { WrapType } from '../../wrap';
+import type { ECDSAWrapValue } from '../../wrap/types';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type { Job, WorkerDataRequest, WorkerMessage } from '../types';
+import type {
+  Job,
+  UnwrapRequest,
+  UnwrapResult,
+  WorkerDataRequest,
+  WorkerMessage,
+  WrapResult,
+} from '../types';
 import { WorkerMessageType } from '../types';
 import { getIdentity } from './jobs/identity/get';
 import { createKeyring } from './jobs/keyring/create';
@@ -67,25 +75,28 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'unwrap': {
           switch (job.payload.type) {
             case WrapType.ECDSA: {
+              const request = job.payload as UnwrapRequest & ECDSAWrapValue;
               if (
                 !verify(
-                  job.payload.metadata.signature,
-                  (await hash(job.payload.hash[0], job.payload.payload)).value,
-                  job.payload.metadata.publicKey,
+                  request.metadata.signature,
+                  (await hash(request.hash[0], request.payload)).value,
+                  request.metadata.publicKey,
                 )
               ) {
                 throw new Error('Invalid signature');
               }
               resultPayload = {
                 config: {
-                  hashAlg: job.payload.hash[0],
-                  metadata: job.payload.metadata.publicKey,
-                  type: job.payload.type,
+                  hashAlg: request.hash[0],
+                  metadata: request.metadata.publicKey,
+                  type: request.type,
                 },
-                payload: job.payload.payload,
-              };
+                payload: request.payload,
+              } as UnwrapResult;
               break;
             }
+            default:
+              throw new Error('Unsupported wrap type');
           }
           break;
         }
@@ -106,9 +117,11 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 },
                 payload: job.payload.payload,
                 type: job.payload.type,
-              };
+              } as WrapResult;
               break;
             }
+            default:
+              throw new Error('Unsupported wrap type');
           }
           break;
         }

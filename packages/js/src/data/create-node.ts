@@ -84,8 +84,8 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
       const realWrapValue = {
         hash: new Hash(hash[0], hash.subarray(1)),
         mediaType: format(wrappedMediaType),
-        ...wrapValue,
-      };
+        ...(wrapValue as Omit<WrapValue, 'hash' | 'mediaType'>),
+      } as WrapValue;
       wrapValues.push(realWrapValue);
     }
 

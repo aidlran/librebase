@@ -1,5 +1,5 @@
 import type { WrapValue } from '../../../../wrap/types';
 
-export interface UnwrapRequest extends Omit<WrapValue, 'hash'> {
+export type UnwrapRequest = Omit<WrapValue, 'hash'> & {
   hash: Uint8Array;
-}
+};
