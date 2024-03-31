@@ -1,7 +1,6 @@
 export type * from './request/create-keyring';
 export type * from './request/import-keyring';
 export type * from './request/load-keyring';
-export type * from './request/unwrap';
 export type * from './request/wrap';
 
 export type * from './result/create-keyring';

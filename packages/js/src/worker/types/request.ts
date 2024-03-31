@@ -1,3 +1,4 @@
+import type { WrapValue } from '../../wrap/wrap-value';
 import type { Action } from './action';
 import type * as Payload from './payload/index';
 
@@ -10,6 +11,6 @@ export type Request<T extends Action> = {
   | { action: 'keyring.create'; payload: Payload.CreateKeyringRequest }
   | { action: 'keyring.import'; payload: Payload.ImportKeyringRequest }
   | { action: 'keyring.load'; payload: Payload.LoadKeyringRequest }
-  | { action: 'unwrap'; payload: Payload.UnwrapRequest }
+  | { action: 'unwrap'; payload: WrapValue }
   | { action: 'wrap'; payload: Payload.WrapRequest }
 );

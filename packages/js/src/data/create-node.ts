@@ -3,13 +3,13 @@ import { format, parse, type MediaType } from 'content-type';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
 import { getCodec as getCodecFn } from '../codec/get';
-import { Hash, HashAlgorithm, hash } from '../hash';
-import { mediaTypeSignal } from './media-type-signal';
+import { HashAlgorithm, hash } from '../hash';
 import type { Injector } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 import type { UnwrapResult, WrapResult } from '../worker/types';
+import type { WrapConfig, WrapValue } from '../wrap';
 import { isWrap } from '../wrap/is-wrap';
-import type { WrapConfig, WrapValue } from '../wrap/types';
+import { mediaTypeSignal } from './media-type-signal';
 
 export interface Node {
   hashAlg(): HashAlgorithm;
@@ -69,7 +69,7 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
       const wrappedMediaType = first ? mediaType : { type: 'application/json' };
       const value = first ? node.value() : wrapValues[i - 1];
       const wrappedPayload = serialize(wrappedMediaType, value);
-      const { hash, ...wrapValue } = await new Promise<WrapResult>((resolve) => {
+      const wrapValue = (await new Promise<WrapResult>((resolve) => {
         worker.postToOne(
           {
             action: 'wrap',
@@ -80,13 +80,9 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
           },
           ({ payload }) => resolve(payload),
         );
-      });
-      const realWrapValue = {
-        hash: new Hash(hash[0], hash.subarray(1)),
-        mediaType: format(wrappedMediaType),
-        ...(wrapValue as Omit<WrapValue, 'hash' | 'mediaType'>),
-      } as WrapValue;
-      wrapValues.push(realWrapValue);
+      })) as WrapValue;
+      wrapValue.mediaType = format(wrappedMediaType);
+      wrapValues.push(wrapValue);
     }
 
     const final = wrapValues.pop()!;
@@ -116,15 +112,11 @@ async function setPayload(this: [Node, WrapConfig[], Injector], payload: Uint8Ar
     const value = serializer.decode(currentPayload, mediaType);
 
     if (isWrap(value)) {
-      const { hash, ...request } = value as WrapValue;
       const { config, payload } = await new Promise<UnwrapResult>((resolve) => {
         inject(jobWorker).postToOne(
           {
             action: 'unwrap',
-            payload: {
-              ...request,
-              hash: hash.toBytes(),
-            },
+            payload: value as WrapValue,
           },
           ({ payload }) => resolve(payload),
         );

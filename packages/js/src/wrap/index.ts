@@ -1,2 +1,3 @@
 export * from './enum';
-export type { WrapConfig } from './types';
+export type * from './wrap-config';
+export type * from './wrap-value';

@@ -1,7 +1,7 @@
 import { base58 } from '../crypto/encode/base';
 import type { HashAlgorithm } from './algorithm.enum';
 
-type HashBytes = Uint8Array & { 0: HashAlgorithm };
+export type HashBytes = Uint8Array & { 0: HashAlgorithm };
 
 export class Hash {
   constructor(

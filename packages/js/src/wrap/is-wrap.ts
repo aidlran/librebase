@@ -1,8 +1,7 @@
 import { instance, number, object, optional, string, unknown, safeParse } from 'valibot';
-import { Hash } from '../hash';
 
 const wrapSchema = object({
-  hash: instance(Hash),
+  hash: instance(Uint8Array),
   mediaType: string(),
   metadata: optional(unknown()),
   payload: instance(Uint8Array),
