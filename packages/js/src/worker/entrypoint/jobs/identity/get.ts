@@ -1,4 +1,5 @@
 import type { BIP32Interface } from 'bip32';
+import { integer, number, optional, record, string, safeParse, type Input } from 'valibot';
 import { KdfType } from '../../../../crypto/kdf/types';
 import type { Dispatch } from '../../../dispatch/create-dispatch';
 import {
@@ -9,7 +10,8 @@ import {
   WorkerMessageType,
 } from '../../../types';
 
-type IndexData = Record<string, number>;
+const indexSchema = optional(record(string(), number([integer()])));
+type IndexData = Input<typeof indexSchema>;
 
 export function getIdentity(
   dispatch: Dispatch<WorkerDataRequest, unknown>,
@@ -17,7 +19,7 @@ export function getIdentity(
   keyring?: BIP32Interface,
 ) {
   if (!keyring) throw new TypeError('No active keyring');
-  return new Promise<BIP32Interface>((resolve) => {
+  return new Promise<BIP32Interface>((resolve, reject) => {
     const indexKey = keyring.deriveHardened(0);
     const indexRequest: GetRootNodeRequest = [
       WorkerMessageType.DATA,
@@ -26,7 +28,9 @@ export function getIdentity(
       new Uint8Array(indexKey.publicKey),
     ];
     dispatch(indexRequest, (response) => {
-      // TODO: may be a good idea to validate the data structure
+      if (!safeParse(indexSchema, response).success) {
+        return reject('Got invalid index data');
+      }
       const indexData: IndexData = (response as IndexData) ?? { [id]: 0 };
       let keyIndex = indexData[id];
       const needPush = !response || !keyIndex;
