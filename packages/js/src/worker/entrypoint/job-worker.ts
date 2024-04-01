@@ -177,7 +177,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               const identity = await getIdentity(dispatch, identityID, keyring);
               if (!identity.privateKey) throw new TypeError('No private key available');
 
-              const hashAlg = job.payload.metadata.hashAlg ?? 'SHA-256';
+              const encryptionHashAlg = job.payload.metadata.hashAlg ?? 'SHA-256';
               const iterations = job.payload.metadata.iterations ?? 600000;
               const iv = job.payload.metadata.iv ?? crypto.getRandomValues(new Uint8Array(12));
               const kdf = job.payload.metadata.kdf ?? 'PBKDF2';
@@ -194,7 +194,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               const derivedKey = await crypto.subtle.deriveKey(
                 {
                   name: kdf,
-                  hash: hashAlg,
+                  hash: encryptionHashAlg,
                   salt,
                   iterations,
                 },
@@ -216,9 +216,9 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               );
 
               resultPayload = {
-                hash: new Uint8Array(),
+                hash: payloadHash.toBytes(),
                 metadata: {
-                  hashAlg,
+                  hashAlg: encryptionHashAlg,
                   iterations,
                   iv,
                   kdf,
