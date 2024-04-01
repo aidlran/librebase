@@ -3,9 +3,11 @@
 import { derived, tick } from '@adamantjs/signals';
 import type { MediaType } from 'content-type';
 import { channelSet } from '../channel/channel-set';
+import { base58 } from '../crypto';
 import { createNode, type Node } from '../data/create-node';
 import { getAddressedNode } from '../data/get-node';
 import type { HashAlgorithm } from '../hash';
+import { log } from '../logger/logger';
 import { getModule } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 import { WrapType } from '../wrap/enum';
@@ -72,6 +74,11 @@ export async function getIdentity(identityID: string, instanceID?: string) {
   identity.push = async function (this: () => Promise<Identity>) {
     await tick();
     const setAddressedHashPromise = identity.hash().then((hash) => {
+      log(undefined, 'Update identity data', {
+        id: identity.id,
+        address: base58.encode(identity.publicKey),
+        hash: base58.encode(hash),
+      });
       return Promise.all(
         [...getModule(channelSet, instanceID)].map((channel) => {
           return channel.setAddressedNodeHash(identity.publicKey, hash);

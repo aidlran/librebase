@@ -3,7 +3,9 @@ import { format, parse, type MediaType } from 'content-type';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
 import { getCodec as getCodecFn } from '../codec/get';
+import { base58, base64 } from '../crypto';
 import { HashAlgorithm, hash } from '../hash';
+import { enabledLogLevels, log } from '../logger/logger';
 import type { Injector } from '../modules/modules';
 import { jobWorker } from '../worker/worker.module';
 import type { UnwrapResult, WrapResult } from '../worker/types';
@@ -43,6 +45,7 @@ export function createNode(this: Injector) {
     node.pushWrapper = pushWrapper.bind([node, wrappers]);
     node.hash = derived(calculateHash.bind(node));
     node.push = pushNode.bind([node, wrappers, this]);
+    log(undefined, 'Node interface created');
     return node;
   };
 }
@@ -58,9 +61,17 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
   const getCodec = inject(getCodecFn);
   const mediaType = node.mediaType();
   function serialize(mediaType: MediaType, value: unknown) {
-    return getCodec(mediaType.type).encode(value, mediaType);
+    const payload = getCodec(mediaType.type).encode(value, mediaType);
+    if (enabledLogLevels.has('log')) {
+      log({}, 'Serialized', value, 'as', format(mediaType), 'result:', base64.encode(payload));
+    }
+    return payload;
   }
   if (wrapConfigs.length) {
+    if (enabledLogLevels.has('log')) {
+      log({}, 'Node', node.value(), 'has wrap configs:', [...wrapConfigs]);
+    }
+
     const worker = inject(jobWorker);
     const wrapValues = new Array<WrapValue>();
 
@@ -83,11 +94,29 @@ async function calculatePayload(this: [Node, WrapConfig[], Injector]) {
       })) as WrapValue;
       wrapValue.mediaType = format(wrappedMediaType);
       wrapValues.push(wrapValue);
+      log(undefined, 'Got wrap value', wrapValue);
+    }
+
+    if (enabledLogLevels.has('log')) {
+      log(
+        {},
+        'Node',
+        node.value(),
+        'wrap values:',
+        wrapValues.map((wrapValue) => ({
+          hash: base58.encode(wrapValue.hash),
+          mediaType: wrapValue.mediaType,
+          metadata: wrapValue.metadata,
+          payload: base64.encode(wrapValue.payload),
+          type: wrapValue.type,
+        })),
+      );
     }
 
     const final = wrapValues.pop()!;
     return serialize({ type: 'application/json' }, final);
   } else {
+    log(undefined, 'Node has no wrap configs');
     return serialize(mediaType, node.value());
   }
 }
@@ -138,6 +167,13 @@ async function pushNode(this: [Node, WrapConfig[], Injector]) {
     mediaType: wrappers.length ? 'application/json' : format(node.mediaType()),
     payload: await node.payload(),
   };
+  if (enabledLogLevels.has('log')) {
+    log({}, 'Push', {
+      hash: base58.encode(data.hash),
+      mediaType: data.mediaType,
+      payload: base64.encode(data.payload),
+    });
+  }
   await Promise.all([...inject(channelSet)].map((channel) => channel.putNode(data)));
   return this[0];
 }
