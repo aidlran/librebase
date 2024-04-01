@@ -5,4 +5,5 @@ export * from './data';
 export * from './hash';
 export * from './identity';
 export * from './keyring';
+export * from './logger';
 export * from './wrap';
