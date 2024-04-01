@@ -1,5 +1,5 @@
 import { object, string, type Input, safeParse } from 'valibot';
-import { base58 } from '../../../crypto/encode/base';
+import { base58 } from '../../../buffer';
 import { Hash } from '../../../hash';
 import type { JsonCodecPlugin } from '../types';
 

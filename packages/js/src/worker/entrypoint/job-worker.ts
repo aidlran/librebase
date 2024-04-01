@@ -1,7 +1,7 @@
 import { sign, verify } from '@noble/secp256k1';
 import { type BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
-import { shred } from '../../crypto';
+import { shred } from '../../buffer';
 import { HashAlgorithm, hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
 import { WrapType, type ECDSAWrapValue, type EncryptWrapValue } from '../../wrap';

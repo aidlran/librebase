@@ -1,4 +1,4 @@
-import { base58 } from '../crypto/encode/base';
+import { base58 } from '../buffer';
 import type { HashAlgorithm } from './algorithm.enum';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };

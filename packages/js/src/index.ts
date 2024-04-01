@@ -1,3 +1,4 @@
+export * from './buffer';
 export * from './channel';
 export * from './codec';
 export * from './crypto';

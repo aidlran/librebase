@@ -1,5 +1,3 @@
-export * from './common/buffer-utils';
-export * from './encode/base';
 export * from './kdf/types';
 export * from './sign/types';
 

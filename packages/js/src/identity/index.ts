@@ -2,8 +2,8 @@
 
 import { derived, tick } from '@adamantjs/signals';
 import type { MediaType } from 'content-type';
+import { base58 } from '../buffer';
 import { channelSet } from '../channel/channel-set';
-import { base58 } from '../crypto';
 import { createNode, type Node } from '../data/create-node';
 import { getAddressedNode } from '../data/get-node';
 import type { HashAlgorithm } from '../hash';
@@ -50,6 +50,7 @@ export async function getIdentity(identityID: string, instanceID?: string) {
 
   function appendWrappers() {
     if (!wrappersAdded) {
+      identity.pushWrapper({ type: WrapType.Encrypt, metadata: { pubKey: publicKey } });
       identity.pushWrapper({ type: WrapType.ECDSA, metadata: publicKey });
       wrappersAdded = true;
     }
@@ -57,6 +58,7 @@ export async function getIdentity(identityID: string, instanceID?: string) {
 
   function removeWrappers() {
     if (wrappersAdded) {
+      identity.popWrapper();
       identity.popWrapper();
       wrappersAdded = false;
     }
@@ -72,6 +74,9 @@ export async function getIdentity(identityID: string, instanceID?: string) {
   );
 
   identity.push = async function (this: () => Promise<Identity>) {
+    appendWrappers();
+    pushing = true;
+    identity.setValue(identity.value());
     await tick();
     const setAddressedHashPromise = identity.hash().then((hash) => {
       void log(
@@ -91,8 +96,6 @@ export async function getIdentity(identityID: string, instanceID?: string) {
         }),
       );
     });
-    appendWrappers();
-    pushing = true;
     await Promise.all([this(), setAddressedHashPromise]);
     removeWrappers();
     return identity;

@@ -1,9 +1,9 @@
 import { derived, signal, tick } from '@adamantjs/signals';
 import { format, parse, type MediaType } from 'content-type';
+import { base58, base64 } from '../buffer';
 import type { SerializedNodeData } from '../channel';
 import { channelSet } from '../channel/channel-set';
 import { getCodec as getCodecFn } from '../codec/get';
-import { base58, base64 } from '../crypto';
 import { HashAlgorithm, hash } from '../hash';
 import { log } from '../logger/logger';
 import type { Injector } from '../modules/modules';

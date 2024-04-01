@@ -1,7 +1,7 @@
 import { tick } from '@adamantjs/signals';
+import { base58 } from '../buffer';
 import type { RetrievedNodeData } from '../channel';
 import { raceChannels } from '../channel/race';
-import { base58 } from '../crypto';
 import { error, getRequestID, log } from '../logger/logger';
 import type { Injector } from '../modules/modules';
 import { createNode } from './create-node';

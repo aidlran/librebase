@@ -1,5 +1,5 @@
 import { literal, object, safeParse, string, type Input } from 'valibot';
-import { base64 } from '../../../crypto/encode/base';
+import { base64 } from '../../../buffer';
 import type { JsonCodecPlugin } from '../types';
 
 const schema = object({
