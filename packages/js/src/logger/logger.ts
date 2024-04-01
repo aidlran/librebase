@@ -56,7 +56,7 @@ function processLog(
   ...messages: unknown[]
 ) {
   const level = config?.level ?? defaultLevel;
-  if (enabledLogLevels.has(level)) {
+  if (enabledLogLevels.has('all') || enabledLogLevels.has(level)) {
     (config ??= {}).level ??= level;
     console[defaultLevel](buildLogString(config), ...messages);
   }
