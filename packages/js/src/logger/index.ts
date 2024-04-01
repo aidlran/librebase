@@ -1,1 +1,1 @@
-export { setLoggingEnabled } from './logger';
+export { loggingEnabled, setLoggingEnabled } from './logger';

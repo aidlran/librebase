@@ -1,20 +1,20 @@
 /* eslint-disable no-console */
 
-let enabled = false;
+export let loggingEnabled = false;
 
 export function setLoggingEnabled(value: boolean) {
-  enabled = value;
-  log(`Librebase: logging is ${enabled ? 'en' : 'dis'}abled`);
+  loggingEnabled = value;
+  log(`Logging is ${loggingEnabled ? 'en' : 'dis'}abled`);
 }
 
-export function error(message?: unknown, ...optionalParams: unknown[]) {
-  enabled && console.error(message, ...optionalParams);
+export function error(...messages: unknown[]) {
+  loggingEnabled && console.error('Librebase:', ...messages);
 }
 
-export function log(message?: unknown, ...optionalParams: unknown[]) {
-  enabled && console.log(message, ...optionalParams);
+export function log(...messages: unknown[]) {
+  loggingEnabled && console.log('Librebase:', ...messages);
 }
 
-export function warn(message?: unknown, ...optionalParams: unknown[]) {
-  enabled && console.warn(message, ...optionalParams);
+export function warn(...messages: unknown[]) {
+  loggingEnabled && console.warn('Librebase:', ...messages);
 }
