@@ -16,7 +16,7 @@ export function getNode(this: Injector) {
       (data) => this(parseSerializedNode)(data, hash, requestID),
     );
     if (enabledLogLevels.has('log')) {
-      result.then((v) => {
+      void result.then((v) => {
         log({ requestID }, v ? 'Found' : 'Not found', {
           hash: base58.encode(hash),
         });
@@ -36,9 +36,9 @@ export function getAddressedNode(this: Injector) {
       (hash) => this(getNode)(hash, requestID),
     );
     if (enabledLogLevels.has('log')) {
-      result.then((v) => {
+      void result.then((v) => {
         if (v) {
-          v.hash().then((h) =>
+          void v.hash().then((h) =>
             log({ requestID }, 'Found', {
               address: base58.encode(address),
               hash: base58.encode(h),
