@@ -1,8 +1,1 @@
-export {
-  enabledLogFeatures,
-  enabledLogLevels,
-  setLogLevel,
-  setlogFeatureEnabled,
-  type LogFeature,
-  type LogLevel,
-} from './logger';
+export { setLogLevel, setlogFeatureEnabled, type LogFeature, type LogLevel } from './logger';

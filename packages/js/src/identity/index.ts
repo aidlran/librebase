@@ -74,11 +74,17 @@ export async function getIdentity(identityID: string, instanceID?: string) {
   identity.push = async function (this: () => Promise<Identity>) {
     await tick();
     const setAddressedHashPromise = identity.hash().then((hash) => {
-      log(undefined, 'Update identity data', {
-        id: identity.id,
-        address: base58.encode(identity.publicKey),
-        hash: base58.encode(hash),
-      });
+      void log(
+        () => [
+          'Update identity data',
+          {
+            id: identity.id,
+            address: base58.encode(identity.publicKey),
+            hash: base58.encode(hash),
+          },
+        ],
+        { feature: 'write' },
+      );
       return Promise.all(
         [...getModule(channelSet, instanceID)].map((channel) => {
           return channel.setAddressedNodeHash(identity.publicKey, hash);
