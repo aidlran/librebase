@@ -8,7 +8,7 @@ export interface EncodingMap {
   base64: string;
 }
 
-export function getMultipleEncodings<T extends Encoding, R extends Exclude<Encoding, T | 'raw'>[]>(
+export function getMultipleEncodings<T extends Encoding, R extends Exclude<Encoding, 'raw'>[]>(
   input: EncodingMap[T],
   inputEncoding: T,
   outputEncodings: R,

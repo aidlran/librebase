@@ -1,63 +1,99 @@
-import { tick } from '@adamantjs/signals';
-import { base58 } from '../buffer';
+import { tick, type Signal, signal } from '@adamantjs/signals';
+import { base58, getMultipleEncodings } from '../buffer';
 import type { RetrievedNodeData } from '../channel';
 import { raceChannels } from '../channel/race';
 import { error, getRequestID, log } from '../logger/logger';
 import type { Injector } from '../modules/modules';
-import { createNode } from './create-node';
+import { createNode, type Node } from './create-node';
+
+function validNodeCache(): Record<string, Node> {
+  return {};
+}
+
+function addressedCache(): Record<string, Signal<Node>> {
+  return {};
+}
 
 export function getNode(this: Injector) {
-  return (hash: Uint8Array, requestID = getRequestID()) => {
-    void log(() => ['Retrieving', { hash: base58.encode(hash) }], {
-      feature: 'retrieve',
-      requestID,
-    });
-    const result = this(raceChannels)(
-      (channel) => channel.getNode(hash),
-      (data) => this(parseSerializedNode)(data, hash, requestID),
+  return async (hash: string | Uint8Array, requestID = getRequestID()) => {
+    const { raw, base58 } = getMultipleEncodings(
+      hash,
+      typeof hash === 'string' ? 'base58' : 'raw',
+      ['base58'],
     );
-    void log(async () => [(await result) ? 'Found' : 'Not found', { hash: base58.encode(hash) }], {
+
+    void log(() => ['Requested', { hash: base58 }], {
       feature: 'retrieve',
       requestID,
     });
+
+    const cache = this(validNodeCache);
+    const cached = cache[base58];
+    if (cached) {
+      void log(() => ['Found in cache', { hash: base58 }], { feature: 'retrieve', requestID });
+      return cached;
+    }
+
+    const result = await this(raceChannels)(
+      (channel) => channel.getNode(raw),
+      (data) => this(parseSerializedNode)(data, raw, requestID),
+    );
+
+    if (result) {
+      cache[base58] = result;
+      void log(() => ['Added to cache', { hash: base58 }], { feature: 'retrieve', requestID });
+    }
+
+    void log(() => [result ? 'Retrieved' : 'Not found', { hash: base58 }], {
+      feature: 'retrieve',
+      requestID,
+    });
+
     return result;
   };
 }
 
 export function getAddressedNode(this: Injector) {
-  return (address: Uint8Array, requestID = getRequestID()) => {
-    void log(() => ['Retrieving', { address: base58.encode(address) }], {
+  return async (address: string | Uint8Array, requestID = getRequestID()) => {
+    const { raw, base58 } = getMultipleEncodings(
+      address,
+      typeof address === 'string' ? 'base58' : 'raw',
+      ['base58'],
+    );
+
+    void log(() => ['Requested', { address: base58 }], {
       feature: 'retrieve',
       requestID,
     });
-    const result = this(raceChannels)(
-      (channel) => channel.getAddressedNodeHash(address),
+
+    const cache = this(addressedCache);
+    const cached = cache[base58]?.[0]();
+    if (cached) {
+      void log(() => ['Found in cache', { address: base58 }], { feature: 'retrieve', requestID });
+      return cached;
+    }
+
+    const result = await this(raceChannels)(
+      (channel) => channel.getAddressedNodeHash(raw),
       (hash) => this(getNode)(hash, requestID),
     );
 
-    void log(
-      async () => {
-        const encAddress = base58.encode(address);
-        const node = await result;
-        if (!node) return ['Not found', { address: encAddress }];
-        const hash = base58.encode(await node.hash());
-        return [
-          'Found',
-          {
-            address: encAddress,
-            hash,
-          },
-        ];
-      },
-      { feature: 'retrieve', requestID },
-    );
+    if (result) {
+      cache[base58] = signal(result);
+      void log(() => ['Added to cache', { address: base58 }], { feature: 'retrieve', requestID });
+    }
+
+    void log(() => [result ? 'Retrieved' : 'Not found', { address: base58 }], {
+      feature: 'retrieve',
+      requestID,
+    });
 
     return result;
   };
 }
 
 export function parseSerializedNode(this: Injector) {
-  return async (data: RetrievedNodeData, hash: Uint8Array, requestID: number) => {
+  return async (data: RetrievedNodeData, hash: Uint8Array, requestID?: number) => {
     void log(
       () => [
         'Got node',
@@ -97,7 +133,7 @@ export function parseSerializedNode(this: Injector) {
   };
 }
 
-function rejectHash(hash: Uint8Array, requestID: number) {
+function rejectHash(hash: Uint8Array, requestID?: number) {
   void error(() => ['Failed hash validation', { hash: base58.encode(hash) }], {
     feature: 'retrieve',
     requestID,
