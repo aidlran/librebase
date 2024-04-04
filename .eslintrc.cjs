@@ -7,11 +7,12 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
+    'plugin:compat/recommended',
     'plugin:svelte/recommended',
     'plugin:svelte/prettier',
     'plugin:prettier/recommended',
   ],
-  plugins: ['deprecation'],
+  plugins: ['compat', 'deprecation'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',

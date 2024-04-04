@@ -7,10 +7,10 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.1",
-    "@sveltejs/kit": "^2.5.4",
+    "@sveltejs/kit": "^2.5.5",
     "@sveltejs/vite-plugin-svelte": "^3.0.2",
     "svelte": "^4.2.12",
-    "vite": "^5.1.6"
+    "vite": "^5.2.8"
   },
   "type": "module"
 }
