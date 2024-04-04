@@ -10,7 +10,7 @@ import type { ChannelDriver, GetResult } from './types';
 export function raceChannels(this: Injector) {
   return <T, R>(
     query: (channel: ChannelDriver) => GetResult<T>,
-    validator: (data: T) => Promise<R | void>,
+    validator: (data: T) => R | void | Promise<R | void>,
   ) => {
     return new Promise<R | void>((resolve) => {
       const channels = this(channelSet);
@@ -29,7 +29,7 @@ export function raceChannels(this: Injector) {
             .then((data) => {
               if (!resolved) {
                 if (data !== null && data !== undefined) {
-                  void validator(data).then((validValue) => {
+                  void Promise.resolve(validator(data)).then((validValue) => {
                     if (!resolved) {
                       if (validValue !== null && validValue !== undefined) {
                         resolved = true;
