@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
+import { encodes } from '../../testing/encodes';
 import { getMultipleEncodings } from './multiple-encode';
-import { encodes } from './test/encodes';
 
 describe('getMultipleEncodings', () => {
   for (const [string, raw, base58, base64] of encodes) {

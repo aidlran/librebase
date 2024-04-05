@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
+import { encodes } from '../../testing/encodes';
 import { bytesToString, shred, stringToBytes } from './buffer-utils';
-import { encodes } from './test/encodes';
 
 describe('Buffer utilities', () => {
   describe('bytesToString', () => {

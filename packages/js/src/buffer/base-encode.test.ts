@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { encodes } from '../../testing/encodes';
 import { base58, base64 } from './base-encode';
-import { encodes } from './test/encodes';
 
 describe('Base58', () => {
   for (const [string, bytes, b58] of encodes) {
