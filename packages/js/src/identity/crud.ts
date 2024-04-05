@@ -39,18 +39,47 @@ export async function getIdentityValue(address: string | ArrayBuffer, instanceID
   }
 }
 
+export interface IdentityPutOptions extends PutOptions {
+  /**
+   * Whether to encrypt the payload with a default encryption.
+   *
+   * @todo Allow greater configuration. For now you can omit this and simply encrypt yourself.
+   */
+  encrypt?: boolean;
+}
+
 export async function putIdentity(
   address: string | ArrayBuffer,
   value: unknown,
   mediaType: string | MediaType,
-  options?: PutOptions,
+  options?: IdentityPutOptions,
 ) {
   const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
   const codec = getCodec(mediaTypeObj, options?.instanceID);
-  const payload = codec.encode(value, mediaTypeObj);
+  let payload = codec.encode(value, mediaTypeObj);
   const addressBytes =
     typeof address === 'string' ? base58.decode(address) : new Uint8Array(address);
-  const wrapValue = (await new Promise<WrapResult>((resolve) => {
+
+  const jsonMediaType = { type: 'application/json' };
+  const jsonEncoder = getCodec(jsonMediaType, options?.instanceID);
+
+  if (options?.encrypt) {
+    const encryptWrapValue = (await new Promise<WrapResult>((resolve) => {
+      getModule(jobWorker, options?.instanceID).postToOne(
+        {
+          action: 'wrap',
+          payload: { type: WrapType.Encrypt, metadata: { pubKey: addressBytes }, payload },
+        },
+        (response) => {
+          resolve(response.payload);
+        },
+      );
+    })) as WrapValue;
+    encryptWrapValue.mediaType = format(mediaTypeObj);
+    payload = jsonEncoder.encode(encryptWrapValue, jsonMediaType);
+  }
+
+  const signedWrapValue = (await new Promise<WrapResult>((resolve) => {
     getModule(jobWorker, options?.instanceID).postToOne(
       { action: 'wrap', payload: { type: WrapType.ECDSA, metadata: addressBytes, payload } },
       (response) => {
@@ -58,8 +87,10 @@ export async function putIdentity(
       },
     );
   })) as WrapValue;
-  wrapValue.mediaType = format(mediaTypeObj);
-  const hash = await putObject(wrapValue, { type: 'application/json' });
+  signedWrapValue.mediaType = format(mediaTypeObj);
+
+  const hash = await putObject(signedWrapValue, jsonMediaType);
+
   await queryChannelsAsync(getChannels(options?.instanceID), (channel) => {
     if (channel.setAddressHash) {
       return channel.setAddressHash(addressBytes, hash.toBytes());
