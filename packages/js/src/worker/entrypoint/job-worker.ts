@@ -21,8 +21,30 @@ const dispatch = createDispatch<WorkerDataRequest, unknown>(self, 1);
 
 let keyring: BIP32Interface | undefined;
 
-/** A map of text encoded public keys to their identity ID. */
-let publicKeys: Record<string, string> | undefined;
+/**
+ * A map of text encoded public keys to their identity ID.
+ *
+ * @todo Encode as base58 instead
+ */
+let identityPubKeyMap: Record<string, string> | undefined;
+
+async function findPrivateKey(address: Uint8Array): Promise<Buffer> {
+  if (!keyring) {
+    throw new Error('No active keyring');
+  }
+  let privateKey: Buffer | undefined;
+  const stringifiedPubKey = JSON.stringify(Array.from(address.subarray(1)));
+  const indexKey = keyring.deriveHardened(0);
+  if (stringifiedPubKey === JSON.stringify(Array.from(indexKey.publicKey))) {
+    privateKey = indexKey.privateKey;
+  } else {
+    const identityID = identityPubKeyMap![stringifiedPubKey];
+    if (!identityID) throw new TypeError('No private key available');
+    privateKey = (await getIdentity(dispatch, identityID, keyring)).privateKey;
+  }
+  if (!privateKey) throw new TypeError('No private key available');
+  return privateKey;
+}
 
 // eslint-disable-next-line @typescript-eslint/no-misused-promises
 self.addEventListener('message', async (event: MessageEvent<[number, number, Job]>) => {
@@ -40,12 +62,12 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'identity.get': {
           const publicKey = (await getIdentity(dispatch, job.payload, keyring)).publicKey;
           resultPayload = publicKey;
-          publicKeys![JSON.stringify(Array.from(publicKey))] = job.payload;
+          identityPubKeyMap![JSON.stringify(Array.from(publicKey))] = job.payload;
           break;
         }
         case 'keyring.clear': {
           if (keyring?.privateKey) shred(keyring.privateKey);
-          keyring = publicKeys = undefined;
+          keyring = identityPubKeyMap = undefined;
           break;
         }
         case 'keyring.create': {
@@ -59,7 +81,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'keyring.load': {
           const { node, result } = await loadKeyring(job.payload);
           keyring = node;
-          publicKeys = {};
+          identityPubKeyMap = {};
           resultPayload = result;
           break;
         }
@@ -88,15 +110,11 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
             }
 
             case WrapType.Encrypt: {
-              const identityID =
-                publicKeys![JSON.stringify(Array.from(job.payload.metadata.pubKey))];
-              if (!identityID) throw new TypeError('No private key available');
-              const identity = await getIdentity(dispatch, identityID, keyring);
-              if (!identity.privateKey) throw new TypeError('No private key available');
+              const privateKey = await findPrivateKey(job.payload.metadata.pubKey);
 
               const sourceKey = await crypto.subtle.importKey(
                 'raw',
-                identity.privateKey,
+                privateKey,
                 job.payload.metadata.kdf,
                 false,
                 ['deriveKey'],
@@ -154,15 +172,12 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           const payloadHash = await hash(hashAlg, job.payload.payload);
           switch (job.payload.type) {
             case WrapType.ECDSA: {
-              const identityID = publicKeys![JSON.stringify(Array.from(job.payload.metadata))];
-              if (!identityID) throw new TypeError('No private key available');
-              const identity = await getIdentity(dispatch, identityID, keyring);
-              if (!identity.privateKey) throw new TypeError('No private key available');
+              const privateKey = await findPrivateKey(job.payload.metadata);
               resultPayload = {
                 hash: payloadHash.toBytes(),
                 metadata: {
                   publicKey: job.payload.metadata,
-                  signature: await sign(payloadHash.value, identity.privateKey),
+                  signature: await sign(payloadHash.value, privateKey),
                 },
                 payload: job.payload.payload,
                 type: job.payload.type,
@@ -171,25 +186,16 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
             }
 
             case WrapType.Encrypt: {
-              const identityID =
-                publicKeys![JSON.stringify(Array.from(job.payload.metadata.pubKey))];
-              if (!identityID) throw new TypeError('No private key available');
-              const identity = await getIdentity(dispatch, identityID, keyring);
-              if (!identity.privateKey) throw new TypeError('No private key available');
-
+              const privateKey = await findPrivateKey(job.payload.metadata.pubKey);
               const encryptionHashAlg = job.payload.metadata.hashAlg ?? 'SHA-256';
               const iterations = job.payload.metadata.iterations ?? 600000;
               const iv = job.payload.metadata.iv ?? crypto.getRandomValues(new Uint8Array(12));
               const kdf = job.payload.metadata.kdf ?? 'PBKDF2';
               const salt = job.payload.metadata.salt ?? crypto.getRandomValues(new Uint8Array(16));
 
-              const sourceKey = await crypto.subtle.importKey(
-                'raw',
-                identity.privateKey,
-                kdf,
-                false,
-                ['deriveKey'],
-              );
+              const sourceKey = await crypto.subtle.importKey('raw', privateKey, kdf, false, [
+                'deriveKey',
+              ]);
 
               const derivedKey = await crypto.subtle.deriveKey(
                 {
