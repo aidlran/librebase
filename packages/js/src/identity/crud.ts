@@ -10,6 +10,17 @@ import { isWrap, WrapType, type WrapValue } from '../wrap';
 
 // TODO: separate address hash CRUD module
 
+export function getIdentityAddress(identityID: string, instanceID?: string) {
+  return new Promise<Uint8Array>((resolve) => {
+    getModule(jobWorker, instanceID).postToOne(
+      { action: 'identity.get', payload: identityID },
+      ({ payload }) => {
+        resolve(payload);
+      },
+    );
+  });
+}
+
 export async function getIdentityValue(address: string | ArrayBuffer, instanceID?: string) {
   const addressBytes = typeof address === 'string' ? base58.decode(address) : address;
   const channels = getChannels(instanceID);
