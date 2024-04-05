@@ -1,14 +1,8 @@
-import { getModule } from '../modules/modules';
-import { channelSet } from './channel-set';
-import type { ChannelDriver } from './types';
+export { getChannels, type Channels } from './channels';
 
 export * from './driver/indexeddb';
+
+export * from './query-async';
+export * from './query-sync';
+
 export type * from './types';
-
-export function registerDriver(driver: ChannelDriver, instanceID?: string) {
-  return getModule(channelSet, instanceID).add(driver);
-}
-
-export function unregisterDriver(driver: ChannelDriver, instanceID?: string) {
-  return getModule(channelSet, instanceID).delete(driver);
-}

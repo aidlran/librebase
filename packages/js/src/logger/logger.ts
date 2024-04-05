@@ -22,7 +22,7 @@ export function setLogLevel(desiredLevel: LogLevel) {
   }
 }
 
-export function setlogFeatureEnabled(desiredFeature: LogFeature, enabled: boolean) {
+export function setLogFeatureEnabled(desiredFeature: LogFeature, enabled: boolean) {
   enabledLogFeatures[enabled ? 'add' : 'delete'](desiredFeature);
   void log(() => [
     desiredFeature,

@@ -1,4 +1,4 @@
-import { getAllObjects } from '../indexeddb/indexeddb';
+import { getAllRecords } from '../indexeddb/indexeddb';
 import { getModule } from '../modules/modules';
 import type {
   CreateKeyringRequest,
@@ -92,7 +92,7 @@ export async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
     await openKeyringDB();
     dbOpen = true;
   }
-  const keyrings = await getAllObjects<PersistedKeyring<T>>('lbkeyrings', 'keyring');
+  const keyrings = await getAllRecords<PersistedKeyring<T>>('lbkeyrings', 'keyring');
   return keyrings.map((keyring) => ({ id: keyring.id, metadata: keyring.metadata }));
 }
 

@@ -1,4 +1,4 @@
 export * from './codecs';
+export * from './functions';
 export * from './json';
-export * from './register';
-export type { Codec } from './types';
+export * from './types';

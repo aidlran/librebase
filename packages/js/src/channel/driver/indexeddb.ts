@@ -1,55 +1,79 @@
-import { deleteObject, getObject, open, putObject } from '../../indexeddb/indexeddb';
-import type { ChannelDriver, RetrievedNodeData, SerializedNodeData } from '../types';
+import { deleteRecord, getRecord, open, putRecord } from '../../indexeddb/indexeddb';
+import type { ChannelDriver } from '../types';
+
+/** Configuration object for the IndexedDB channel driver. */
+export interface IndexedDbChannelOptions {
+  databaseName?: string;
+  addressTableName?: string;
+  objectTableName?: string;
+}
+
+interface AddressTableEntry {
+  address: ArrayBuffer;
+  hash: ArrayBuffer;
+}
+
+interface ObjectTableEntry {
+  hash: ArrayBuffer;
+  object: ArrayBuffer;
+}
 
 /**
- * @param {string} [dbName] The name of the IndexedDB database to use.
- * @returns A `ChannelDriver` interface for local indexedDB.
+ * Creates an IndexedDB channel.
+ *
+ * @param {IndexedDbChannelOptions} [config] An optional configuration object.
+ * @returns {Promise<ChannelDriver>} A promise that resolves with the `Channel` interface once the
+ *   indexedDB connection has been established.
  */
-export async function indexedDBDriver(dbName = 'lbdata'): Promise<ChannelDriver> {
+export async function indexeddb(config?: IndexedDbChannelOptions): Promise<IndexedDB> {
+  const databaseName = config?.databaseName ?? 'lbdata';
+  const addressTableName = config?.addressTableName ?? 'address';
+  const objectTableName = config?.objectTableName ?? 'object';
   await open(
-    dbName,
+    databaseName,
     [
-      ['address', { keyPath: 'address' }],
-      ['data', { keyPath: 'hash' }],
+      [addressTableName, { keyPath: 'address' }],
+      [objectTableName, { keyPath: 'hash' }],
     ],
     1,
   );
-  return {
-    deleteNode: deleteNode.bind(dbName),
-    getNode: getNode.bind(dbName),
-    putNode: putNode.bind(dbName),
-    getAddressedNodeHash: getAddressedNodeHash.bind(dbName),
-    setAddressedNodeHash: setAddressedNodeHash.bind(dbName),
-    unsetAddressedNode: unsetAddressedNode.bind(dbName),
-  };
+  return new IndexedDB(databaseName, addressTableName, objectTableName);
 }
 
-function deleteNode(this: string, hash: Uint8Array) {
-  return deleteObject(this, 'data', hash);
-}
+class IndexedDB implements Required<ChannelDriver> {
+  constructor(
+    readonly databaseName: string,
+    readonly addressTableName: string,
+    readonly objectTableName: string,
+  ) {}
 
-async function getNode(this: string, hash: Uint8Array) {
-  const data = await getObject<SerializedNodeData>(this, 'data', hash);
-  if (!data) return;
-  return [data.mediaType, data.payload] as RetrievedNodeData;
-}
+  deleteObject(hash: ArrayBuffer): Promise<void> {
+    return deleteRecord(this.databaseName, this.objectTableName, hash);
+  }
 
-async function putNode(this: string, node: SerializedNodeData) {
-  await putObject(this, 'data', node);
-}
+  async getObject(hash: ArrayBuffer): Promise<ArrayBuffer | void> {
+    const record = await getRecord<ObjectTableEntry>(this.databaseName, this.objectTableName, hash);
+    if (record?.object) return record.object;
+  }
 
-async function getAddressedNodeHash(this: string, address: Uint8Array) {
-  const data = await getObject<{
-    address: Uint8Array;
-    hash: Uint8Array;
-  }>(this, 'address', address);
-  return data?.hash;
-}
+  async putObject(hash: ArrayBuffer, object: ArrayBuffer): Promise<void> {
+    await putRecord(this.databaseName, this.objectTableName, { hash, object });
+  }
 
-function setAddressedNodeHash(this: string, address: Uint8Array, hash: Uint8Array) {
-  return putObject(this, 'address', { address, hash });
-}
+  async getAddressHash(address: ArrayBuffer): Promise<ArrayBuffer | void> {
+    const record = await getRecord<AddressTableEntry>(
+      this.databaseName,
+      this.addressTableName,
+      address,
+    );
+    if (record?.hash) return record.hash;
+  }
 
-function unsetAddressedNode(this: string, address: Uint8Array) {
-  return deleteObject(this, 'address', address);
+  async setAddressHash(address: ArrayBuffer, hash: ArrayBuffer): Promise<void> {
+    await putRecord(this.databaseName, this.addressTableName, { address, hash });
+  }
+
+  unsetAddressHash(address: ArrayBuffer): Promise<void> {
+    return deleteRecord(this.databaseName, this.addressTableName, address);
+  }
 }

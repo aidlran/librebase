@@ -1,5 +1,7 @@
 export type Constructor = (this: Injector) => unknown;
-export type Injector = <T extends Constructor>(module: T) => ReturnType<T>;
+export type Injector = (<T extends Constructor>(module: T) => ReturnType<T>) & {
+  instanceID: string;
+};
 
 const currentDependencies = new Set<Constructor>();
 const injectors: Record<string, Injector> = {};
@@ -12,7 +14,11 @@ export function getModule<T extends Constructor>(module: T, instanceID = '') {
   currentDependencies.add(module);
   let instance = (instances[instanceID] ??= new Map()).get(module);
   if (!instance) {
-    const injector = (injectors[instanceID] ??= inject.bind<Injector>(instanceID));
+    if (!injectors[instanceID]) {
+      injectors[instanceID] = inject.bind<Omit<Injector, 'instanceID'>>(instanceID) as Injector;
+      injectors[instanceID].instanceID ??= instanceID;
+    }
+    const injector = injectors[instanceID];
     instance = module.bind(injector)();
     instances[instanceID].set(module, instance);
   }

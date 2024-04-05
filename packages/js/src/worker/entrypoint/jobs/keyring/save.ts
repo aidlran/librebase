@@ -1,4 +1,4 @@
-import { putObject } from '../../../../indexeddb/indexeddb';
+import { putRecord } from '../../../../indexeddb/indexeddb';
 import type { PersistedKeyring } from '../../../../keyring/types';
 
 export async function saveKeyring(
@@ -48,5 +48,5 @@ export async function saveKeyring(
 
   if (id) keyring.id = id;
 
-  return putObject('lbkeyrings', 'keyring', keyring);
+  return putRecord('lbkeyrings', 'keyring', keyring);
 }

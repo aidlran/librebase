@@ -1,9 +1,11 @@
-import { tick } from '@adamantjs/signals';
-import { channelSet } from '../../channel/channel-set';
-import { createNode } from '../../data/create-node';
-import { getAddressedNode } from '../../data/get-node';
+import { parse } from 'content-type';
+import { queryChannelsAsync, queryChannelsSync } from '../../channel';
+import { channels } from '../../channel/channels';
+import { codecMap } from '../../codec/codec-map';
+import { HashAlgorithm, hash } from '../../hash';
 import type { Injector } from '../../modules/modules';
-import type { GetRootNodeRequest, SetRootNodeRequest, WorkerDataRequest } from '../types';
+import { getObject, parseObject, putObject, serializeObject } from '../../object';
+import type { WorkerDataRequest } from '../types';
 import { WorkerDataRequestType, WorkerMessageType } from '../types';
 
 export function handleMessageFromWorker(this: Injector) {
@@ -13,42 +15,48 @@ export function handleMessageFromWorker(this: Injector) {
     if (!(data instanceof Array) || data.length < 3 || !(data[2] instanceof Array)) return;
     const request = data[2];
     const next = (result?: unknown) => this.postMessage([data[0], data[1], result]);
+    const [, , kdfType, publicKey] = request;
+    const address = new Uint8Array([kdfType, ...publicKey]);
     if (request[0] == WorkerMessageType.DATA) {
       switch (request[1]) {
-        case WorkerDataRequestType.GET_ROOT_NODE:
-          void getRootNode(inject, request, next);
+        case WorkerDataRequestType.GET_ROOT_NODE: {
+          void queryChannelsSync(inject(channels), (channel) => {
+            if (channel.getAddressHash) {
+              return channel.getAddressHash(address);
+            }
+          }).then((hash) => {
+            if (hash) {
+              void getObject(hash).then((object) => {
+                if (object) {
+                  const [, mediaTypeString, payload] = parseObject(new Uint8Array(object));
+                  const mediaType = parse(mediaTypeString);
+                  const codec = inject(codecMap)[mediaType.type];
+                  if (!codec) {
+                    throw new TypeError('No codec available for ' + mediaType.type);
+                  }
+                  const objectValue = codec.decode(payload, mediaType);
+                  next(objectValue);
+                }
+              });
+            }
+          });
           break;
-        case WorkerDataRequestType.SET_ROOT_NODE:
-          void setRootNode(inject, request, next);
+        }
+        case WorkerDataRequestType.SET_ROOT_NODE: {
+          const [, , , , mediaType, value] = request;
+          const payload = serializeObject(value, mediaType);
+          const hashAlg = HashAlgorithm.SHA256;
+          void putObject(payload, hashAlg, inject.instanceID);
+          void hash(hashAlg, payload).then((hash) => {
+            void queryChannelsAsync(inject(channels), (channel) => {
+              if (channel.setAddressHash) {
+                return channel.setAddressHash(address, hash.toBytes());
+              }
+            });
+          });
           break;
+        }
       }
     }
   };
-}
-
-async function getRootNode(
-  inject: Injector,
-  request: GetRootNodeRequest,
-  next: (response: unknown) => void,
-) {
-  const [, , kdfType, publicKey] = request;
-  const address = new Uint8Array([kdfType, ...publicKey]);
-  const node = await inject(getAddressedNode)(address);
-  next(node?.value());
-}
-
-async function setRootNode(inject: Injector, request: SetRootNodeRequest, next: () => void) {
-  const [, , kdfType, publicKey, mediaType, value] = request;
-  const node = inject(createNode)().setMediaType(mediaType).setValue(value);
-  await tick();
-  await Promise.all([
-    node.push(),
-    node.hash().then((hash) => {
-      const address = new Uint8Array([kdfType, ...publicKey]);
-      return Promise.all(
-        [...inject(channelSet)].map((channel) => channel.setAddressedNodeHash(address, hash)),
-      );
-    }),
-  ]);
-  next();
 }

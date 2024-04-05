@@ -26,7 +26,7 @@ function getConnection(name: string) {
   return connection;
 }
 
-export function deleteObject(db: string, store: string, key: IDBValidKey) {
+export function deleteRecord(db: string, store: string, key: IDBValidKey) {
   return new Promise<void>((resolve, reject) => {
     const connection = getConnection(db);
     const request = connection.transaction(store, 'readwrite').objectStore(store).delete(key);
@@ -35,7 +35,7 @@ export function deleteObject(db: string, store: string, key: IDBValidKey) {
   });
 }
 
-export function getObject<T>(db: string, store: string, key: IDBValidKey | IDBKeyRange) {
+export function getRecord<T>(db: string, store: string, key: IDBValidKey | IDBKeyRange) {
   return new Promise<T>((resolve, reject) => {
     const connection = getConnection(db);
     const request = connection.transaction(store, 'readonly').objectStore(store).get(key);
@@ -44,7 +44,7 @@ export function getObject<T>(db: string, store: string, key: IDBValidKey | IDBKe
   });
 }
 
-export async function getAllObjects<T>(
+export async function getAllRecords<T>(
   db: string,
   store: string,
   query?: IDBValidKey | IDBKeyRange,
@@ -61,7 +61,7 @@ export async function getAllObjects<T>(
   });
 }
 
-export async function putObject<T extends IDBValidKey = IDBValidKey>(
+export async function putRecord<T extends IDBValidKey = IDBValidKey>(
   db: string,
   name: string,
   value: unknown,
