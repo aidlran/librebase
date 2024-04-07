@@ -1,4 +1,4 @@
-export * from './enum';
 export * from './is-wrap';
-export type * from './wrap-config';
-export type * from './wrap-value';
+export * from './wrap-config';
+export * from './wrap-type';
+export * from './wrap-value';

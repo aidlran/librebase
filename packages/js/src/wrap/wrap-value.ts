@@ -1,5 +1,5 @@
 import type { HashBytes } from '../hash';
-import type { WrapType } from './enum';
+import type { WrapType } from './wrap-type';
 
 interface BaseWrapValue {
   /** The hash of the unwrapped payload. */
@@ -11,15 +11,17 @@ interface BaseWrapValue {
 }
 
 export interface ECDSAWrapValue extends BaseWrapValue {
-  type: typeof WrapType.ECDSA;
+  $: `wrap:ecdsa`;
   metadata: {
-    publicKey: Uint8Array;
-    signature: Uint8Array;
+    /** Base 58 encoded public key. */
+    publicKey: string;
+    /** Base 64 encoded signature. */
+    signature: string;
   };
 }
 
 export interface EncryptWrapValue extends BaseWrapValue {
-  type: typeof WrapType.Encrypt;
+  $: 'wrap:encrypt';
   metadata: {
     /** The encryption algorithm. */
     encAlg: 'AES-GCM';
@@ -38,4 +40,7 @@ export interface EncryptWrapValue extends BaseWrapValue {
   };
 }
 
-export type WrapValue = ECDSAWrapValue | EncryptWrapValue;
+export type WrapValue<T extends WrapType = WrapType> = { $: `wrap:${T}` } & (
+  | ECDSAWrapValue
+  | EncryptWrapValue
+);

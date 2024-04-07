@@ -1,12 +1,18 @@
 import { sign, verify } from '@noble/secp256k1';
-import { type BIP32Interface } from 'bip32';
+import type { BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
-import { shred } from '../../buffer';
+import { base58, base64, shred } from '../../buffer';
 import { HashAlgorithm, hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
-import { WrapType, type ECDSAWrapValue, type EncryptWrapValue } from '../../wrap';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type { Job, UnwrapResult, WorkerDataRequest, WorkerMessage, WrapResult } from '../types';
+import type {
+  Job,
+  UnwrapResult,
+  WorkerDataRequest,
+  WorkerMessage,
+  WrapRequest,
+  WrapResult,
+} from '../types';
 import { WorkerMessageType } from '../types';
 import { getIdentity } from './jobs/identity/get';
 import { createKeyring } from './jobs/keyring/create';
@@ -87,29 +93,17 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         }
         // TODO: move signature algorithms to crypto module
         case 'unwrap': {
-          switch (job.payload.type) {
-            case WrapType.ECDSA: {
-              if (
-                !verify(
-                  job.payload.metadata.signature,
-                  (await hash(job.payload.hash[0], job.payload.payload)).value,
-                  job.payload.metadata.publicKey,
-                )
-              ) {
-                throw new Error('Invalid signature');
-              }
-              resultPayload = {
-                config: {
-                  hashAlg: job.payload.hash[0],
-                  metadata: job.payload.metadata.publicKey,
-                  type: job.payload.type,
-                },
-                payload: job.payload.payload,
-              } as UnwrapResult;
+          switch (job.payload.$) {
+            case 'wrap:ecdsa': {
+              resultPayload = verify(
+                job.payload.metadata.signature,
+                (await hash(job.payload.hash[0], job.payload.payload)).value,
+                job.payload.metadata.publicKey,
+              );
               break;
             }
 
-            case WrapType.Encrypt: {
+            case 'wrap:encrypt': {
               const privateKey = await findPrivateKey(job.payload.metadata.pubKey);
 
               const sourceKey = await crypto.subtle.importKey(
@@ -151,13 +145,9 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 if (givenHash[i] != checkHash[i]) throw new Error('Hash is not valid');
 
               resultPayload = {
-                config: {
-                  hashAlg: job.payload.hash[0],
-                  metadata: job.payload.metadata,
-                  type: job.payload.type,
-                },
+                metadata: job.payload.metadata,
                 payload,
-              } as UnwrapResult;
+              } as UnwrapResult<'encrypt'>;
 
               break;
             }
@@ -170,28 +160,30 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'wrap': {
           const hashAlg = job.payload.hashAlg ?? HashAlgorithm.SHA256;
           const payloadHash = await hash(hashAlg, job.payload.payload);
-          switch (job.payload.type) {
-            case WrapType.ECDSA: {
-              const privateKey = await findPrivateKey(job.payload.metadata);
-              resultPayload = {
-                hash: payloadHash.toBytes(),
-                metadata: {
-                  publicKey: job.payload.metadata,
-                  signature: await sign(payloadHash.value, privateKey),
-                },
-                payload: job.payload.payload,
-                type: job.payload.type,
-              } as WrapResult & ECDSAWrapValue;
+          switch (job.payload.$) {
+            case 'wrap:ecdsa': {
+              const config = job.payload as WrapRequest<'ecdsa'>;
+              const pubKeyBin =
+                typeof config.metadata === 'string'
+                  ? base58.decode(config.metadata)
+                  : config.metadata;
+              const privateKey = await findPrivateKey(pubKeyBin);
+              resultPayload = base64.encode(await sign(payloadHash.value, privateKey));
               break;
             }
 
-            case WrapType.Encrypt: {
-              const privateKey = await findPrivateKey(job.payload.metadata.pubKey);
-              const encryptionHashAlg = job.payload.metadata.hashAlg ?? 'SHA-256';
-              const iterations = job.payload.metadata.iterations ?? 600000;
-              const iv = job.payload.metadata.iv ?? crypto.getRandomValues(new Uint8Array(12));
-              const kdf = job.payload.metadata.kdf ?? 'PBKDF2';
-              const salt = job.payload.metadata.salt ?? crypto.getRandomValues(new Uint8Array(16));
+            case 'wrap:encrypt': {
+              const config = job.payload as WrapRequest<'encrypt'>;
+              const pubKeyBin =
+                typeof config.metadata.pubKey === 'string'
+                  ? base58.decode(config.metadata.pubKey)
+                  : config.metadata.pubKey;
+              const privateKey = await findPrivateKey(pubKeyBin);
+              const encryptionHashAlg = config.metadata.hashAlg ?? 'SHA-256';
+              const iterations = config.metadata.iterations ?? 600000;
+              const iv = config.metadata.iv ?? crypto.getRandomValues(new Uint8Array(12));
+              const kdf = config.metadata.kdf ?? 'PBKDF2';
+              const salt = config.metadata.salt ?? crypto.getRandomValues(new Uint8Array(16));
 
               const sourceKey = await crypto.subtle.importKey('raw', privateKey, kdf, false, [
                 'deriveKey',
@@ -222,18 +214,16 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               );
 
               resultPayload = {
-                hash: payloadHash.toBytes(),
                 metadata: {
                   hashAlg: encryptionHashAlg,
                   iterations,
                   iv,
                   kdf,
-                  pubKey: job.payload.metadata.pubKey,
+                  pubKey: pubKeyBin,
                   salt,
                 },
                 payload,
-                type: WrapType.Encrypt,
-              } as WrapResult & EncryptWrapValue;
+              } as WrapResult<'encrypt'>;
 
               break;
             }

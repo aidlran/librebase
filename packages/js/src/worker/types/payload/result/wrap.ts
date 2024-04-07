@@ -1,5 +1,9 @@
-import type { WrapValue } from '../../../../wrap';
+import type { WrapType, WrapValue } from '../../../../wrap';
 
-export interface WrapResult extends Omit<WrapValue, 'hash' | 'mediaType'> {
-  hash: Uint8Array;
+interface WrapResultMap extends Record<WrapType, unknown> {
+  /** Base 64 encoded signature. */
+  ecdsa: string;
+  encrypt: Pick<WrapValue<'encrypt'>, 'metadata' | 'payload'>;
 }
+
+export type WrapResult<T extends WrapType = WrapType> = WrapResultMap[T];

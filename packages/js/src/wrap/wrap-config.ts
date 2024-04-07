@@ -1,18 +1,21 @@
+import type { MediaType } from 'content-type';
 import type { HashAlgorithm } from '../hash';
-import type { WrapType } from './enum';
+import type { WrapType } from './wrap-type';
 
 interface BaseWrapConfig {
+  value: unknown;
+  mediaType: MediaType | string;
   hashAlg?: HashAlgorithm;
 }
 
 export interface ECDSAWrapConfig extends BaseWrapConfig {
-  type: typeof WrapType.ECDSA;
+  $: 'wrap:ecdsa';
   /** The public key. */
-  metadata: Uint8Array;
+  metadata: Uint8Array | string;
 }
 
 export interface EncryptWrapConfig extends BaseWrapConfig {
-  type: typeof WrapType.Encrypt;
+  $: 'wrap:encrypt';
   metadata: {
     /** The encryption algorithm. */
     encAlg?: 'AES-GCM';
@@ -25,10 +28,29 @@ export interface EncryptWrapConfig extends BaseWrapConfig {
     /** The key derivation function identifier. */
     kdf?: 'PBKDF2';
     /** The public key of the key pair to use for key derivation. */
-    pubKey: Uint8Array;
+    pubKey: Uint8Array | string;
     /** The key derivation salt. */
     salt?: Uint8Array;
   };
 }
 
-export type WrapConfig = ECDSAWrapConfig | EncryptWrapConfig;
+export type WrapConfig<T extends WrapType = WrapType> = { $: `wrap:${T}` } & (
+  | ECDSAWrapConfig
+  | EncryptWrapConfig
+);
+
+export function wrap<T extends WrapType>(
+  value: unknown,
+  mediaType: MediaType | string,
+  wrapType: T,
+  metadata: WrapConfig<T>['metadata'],
+  hashAlg?: HashAlgorithm,
+) {
+  return {
+    $: `wrap:${wrapType}`,
+    value,
+    mediaType,
+    metadata,
+    hashAlg,
+  } as WrapConfig<T>;
+}

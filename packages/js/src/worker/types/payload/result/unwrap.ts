@@ -1,6 +1,8 @@
-import type { WrapConfig } from '../../../../wrap';
+import type { WrapType, WrapValue } from '../../../../wrap';
 
-export interface UnwrapResult {
-  config: WrapConfig;
-  payload: Uint8Array;
+interface UnwrapResultMap extends Record<WrapType, unknown> {
+  ecdsa: boolean;
+  encrypt: Pick<WrapValue<'encrypt'>, 'metadata' | 'payload'>;
 }
+
+export type UnwrapResult<T extends WrapType = WrapType> = UnwrapResultMap[T];

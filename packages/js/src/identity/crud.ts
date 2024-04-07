@@ -6,7 +6,7 @@ import { getModule } from '../modules/modules';
 import { parseObject, putObject, type PutOptions } from '../object';
 import type { WrapResult } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
-import { isWrap, WrapType, type WrapValue } from '../wrap';
+import { isWrap, type WrapValue } from '../wrap';
 
 // TODO: separate address hash CRUD module
 
@@ -22,11 +22,13 @@ export function getIdentityAddress(identityID: string, instanceID?: string) {
 }
 
 export async function getIdentityValue(address: string | ArrayBuffer, instanceID?: string) {
-  const addressBytes = typeof address === 'string' ? base58.decode(address) : address;
+  const addressBin = typeof address === 'string' ? base58.decode(address) : address;
+  const addressBase58 =
+    typeof address === 'string' ? address : base58.encode(new Uint8Array(address));
   const channels = getChannels(instanceID);
   const hash = await queryChannelsSync(channels, (channel) => {
     if (channel.getAddressHash) {
-      return channel.getAddressHash(addressBytes);
+      return channel.getAddressHash(addressBin);
     }
   });
   if (hash) {
@@ -39,8 +41,8 @@ export async function getIdentityValue(address: string | ArrayBuffer, instanceID
           // It must be a signature wrap that has been signed by the address
           if (
             isWrap(value) &&
-            value.type === WrapType.ECDSA &&
-            value.metadata.publicKey === addressBytes
+            value.$ === 'wrap:ecdsa' &&
+            value.metadata.publicKey === addressBase58
           ) {
             return value;
           }
@@ -79,7 +81,7 @@ export async function putIdentity(
       getModule(jobWorker, options?.instanceID).postToOne(
         {
           action: 'wrap',
-          payload: { type: WrapType.Encrypt, metadata: { pubKey: addressBytes }, payload },
+          payload: { $: 'wrap:encrypt', metadata: { pubKey: addressBytes }, payload },
         },
         (response) => {
           resolve(response.payload);
@@ -92,7 +94,7 @@ export async function putIdentity(
 
   const signedWrapValue = (await new Promise<WrapResult>((resolve) => {
     getModule(jobWorker, options?.instanceID).postToOne(
-      { action: 'wrap', payload: { type: WrapType.ECDSA, metadata: addressBytes, payload } },
+      { action: 'wrap', payload: { $: 'wrap:ecdsa', metadata: addressBytes, payload } },
       (response) => {
         resolve(response.payload);
       },
