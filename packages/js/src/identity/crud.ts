@@ -1,6 +1,7 @@
 import { parse, type MediaType, format } from 'content-type';
+import { getAddressHash, setAddressHash } from '../address';
 import { base58 } from '../buffer';
-import { getChannels, queryChannelsAsync, queryChannelsSync } from '../channel';
+import { getChannels, queryChannelsSync } from '../channel';
 import { decodeWithCodec, getCodec } from '../codec';
 import { getModule } from '../modules/modules';
 import { parseObject, putObject, type PutOptions } from '../object';
@@ -21,20 +22,12 @@ export function getIdentityAddress(identityID: string, instanceID?: string) {
   });
 }
 
-export async function getIdentityValue(address: string | ArrayBuffer, instanceID?: string) {
-  const addressBin = typeof address === 'string' ? base58.decode(address) : address;
-  const addressBase58 =
-    typeof address === 'string' ? address : base58.encode(new Uint8Array(address));
-  const channels = getChannels(instanceID);
-  const hash = await queryChannelsSync(channels, (channel) => {
-    if (channel.getAddressHash) {
-      return channel.getAddressHash(addressBin);
-    }
-  });
+export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {
+  const hash = await getAddressHash(address, instanceID);
   if (hash) {
-    return queryChannelsSync(channels, async (channel) => {
+    return queryChannelsSync(getChannels(instanceID), async (channel) => {
       if (channel.getObject) {
-        const objectResult = await channel.getObject(hash);
+        const objectResult = await channel.getObject(hash.toBytes());
         if (objectResult) {
           const [, mediaType, payload] = parseObject(new Uint8Array(objectResult));
           const value = decodeWithCodec(payload, parse(mediaType), instanceID) as WrapValue;
@@ -42,7 +35,8 @@ export async function getIdentityValue(address: string | ArrayBuffer, instanceID
           if (
             isWrap(value) &&
             value.$ === 'wrap:ecdsa' &&
-            value.metadata.publicKey === addressBase58
+            value.metadata.publicKey ===
+              (typeof address === 'string' ? address : base58.encode(address))
           ) {
             return value;
           }
@@ -103,11 +97,6 @@ export async function putIdentity(
   signedWrapValue.mediaType = format(mediaTypeObj);
 
   const hash = await putObject(signedWrapValue, jsonMediaType);
-
-  await queryChannelsAsync(getChannels(options?.instanceID), (channel) => {
-    if (channel.setAddressHash) {
-      return channel.setAddressHash(addressBytes, hash.toBytes());
-    }
-  });
+  await setAddressHash(addressBytes, hash);
   return hash;
 }
