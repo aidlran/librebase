@@ -35,8 +35,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
           if (
             isWrap(value) &&
             value.$ === 'wrap:ecdsa' &&
-            value.metadata.publicKey ===
-              (typeof address === 'string' ? address : base58.encode(address))
+            value.meta.pub === (typeof address === 'string' ? address : base58.encode(address))
           ) {
             return value;
           }
@@ -73,7 +72,7 @@ export async function putIdentity(
       getModule(jobWorker, options?.instanceID).postToOne(
         {
           action: 'wrap',
-          payload: { $: 'wrap:encrypt', metadata: { pubKey: addressBytes }, payload },
+          payload: { wrapType: 'encrypt', metadata: { pubKey: addressBytes }, payload },
         },
         (response) => {
           resolve(response.payload);
@@ -86,7 +85,7 @@ export async function putIdentity(
 
   const signedWrapValue = (await new Promise<WrapResult>((resolve) => {
     getModule(jobWorker, options?.instanceID).postToOne(
-      { action: 'wrap', payload: { $: 'wrap:ecdsa', metadata: addressBytes, payload } },
+      { action: 'wrap', payload: { wrapType: 'ecdsa', metadata: addressBytes, payload } },
       (response) => {
         resolve(response.payload);
       },

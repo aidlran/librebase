@@ -12,17 +12,17 @@ interface BaseWrapValue {
 
 export interface ECDSAWrapValue extends BaseWrapValue {
   $: `wrap:ecdsa`;
-  metadata: {
+  meta: {
     /** Base 58 encoded public key. */
-    publicKey: string;
+    pub: string;
     /** Base 64 encoded signature. */
-    signature: string;
+    sig: string;
   };
 }
 
 export interface EncryptWrapValue extends BaseWrapValue {
   $: 'wrap:encrypt';
-  metadata: {
+  meta: {
     /** The encryption algorithm. */
     encAlg: 'AES-GCM';
     /** The hashing algorithm used for key derivation. */

@@ -3,19 +3,20 @@ import type { HashAlgorithm } from '../hash';
 import type { WrapType } from './wrap-type';
 
 interface BaseWrapConfig {
-  value: unknown;
+  /** The media type of the value. */
   mediaType: MediaType | string;
+  /** The hashing algorithm to use. */
   hashAlg?: HashAlgorithm;
 }
 
 export interface ECDSAWrapConfig extends BaseWrapConfig {
-  $: 'wrap:ecdsa';
+  wrapType: 'ecdsa';
   /** The public key. */
   metadata: Uint8Array | string;
 }
 
 export interface EncryptWrapConfig extends BaseWrapConfig {
-  $: 'wrap:encrypt';
+  wrapType: 'encrypt';
   metadata: {
     /** The encryption algorithm. */
     encAlg?: 'AES-GCM';
@@ -34,23 +35,7 @@ export interface EncryptWrapConfig extends BaseWrapConfig {
   };
 }
 
-export type WrapConfig<T extends WrapType = WrapType> = { $: `wrap:${T}` } & (
+export type WrapConfig<T extends WrapType = WrapType> = { wrapType: T } & (
   | ECDSAWrapConfig
   | EncryptWrapConfig
 );
-
-export function wrap<T extends WrapType>(
-  value: unknown,
-  mediaType: MediaType | string,
-  wrapType: T,
-  metadata: WrapConfig<T>['metadata'],
-  hashAlg?: HashAlgorithm,
-) {
-  return {
-    $: `wrap:${wrapType}`,
-    value,
-    mediaType,
-    metadata,
-    hashAlg,
-  } as WrapConfig<T>;
-}

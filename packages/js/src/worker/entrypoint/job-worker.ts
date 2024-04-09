@@ -96,30 +96,30 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           switch (job.payload.$) {
             case 'wrap:ecdsa': {
               resultPayload = verify(
-                job.payload.metadata.signature,
+                job.payload.meta.sig,
                 (await hash(job.payload.hash[0], job.payload.payload)).value,
-                job.payload.metadata.publicKey,
+                job.payload.meta.pub,
               );
               break;
             }
 
             case 'wrap:encrypt': {
-              const privateKey = await findPrivateKey(job.payload.metadata.pubKey);
+              const privateKey = await findPrivateKey(job.payload.meta.pubKey);
 
               const sourceKey = await crypto.subtle.importKey(
                 'raw',
                 privateKey,
-                job.payload.metadata.kdf,
+                job.payload.meta.kdf,
                 false,
                 ['deriveKey'],
               );
 
               const derivedKey = await crypto.subtle.deriveKey(
                 {
-                  name: job.payload.metadata.kdf,
-                  hash: job.payload.metadata.hashAlg,
-                  salt: job.payload.metadata.salt,
-                  iterations: job.payload.metadata.iterations,
+                  name: job.payload.meta.kdf,
+                  hash: job.payload.meta.hashAlg,
+                  salt: job.payload.meta.salt,
+                  iterations: job.payload.meta.iterations,
                 },
                 sourceKey,
                 { name: 'AES-GCM', length: 256 },
@@ -131,7 +131,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 await crypto.subtle.decrypt(
                   {
                     name: 'AES-GCM',
-                    iv: job.payload.metadata.iv,
+                    iv: job.payload.meta.iv,
                   },
                   derivedKey,
                   job.payload.payload,
@@ -145,7 +145,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 if (givenHash[i] != checkHash[i]) throw new Error('Hash is not valid');
 
               resultPayload = {
-                metadata: job.payload.metadata,
+                meta: job.payload.meta,
                 payload,
               } as UnwrapResult<'encrypt'>;
 
@@ -160,8 +160,8 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'wrap': {
           const hashAlg = job.payload.hashAlg ?? HashAlgorithm.SHA256;
           const payloadHash = await hash(hashAlg, job.payload.payload);
-          switch (job.payload.$) {
-            case 'wrap:ecdsa': {
+          switch (job.payload.wrapType) {
+            case 'ecdsa': {
               const config = job.payload as WrapRequest<'ecdsa'>;
               const pubKeyBin =
                 typeof config.metadata === 'string'
@@ -172,7 +172,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               break;
             }
 
-            case 'wrap:encrypt': {
+            case 'encrypt': {
               const config = job.payload as WrapRequest<'encrypt'>;
               const pubKeyBin =
                 typeof config.metadata.pubKey === 'string'
@@ -214,7 +214,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
               );
 
               resultPayload = {
-                metadata: {
+                meta: {
                   hashAlg: encryptionHashAlg,
                   iterations,
                   iv,
