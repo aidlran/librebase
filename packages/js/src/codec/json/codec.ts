@@ -1,5 +1,5 @@
 import { textDecoder, textEncoder } from '../../shared';
-import type { Codec } from '../types';
+import type { Codec, CodecProps } from '../types';
 import type { JsonCodecPlugin } from './types';
 
 /**
@@ -14,11 +14,11 @@ export function jsonCodec(...plugins: JsonCodecPlugin[]): Codec {
   };
 }
 
-function decode(this: JsonCodecPlugin[], payload: Uint8Array): unknown {
+function decode(this: JsonCodecPlugin[], payload: Uint8Array, props: CodecProps): unknown {
   return JSON.parse(textDecoder.decode(payload), (key, value) => {
     for (const { reviver } of this) {
       if (reviver) {
-        const result = reviver(key, value);
+        const result = reviver(key, value, { instanceID: props.instanceID });
         if (result !== value) return result;
       }
     }
@@ -26,12 +26,12 @@ function decode(this: JsonCodecPlugin[], payload: Uint8Array): unknown {
   }) as unknown;
 }
 
-function encode(this: JsonCodecPlugin[], data: unknown): Uint8Array {
+function encode(this: JsonCodecPlugin[], data: unknown, props: CodecProps): Uint8Array {
   return textEncoder.encode(
     JSON.stringify(data, (key, value) => {
       for (const { replacer } of this) {
         if (replacer) {
-          const result = replacer(key, value);
+          const result = replacer(key, value, { instanceID: props.instanceID });
           if (result !== value) return result;
         }
       }

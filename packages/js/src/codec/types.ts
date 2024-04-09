@@ -1,6 +1,11 @@
 import type { MediaType } from 'content-type';
 
+export interface CodecProps {
+  instanceID?: string;
+  mediaType: MediaType;
+}
+
 export interface Codec<T = unknown> {
-  encode(data: T, mediaType: MediaType): Uint8Array;
-  decode(payload: Uint8Array, mediaType: MediaType): T;
+  encode(data: T, props: CodecProps): Uint8Array;
+  decode(payload: Uint8Array, props: CodecProps): T;
 }

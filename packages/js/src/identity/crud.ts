@@ -2,7 +2,7 @@ import { parse, type MediaType, format } from 'content-type';
 import { getAddressHash, setAddressHash } from '../address';
 import { base58 } from '../buffer';
 import { getChannels, queryChannelsSync } from '../channel';
-import { decodeWithCodec, getCodec } from '../codec';
+import { decodeWithCodec, encodeWithCodec } from '../codec';
 import { getModule } from '../modules/modules';
 import { parseObject, putObject, type PutOptions } from '../object';
 import type { WrapResult } from '../worker/types';
@@ -61,14 +61,12 @@ export async function putIdentity(
   mediaType: string | MediaType,
   options?: IdentityPutOptions,
 ) {
-  const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
-  const codec = getCodec(mediaTypeObj, options?.instanceID);
-  let payload = codec.encode(value, mediaTypeObj);
   const addressBytes =
     typeof address === 'string' ? base58.decode(address) : new Uint8Array(address);
-
   const jsonMediaType = { type: 'application/json' };
-  const jsonEncoder = getCodec(jsonMediaType, options?.instanceID);
+  const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
+
+  let payload = encodeWithCodec(value, mediaTypeObj, options?.instanceID);
 
   if (options?.encrypt) {
     const encryptWrapValue = (await new Promise<WrapResult>((resolve) => {
@@ -83,7 +81,7 @@ export async function putIdentity(
       );
     })) as WrapValue;
     encryptWrapValue.mediaType = format(mediaTypeObj);
-    payload = jsonEncoder.encode(encryptWrapValue, jsonMediaType);
+    payload = encodeWithCodec(encryptWrapValue, jsonMediaType, options.instanceID);
   }
 
   const signedWrapValue = (await new Promise<WrapResult>((resolve) => {
