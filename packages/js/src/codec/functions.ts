@@ -13,14 +13,14 @@ export function decodeWithCodec(
   return codec.decode(payload, { instanceID, mediaType: mediaTypeObj });
 }
 
-export function encodeWithCodec(
+export async function encodeWithCodec(
   input: unknown,
   mediaType: string | MediaType,
   instanceID?: string,
 ) {
   const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
   const codec = getCodec(mediaTypeObj, instanceID);
-  return codec.encode(input, { instanceID, mediaType: mediaTypeObj });
+  return Promise.resolve(codec.encode(input, { instanceID, mediaType: mediaTypeObj }));
 }
 
 export function getCodec(mediaType: string | MediaType, instanceID?: string) {

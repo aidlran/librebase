@@ -65,7 +65,7 @@ export async function putIdentity(
   const jsonMediaType = { type: 'application/json' };
   const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
 
-  let payload = encodeWithCodec(value, mediaTypeObj, options?.instanceID);
+  let payload = await encodeWithCodec(value, mediaTypeObj, options?.instanceID);
 
   if (options?.encrypt) {
     const encryptWrapValue = (await new Promise<WrapResult>((resolve) => {
@@ -80,7 +80,7 @@ export async function putIdentity(
       );
     })) as WrapValue;
     encryptWrapValue.mediaType = format(mediaTypeObj);
-    payload = encodeWithCodec(encryptWrapValue, jsonMediaType, options.instanceID);
+    payload = await encodeWithCodec(encryptWrapValue, jsonMediaType, options.instanceID);
   }
 
   const signedWrapValue = (await new Promise<WrapResult>((resolve) => {

@@ -31,7 +31,7 @@ export async function putObject(
   mediaType: string | MediaType,
   options?: PutOptions,
 ): Promise<Hash> {
-  const payload = serializeObject(value, mediaType, { instanceID: options?.instanceID });
+  const payload = await serializeObject(value, mediaType, { instanceID: options?.instanceID });
   const hashAlg = options?.hashAlg ?? HashAlgorithm.SHA256;
   const objectHash = await hash(hashAlg, payload);
   await queryChannelsAsync(getChannels(options?.instanceID), (channel) => {

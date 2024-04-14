@@ -14,7 +14,7 @@ export async function wrap<T extends WrapType>(
   { hashAlg, mediaType, metadata, wrapType }: WrapConfig<T>,
   instanceID?: string,
 ): Promise<WrapValue<T>> {
-  const unwrappedPayload = encodeWithCodec(value, mediaType, instanceID);
+  const unwrappedPayload = await encodeWithCodec(value, mediaType, instanceID);
   const unwrappedPayloadHash = await hash(hashAlg ?? HashAlgorithm.SHA256, unwrappedPayload);
 
   const result = await new Promise<WrapResult<T>>((resolve) => {

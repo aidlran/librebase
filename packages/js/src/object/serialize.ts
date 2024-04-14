@@ -17,12 +17,12 @@ export function serializeEncodedObject(
   return new Uint8Array([1, ...mediaTypeBytes, 0, ...payload]);
 }
 
-export function serializeObject(
+export async function serializeObject(
   value: unknown,
   mediaType: string | MediaType,
   options?: { trust?: boolean; instanceID?: string },
-): Uint8Array {
+): Promise<Uint8Array> {
   const mediaTypeObj = typeof mediaType === 'string' ? parse(mediaType) : mediaType;
-  const encodedPayload = encodeWithCodec(value, mediaTypeObj, options?.instanceID);
+  const encodedPayload = await encodeWithCodec(value, mediaTypeObj, options?.instanceID);
   return serializeEncodedObject(encodedPayload, mediaType, options?.trust);
 }

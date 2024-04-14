@@ -6,6 +6,6 @@ export interface CodecProps {
 }
 
 export interface Codec<T = unknown> {
-  encode(data: T, props: CodecProps): Uint8Array;
+  encode(data: T, props: CodecProps): Uint8Array | Promise<Uint8Array>;
   decode(payload: Uint8Array, props: CodecProps): T;
 }
