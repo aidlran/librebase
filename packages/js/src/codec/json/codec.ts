@@ -3,9 +3,9 @@ import type { Codec } from '../types';
 import type { JsonCodecPlugin, JsonCodecProps } from './types';
 
 /**
- * Extensible JSON codec for the `application/json` media type and structured data values. Node
- * values are first encoded as JSON strings using the native `JSON` API before being converted to
- * bytes. Plugins can provide replacer and reviver functions that hook into the native `JSON` API.
+ * Extensible JSON codec for the `application/json` media type with structured data values. Values
+ * are first encoded as JSON strings before being converted to bytes. Plugins can provide replacer
+ * and reviver functions that hook into the stringification and destringification processes.
  */
 export function jsonCodec(...plugins: JsonCodecPlugin[]): Codec {
   return {
