@@ -18,6 +18,7 @@ const noOpPlugin: JsonCodecPlugin = {
 
 const noOpAsyncPlugin: JsonCodecPlugin = {
   replacer: (_, value) => Promise.resolve(value),
+  reviver: (_, value) => Promise.resolve(value),
 };
 
 const stringPlugin: JsonCodecPlugin = {

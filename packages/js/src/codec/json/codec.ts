@@ -14,16 +14,14 @@ export function jsonCodec(...plugins: JsonCodecPlugin[]): Codec {
   };
 }
 
-function decode(this: JsonCodecPlugin[], payload: Uint8Array, props: JsonCodecProps): unknown {
-  return JSON.parse(textDecoder.decode(payload), (key, value) => {
-    for (const { reviver } of this) {
-      if (reviver) {
-        const result = reviver(key, value, { instanceID: props.instanceID });
-        if (result !== value) return result;
-      }
-    }
-    return value as unknown;
-  }) as unknown;
+function decode(
+  this: JsonCodecPlugin[],
+  payload: Uint8Array,
+  props: JsonCodecProps,
+): Promise<unknown> {
+  const refTrack = new Set();
+  const parsed = JSON.parse(textDecoder.decode(payload)) as unknown;
+  return Promise.resolve(replace(this, 'reviver', props.instanceID, refTrack, parsed));
 }
 
 async function encode(
@@ -32,12 +30,13 @@ async function encode(
   props: JsonCodecProps,
 ): Promise<Uint8Array> {
   const refTrack = new Set();
-  const replaced = await replace(this, props.instanceID, refTrack, data);
+  const replaced = await replace(this, 'replacer', props.instanceID, refTrack, data);
   return textEncoder.encode(JSON.stringify(replaced));
 }
 
 async function replace(
   plugins: JsonCodecPlugin[],
+  fn: keyof JsonCodecPlugin,
   instanceID: string | undefined,
   refTrack: Set<unknown>,
   value: unknown,
@@ -49,7 +48,7 @@ async function replace(
   refTrack.add(value);
   if (value instanceof Array) {
     const replaced = await Promise.all(
-      value.map((entry, index) => replace(plugins, instanceID, refTrack, entry, index)),
+      value.map((entry, index) => replace(plugins, fn, instanceID, refTrack, entry, index)),
     );
     refTrack.delete(value);
     return replaced;
@@ -59,6 +58,7 @@ async function replace(
     for (const key of Object.keys(value)) {
       replaceObj[key] = await replace(
         plugins,
+        fn,
         instanceID,
         refTrack,
         (value as Record<string, unknown>)[key],
@@ -69,8 +69,9 @@ async function replace(
     return replaceObj;
   }
   for (const plugin of plugins) {
-    if (plugin.replacer) {
-      const result = await Promise.resolve(plugin.replacer(key, value, { instanceID }));
+    const func = plugin[fn];
+    if (func) {
+      const result = await Promise.resolve(func(key, value, { instanceID }));
       if (result !== value) {
         refTrack.delete(value);
         return result;

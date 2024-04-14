@@ -22,5 +22,5 @@ export interface JsonCodecPlugin {
    * A function that alters the output of the parser. See
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse#reviver
    */
-  reviver?: (key: string, value: unknown, props: JsonCodecProps) => unknown;
+  reviver?: (key: string | number | undefined, value: unknown, props: JsonCodecProps) => unknown;
 }
