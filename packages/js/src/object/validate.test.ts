@@ -1,13 +1,13 @@
 import mediaTypes from 'mime-db';
 import { describe, expect, it, test } from 'vitest';
 import { textEncoder } from '../shared';
-import { validateObjectPayloadMediaType, validateObjectVersion } from './validate';
+import { validateSerializedObjectMediaType, validateObjectVersion } from './validate';
 
-describe('Validate object payload media type', () => {
+describe('Validate serialized object media type', () => {
   describe('Should pass valid media types', () => {
     for (const mediaType of Object.keys(mediaTypes)) {
       test(mediaType, () => {
-        expect(validateObjectPayloadMediaType(textEncoder.encode(mediaType))).toBe(true);
+        expect(validateSerializedObjectMediaType(textEncoder.encode(mediaType))).toBe(true);
       });
     }
   });
@@ -25,7 +25,7 @@ describe('Validate object payload media type', () => {
     for (const byte of disallowedBytes) {
       test(byte.toString(16).padStart(2, '0'), () => {
         const mediaType = new Uint8Array([...baseMediaType, byte]);
-        expect(validateObjectPayloadMediaType(mediaType)).toBe(false);
+        expect(validateSerializedObjectMediaType(mediaType)).toBe(false);
       });
     }
   });
@@ -33,7 +33,7 @@ describe('Validate object payload media type', () => {
   describe('Should fail if there there are 0 or 2 or more forward slash', () => {
     for (const mediaType of ['abc', 'a/b/c', 'a/b/c/']) {
       test(mediaType, () => {
-        expect(validateObjectPayloadMediaType(textEncoder.encode(mediaType))).toBe(false);
+        expect(validateSerializedObjectMediaType(textEncoder.encode(mediaType))).toBe(false);
       });
     }
   });
@@ -41,13 +41,13 @@ describe('Validate object payload media type', () => {
   describe('Should fail if first character is a slash', () => {
     for (const mediaType of ['/abc', '/a/bc']) {
       test(mediaType, () => {
-        expect(validateObjectPayloadMediaType(textEncoder.encode(mediaType))).toBe(false);
+        expect(validateSerializedObjectMediaType(textEncoder.encode(mediaType))).toBe(false);
       });
     }
   });
 });
 
-describe('Validate object version byte', () => {
+describe('Validate object version', () => {
   it('Should pass known versions', () => {
     expect(validateObjectVersion(1)).toBe(true);
   });

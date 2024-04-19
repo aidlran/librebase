@@ -1,4 +1,4 @@
-export function validateObjectPayloadMediaType(mediaType: Uint8Array): boolean {
+export function validateSerializedObjectMediaType(mediaType: Uint8Array): boolean {
   let once = false;
   let slashCount = 0;
 

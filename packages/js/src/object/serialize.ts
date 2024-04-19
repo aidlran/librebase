@@ -1,7 +1,7 @@
 import { format, parse, type MediaType } from 'content-type';
 import { encodeWithCodec } from '../codec';
 import { textEncoder } from '../shared';
-import { validateObjectPayloadMediaType } from './validate';
+import { validateSerializedObjectMediaType } from './validate';
 
 export function serializeEncodedObject(
   payload: Uint8Array,
@@ -11,7 +11,7 @@ export function serializeEncodedObject(
   const mediaTypeBytes = textEncoder.encode(
     typeof mediaType === 'string' ? mediaType : format(mediaType),
   );
-  if (!trust && !validateObjectPayloadMediaType(mediaTypeBytes)) {
+  if (!trust && !validateSerializedObjectMediaType(mediaTypeBytes)) {
     throw new Error('Bad media type');
   }
   return new Uint8Array([1, ...mediaTypeBytes, 0, ...payload]);
