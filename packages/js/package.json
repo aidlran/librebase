@@ -34,6 +34,8 @@
     "valibot": "^0.30.0"
   },
   "devDependencies": {
-    "@types/content-type": "^1.1.8"
+    "@types/content-type": "^1.1.8",
+    "@types/mime-db": "^1.43.5",
+    "mime-db": "^1.52.0"
   }
 }

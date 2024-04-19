@@ -1,5 +1,5 @@
 import { textDecoder } from '../shared';
-import { checkMediaType, checkVersion } from './check';
+import { validateObjectPayloadMediaType, validateObjectVersion } from './validate';
 import type { ParsedObject } from './types';
 
 export function getMediaTypeTerminateIndex(object: Uint8Array): number {
@@ -21,15 +21,16 @@ export function getMediaTypeTerminateIndex(object: Uint8Array): number {
 
 export function parseObject(object: Uint8Array, trust = false): ParsedObject {
   const version = object[0];
-  if (!trust) {
-    checkVersion(version);
-  }
-
   const nulIndex = getMediaTypeTerminateIndex(object);
-
   const mediaTypeBytes = object.subarray(1, nulIndex);
+
   if (!trust) {
-    checkMediaType(mediaTypeBytes);
+    if (!validateObjectVersion(version)) {
+      throw new TypeError('Unsupported object version: ' + version);
+    }
+    if (!validateObjectPayloadMediaType(mediaTypeBytes)) {
+      throw new TypeError('Bad media type');
+    }
   }
 
   return [version, textDecoder.decode(mediaTypeBytes), object.subarray(nulIndex + 1)];
