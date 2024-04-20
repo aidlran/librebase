@@ -1,7 +1,6 @@
 import { textDecoder, textEncoder } from '../shared';
-import type { Codec } from './types';
 
-export const BinaryCodec: Codec<Uint8Array> = {
+export const BinaryCodec = {
   encode(data: Uint8Array) {
     if (!(data instanceof Uint8Array)) {
       throw new TypeError('Expected byte array');
@@ -13,7 +12,7 @@ export const BinaryCodec: Codec<Uint8Array> = {
   },
 };
 
-export const TextCodec: Codec<string> = {
+export const TextCodec = {
   encode(data: string) {
     if (typeof data !== 'string') {
       throw new TypeError('Expected string');
