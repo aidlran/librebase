@@ -1,28 +1,21 @@
-import { literal, object, safeParse, string, type Input } from 'valibot';
 import { base64 } from '../../../buffer';
-import type { JsonCodecPlugin } from '../types';
 
-const schema = object({
-  $: literal('bytes:b64'),
-  v: string(),
-});
-
-type Schema = Input<typeof schema>;
-
-/** JSON codec plugin for storing byte arrays as base64 strings. */
-export const binaryPlugin: JsonCodecPlugin = {
-  replacer(_, value) {
+/** JSON codec plugin for storing arbitrary byte arrays as base64 strings. */
+export const binaryPlugin = {
+  replacer(_: unknown, value: unknown) {
+    let v: string;
     if (value instanceof Uint8Array) {
-      return {
-        $: 'bytes:b64',
-        v: base64.encode(value),
-      };
+      v = base64.encode(value);
+    } else if (value instanceof ArrayBuffer) {
+      v = base64.encode(new Uint8Array(value));
+    } else {
+      return value;
     }
-    return value;
+    return `$bin:b64:${v}`;
   },
-  reviver(_, value) {
-    if (safeParse(schema, value, { abortEarly: true }).success) {
-      return base64.decode((value as Schema).v);
+  reviver(_: unknown, value: unknown) {
+    if (typeof value === 'string' && value.startsWith('$bin:b64:')) {
+      return base64.decode(value.slice(9));
     }
     return value;
   },
