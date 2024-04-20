@@ -1,5 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
 import { encodes } from '../../testing/encodes';
+import { Hash } from '../hash';
 import {
   bytesToString,
   identifierToBytes,
@@ -41,6 +42,10 @@ describe('Buffer utilities', () => {
       test(`Uint8Array (${ascii})`, () => expect(identifierToBytes(bytes)).toEqual(bytes));
       test(`ArrayBuffer (${ascii})`, () => expect(identifierToBytes(bytes.buffer)).toEqual(bytes));
       test(`Base58 string (${ascii})`, () => expect(identifierToBytes(b58)).toEqual(bytes));
+      if (ascii) {
+        const hash = new Hash(bytes[0], bytes.subarray(1));
+        test(`Hash (${ascii})`, () => expect(identifierToBytes(hash)).toEqual(bytes));
+      }
     }
 
     it('Rejects non-base58 encoded string', () => {
@@ -54,6 +59,10 @@ describe('Buffer utilities', () => {
       test(`Uint8Array (${ascii})`, () => expect(payloadToBytes(bytes)).toEqual(bytes));
       test(`ArrayBuffer (${ascii})`, () => expect(payloadToBytes(bytes.buffer)).toEqual(bytes));
       test(`Base64 string (${ascii})`, () => expect(payloadToBytes(b64)).toEqual(bytes));
+      if (ascii) {
+        const hash = new Hash(bytes[0], bytes.subarray(1));
+        test(`Hash (${ascii})`, () => expect(identifierToBytes(hash)).toEqual(bytes));
+      }
     }
 
     it('Rejects non-base64 encoded string', () => {

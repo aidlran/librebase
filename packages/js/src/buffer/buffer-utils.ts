@@ -1,3 +1,4 @@
+import { Hash } from '../hash';
 import { base58, base64 } from './base-encode';
 
 export function stringToBytes(string: string): Uint8Array {
@@ -21,12 +22,14 @@ export function shred(buffer: Uint8Array) {
 
 function toBytes(
   this: { decode(input: string): Uint8Array },
-  input: string | Uint8Array | ArrayBuffer,
+  input: string | Hash | Uint8Array | ArrayBuffer,
 ): Uint8Array {
   if (typeof input === 'string') {
     return this.decode(input);
   } else if (input instanceof Uint8Array) {
     return input;
+  } else if (input instanceof Hash) {
+    return input.toBytes();
   } else {
     return new Uint8Array(input);
   }
@@ -35,7 +38,7 @@ function toBytes(
 /**
  * Coerces an identifier (address or hash) to a byte array.
  *
- * @param {string | Uint8Array | ArrayBuffer} address A buffer or base 58 encoded string.
+ * @param {string | Hash | Uint8Array | ArrayBuffer} address A buffer or base 58 encoded string.
  * @returns {Uint8Array}
  */
 export const identifierToBytes = toBytes.bind(base58);

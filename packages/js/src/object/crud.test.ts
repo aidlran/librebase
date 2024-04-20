@@ -16,6 +16,7 @@ describe('Object CRUD', () => {
 
   afterAll(() => {
     channels.pop();
+    channels.pop();
   });
 
   describe('Delete object', () => {
@@ -40,20 +41,20 @@ describe('Object CRUD', () => {
   });
 
   test('Get object', async () => {
-    const existingRequestHash = createHash();
-    const nonExistentRequestHash = createHash();
+    const existing = createHash();
+    const nonExistent = createHash();
     let calls = 0;
     function getObjectMock(hash: ArrayBuffer) {
       calls++;
-      expect(hash).oneOf([existingRequestHash, nonExistentRequestHash]);
-      if (hash === existingRequestHash) {
+      expect(hash).oneOf([existing, nonExistent]);
+      if (hash === existing) {
         return hash;
       }
     }
     mockDriverA.getObject = getObjectMock;
     mockDriverB.getObject = getObjectMock;
-    await expect(getObject(nonExistentRequestHash, instanceID)).resolves.toBeUndefined();
-    await expect(getObject(existingRequestHash, instanceID)).resolves.toBe(existingRequestHash);
+    await expect(getObject(nonExistent, instanceID)).resolves.toBeUndefined();
+    await expect(getObject(existing, instanceID)).resolves.toBe(existing);
     expect(calls).toBe(2);
   });
 
