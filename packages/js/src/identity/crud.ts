@@ -30,7 +30,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
         const objectResult = await channel.getObject(hash.toBytes());
         if (objectResult) {
           const [, mediaType, payload] = parseObject(new Uint8Array(objectResult));
-          const value = decodeWithCodec(payload, parse(mediaType), instanceID) as WrapValue;
+          const value = await decodeWithCodec<WrapValue>(payload, parse(mediaType), instanceID);
           // It must be a signature wrap that has been signed by the address
           if (
             isWrap(value) &&
