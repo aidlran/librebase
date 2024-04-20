@@ -20,12 +20,15 @@ export function shred(buffer: Uint8Array) {
   }
 }
 
-function toBytes(
-  this: { decode(input: string): Uint8Array },
-  input: string | Hash | Uint8Array | ArrayBuffer,
-): Uint8Array {
+/**
+ * Coerces an identifier (address or hash) to a byte array.
+ *
+ * @param address A buffer or base 58 encoded string.
+ * @returns {Uint8Array}
+ */
+export function identifierToBytes(input: string | Hash | Uint8Array | ArrayBuffer): Uint8Array {
   if (typeof input === 'string') {
-    return this.decode(input);
+    return base58.decode(input);
   } else if (input instanceof Uint8Array) {
     return input;
   } else if (input instanceof Hash) {
@@ -36,17 +39,17 @@ function toBytes(
 }
 
 /**
- * Coerces an identifier (address or hash) to a byte array.
- *
- * @param {string | Hash | Uint8Array | ArrayBuffer} address A buffer or base 58 encoded string.
- * @returns {Uint8Array}
- */
-export const identifierToBytes = toBytes.bind(base58);
-
-/**
  * Coerces a payload to a byte array.
  *
- * @param {string | Uint8Array | ArrayBuffer} address A buffer or base 64 encoded string.
+ * @param address A buffer or base 64 encoded string.
  * @returns {Uint8Array}
  */
-export const payloadToBytes = toBytes.bind(base64);
+export function payloadToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {
+  if (typeof input === 'string') {
+    return base64.decode(input);
+  } else if (input instanceof Uint8Array) {
+    return input;
+  } else {
+    return new Uint8Array(input);
+  }
+}

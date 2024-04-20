@@ -59,10 +59,6 @@ describe('Buffer utilities', () => {
       test(`Uint8Array (${ascii})`, () => expect(payloadToBytes(bytes)).toEqual(bytes));
       test(`ArrayBuffer (${ascii})`, () => expect(payloadToBytes(bytes.buffer)).toEqual(bytes));
       test(`Base64 string (${ascii})`, () => expect(payloadToBytes(b64)).toEqual(bytes));
-      if (ascii) {
-        const hash = new Hash(bytes[0], bytes.subarray(1));
-        test(`Hash (${ascii})`, () => expect(identifierToBytes(hash)).toEqual(bytes));
-      }
     }
 
     it('Rejects non-base64 encoded string', () => {
