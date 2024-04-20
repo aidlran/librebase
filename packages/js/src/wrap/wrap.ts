@@ -5,9 +5,7 @@ import { HashAlgorithm, hash } from '../hash';
 import { getModule } from '../modules/modules';
 import type { WrapResult } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
-import type { WrapConfig } from './wrap-config';
-import type { WrapType } from './wrap-type';
-import type { WrapValue } from './wrap-value';
+import type { WrapConfig, WrapType, WrapValue } from './types';
 
 export async function wrap<T extends WrapType>(
   value: unknown,

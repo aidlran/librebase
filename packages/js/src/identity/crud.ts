@@ -35,7 +35,8 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
           if (
             isWrap(value) &&
             value.$ === 'wrap:ecdsa' &&
-            value.meta.pub === (typeof address === 'string' ? address : base58.encode(address))
+            (value as WrapValue<'ecdsa'>).meta.pub ===
+              (typeof address === 'string' ? address : base58.encode(address))
           ) {
             return value;
           }

@@ -1,4 +1,4 @@
-import type { WrapValue } from '../../wrap/wrap-value';
+import type { WrapValue } from '../../wrap';
 import type { Action } from './action';
 import type * as Payload from './payload/index';
 

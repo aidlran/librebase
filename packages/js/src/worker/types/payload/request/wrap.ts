@@ -1,8 +1,10 @@
-import type { WrapConfig, WrapType } from '../../../../wrap';
+import type { HashAlgorithm } from '../../../../hash';
+import type { WrapConfigMetadataMap, WrapType } from '../../../../wrap';
 
-export type WrapRequest<T extends WrapType = WrapType> = Omit<
-  WrapConfig<T>,
-  'mediaType' | 'value'
-> & {
+export interface WrapRequest<T extends WrapType = WrapType> {
+  wrapType: T;
+  metadata: WrapConfigMetadataMap[T];
+  /** The hashing algorithm to use. */
+  hashAlg?: HashAlgorithm;
   payload: Uint8Array;
-};
+}

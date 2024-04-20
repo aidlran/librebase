@@ -1,6 +1,6 @@
 import type { WrapType, WrapValue } from '../../../../wrap';
 
-interface WrapResultMap extends Record<WrapType, unknown> {
+interface WrapResultMap {
   /** Base 64 encoded signature. */
   ecdsa: string;
   encrypt: Pick<WrapValue<'encrypt'>, 'meta' | 'payload'>;

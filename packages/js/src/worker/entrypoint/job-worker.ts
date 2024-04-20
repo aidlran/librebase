@@ -4,6 +4,7 @@ import { Buffer } from 'buffer';
 import { base58, base64, shred } from '../../buffer';
 import { HashAlgorithm, hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
+import type { WrapValue } from '../../wrap';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
 import type {
   Job,
@@ -34,7 +35,7 @@ let keyring: BIP32Interface | undefined;
  */
 let identityPubKeyMap: Record<string, string> | undefined;
 
-async function findPrivateKey(address: Uint8Array): Promise<Buffer> {
+export async function findPrivateKey(address: Uint8Array): Promise<Buffer> {
   if (!keyring) {
     throw new Error('No active keyring');
   }
@@ -95,31 +96,34 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
         case 'unwrap': {
           switch (job.payload.$) {
             case 'wrap:ecdsa': {
+              const wrap = job.payload as WrapValue<'ecdsa'>;
               resultPayload = verify(
-                job.payload.meta.sig,
-                (await hash(job.payload.hash[0], job.payload.payload)).value,
-                job.payload.meta.pub,
+                wrap.meta.sig,
+                (await hash(wrap.hash[0], wrap.payload)).value,
+                wrap.meta.pub,
               );
               break;
             }
 
             case 'wrap:encrypt': {
-              const privateKey = await findPrivateKey(job.payload.meta.pubKey);
+              const wrap = job.payload as WrapValue<'encrypt'>;
+
+              const privateKey = await findPrivateKey(wrap.meta.pubKey);
 
               const sourceKey = await crypto.subtle.importKey(
                 'raw',
                 privateKey,
-                job.payload.meta.kdf,
+                wrap.meta.kdf,
                 false,
                 ['deriveKey'],
               );
 
               const derivedKey = await crypto.subtle.deriveKey(
                 {
-                  name: job.payload.meta.kdf,
-                  hash: job.payload.meta.hashAlg,
-                  salt: job.payload.meta.salt,
-                  iterations: job.payload.meta.iterations,
+                  name: wrap.meta.kdf,
+                  hash: wrap.meta.hashAlg,
+                  salt: wrap.meta.salt,
+                  iterations: wrap.meta.iterations,
                 },
                 sourceKey,
                 { name: 'AES-GCM', length: 256 },
@@ -131,21 +135,21 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 await crypto.subtle.decrypt(
                   {
                     name: 'AES-GCM',
-                    iv: job.payload.meta.iv,
+                    iv: wrap.meta.iv,
                   },
                   derivedKey,
-                  job.payload.payload,
+                  wrap.payload,
                 ),
               );
 
-              const givenHash = job.payload.hash.subarray(1);
-              const checkHash = (await hash(job.payload.hash[0], payload)).value;
+              const givenHash = wrap.hash.subarray(1);
+              const checkHash = (await hash(wrap.hash[0], payload)).value;
               if (givenHash.length != checkHash.length) throw new Error('Hash is not valid');
               for (const i in givenHash)
                 if (givenHash[i] != checkHash[i]) throw new Error('Hash is not valid');
 
               resultPayload = {
-                meta: job.payload.meta,
+                meta: wrap.meta,
                 payload,
               } as UnwrapResult<'encrypt'>;
 
