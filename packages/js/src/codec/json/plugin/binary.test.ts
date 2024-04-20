@@ -6,9 +6,11 @@ describe('JSON codec binary plugin', () => {
   describe('Replacer', () => {
     describe('Replaces Uint8Array or ArrayBuffer', () => {
       for (const [ascii, bin, , b64] of encodes) {
-        const encoded = `$bin:b64:${b64}`;
-        test(ascii, () => expect(binaryPlugin.replacer(undefined, bin)).toBe(encoded));
-        test(ascii, () => expect(binaryPlugin.replacer(undefined, bin.buffer)).toBe(encoded));
+        test(ascii, () => {
+          const encoded = `$bin:b64:${b64}`;
+          expect(binaryPlugin.replacer(undefined, bin)).toBe(encoded);
+          expect(binaryPlugin.replacer(undefined, bin.buffer)).toBe(encoded);
+        });
       }
     });
 
