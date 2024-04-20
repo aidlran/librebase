@@ -1,13 +1,12 @@
-import { base58 } from '../buffer';
+import { base58, identifierToBytes } from '../buffer';
 import { getChannels, queryChannelsAsync, queryChannelsSync } from '../channel';
 import { Hash } from '../hash';
-import { addressToBytes } from './address-to-bytes';
 
 export async function getAddressHash(
   address: string | Uint8Array,
   instanceID?: string,
 ): Promise<Hash | void> {
-  const addressBin = addressToBytes(address);
+  const addressBin = identifierToBytes(address);
   const hash = await queryChannelsSync(getChannels(instanceID), (channel) => {
     if (channel.getAddressHash) {
       return channel.getAddressHash(addressBin);
@@ -24,7 +23,7 @@ export async function setAddressHash(
   hash: Hash | string | Uint8Array,
   instanceID?: string,
 ) {
-  const addressBin = addressToBytes(address);
+  const addressBin = identifierToBytes(address);
   const hashBin =
     typeof hash === 'string' ? base58.decode(hash) : hash instanceof Hash ? hash.toBytes() : hash;
   await queryChannelsAsync(getChannels(instanceID), (channel) => {
