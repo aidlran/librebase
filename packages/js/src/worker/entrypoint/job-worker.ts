@@ -1,25 +1,19 @@
-import { sign, verify } from '@noble/secp256k1';
+import { verify } from '@noble/secp256k1';
 import type { BIP32Interface } from 'bip32';
 import { Buffer } from 'buffer';
-import { base58, base64, shred } from '../../buffer';
-import { HashAlgorithm, hash } from '../../hash';
+import { shred } from '../../buffer';
+import { hash } from '../../hash';
 import { openKeyringDB } from '../../keyring/init-db';
 import type { WrapValue } from '../../wrap';
 import { createDispatch, type JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type {
-  Job,
-  UnwrapResult,
-  WorkerDataRequest,
-  WorkerMessage,
-  WrapRequest,
-  WrapResult,
-} from '../types';
+import type { Job, UnwrapResult, WorkerDataRequest, WorkerMessage } from '../types';
 import { WorkerMessageType } from '../types';
 import { getIdentity } from './jobs/identity/get';
 import { createKeyring } from './jobs/keyring/create';
 import { importKeyring } from './jobs/keyring/import';
 import { loadKeyring } from './jobs/keyring/load';
 import { saveKeyring } from './jobs/keyring/save';
+import { wrap } from './jobs/wrap/wrap';
 
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
@@ -162,79 +156,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           break;
         }
         case 'wrap': {
-          const hashAlg = job.payload.hashAlg ?? HashAlgorithm.SHA256;
-          const payloadHash = await hash(hashAlg, job.payload.payload);
-          switch (job.payload.wrapType) {
-            case 'ecdsa': {
-              const config = job.payload as WrapRequest<'ecdsa'>;
-              const pubKeyBin =
-                typeof config.metadata === 'string'
-                  ? base58.decode(config.metadata)
-                  : config.metadata;
-              const privateKey = await findPrivateKey(pubKeyBin);
-              resultPayload = base64.encode(await sign(payloadHash.value, privateKey));
-              break;
-            }
-
-            case 'encrypt': {
-              const config = job.payload as WrapRequest<'encrypt'>;
-              const pubKeyBin =
-                typeof config.metadata.pubKey === 'string'
-                  ? base58.decode(config.metadata.pubKey)
-                  : config.metadata.pubKey;
-              const privateKey = await findPrivateKey(pubKeyBin);
-              const encryptionHashAlg = config.metadata.hashAlg ?? 'SHA-256';
-              const iterations = config.metadata.iterations ?? 600000;
-              const iv = config.metadata.iv ?? crypto.getRandomValues(new Uint8Array(12));
-              const kdf = config.metadata.kdf ?? 'PBKDF2';
-              const salt = config.metadata.salt ?? crypto.getRandomValues(new Uint8Array(16));
-
-              const sourceKey = await crypto.subtle.importKey('raw', privateKey, kdf, false, [
-                'deriveKey',
-              ]);
-
-              const derivedKey = await crypto.subtle.deriveKey(
-                {
-                  name: kdf,
-                  hash: encryptionHashAlg,
-                  salt,
-                  iterations,
-                },
-                sourceKey,
-                { name: 'AES-GCM', length: 256 },
-                false,
-                ['encrypt'],
-              );
-
-              const payload = new Uint8Array(
-                await crypto.subtle.encrypt(
-                  {
-                    name: 'AES-GCM',
-                    iv,
-                  },
-                  derivedKey,
-                  job.payload.payload,
-                ),
-              );
-
-              resultPayload = {
-                meta: {
-                  hashAlg: encryptionHashAlg,
-                  iterations,
-                  iv,
-                  kdf,
-                  pubKey: pubKeyBin,
-                  salt,
-                },
-                payload,
-              } as WrapResult<'encrypt'>;
-
-              break;
-            }
-
-            default:
-              throw new Error('Unsupported wrap type');
-          }
+          resultPayload = await wrap(job.payload);
           break;
         }
 
