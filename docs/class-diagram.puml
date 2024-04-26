@@ -1,0 +1,166 @@
+@startuml class-diagram
+
+skinparam WrapWidth 280
+
+package "@librebase/core" {
+  interface "Channel Driver" {
+    Provides an implementation of data object storage for a provider.
+    __
+    All methods are optional.
+    __
+    + **deleteObject()**
+    + **getObject()**
+    + **putObject()**
+    + **getAddressHash()**
+    + **setAddressHash()**
+    + **unsetAddressHash()**
+  }
+
+  object "Codec Manager" as CodecManager {
+    + **registerCodec()**
+    + **encode()**
+    + **decode()**
+  }
+
+  interface "Media Codec" {
+    Provides serialization and deserialization capability for a media type.
+    __
+    + **encode()**
+    + **decode()**
+  }
+
+  CodecManager o-r- "Media Codec"
+
+  object "Channel Manager / Queryer" as Queryer {
+    Responsible for querying the list of channels with sensible ordering and asynchronicity while awaiting parsing and validation.
+    __
+    - **channels**
+    + **registerChannel()**
+    + **querySync()**
+    + **queryAsync()**
+  }
+
+  Queryer o-u- CodecManager
+  Queryer o-r- "Channel Driver"
+
+
+  object "Data Object API" as ObjectAPI {
+    Perform simple queries on content addressable data objects.
+    __
+    + **deleteObject()**
+    + **getObject()**
+    + **putObject()**
+  }
+
+  ObjectAPI o-d- Queryer
+  ObjectAPI -d[hidden]-> CodecManager
+
+  object "Address API" as AddressAPI {
+    Perform simple queries on addresses. Addresses are derived from identity public keys and point to a data object hash - the entry point of the identity's graph of data.
+    __
+    + **getAddressHash()**
+    + **setAddressHash()**
+    + **unsetAddressHash()**
+  }
+
+  AddressAPI -r[hidden]-> ObjectAPI
+  AddressAPI o-- Queryer
+
+  object "Core API" as Core {
+    Public facing core API.
+  }
+
+  Core o-d- AddressAPI
+  Core o-d- CodecManager
+  Core o-d- ObjectAPI
+  Core o-d- Queryer
+}
+
+package "@librebase/driver-memory" {
+  class "In-memory Driver" {
+    Functions like a cache. Would typically be added first in the channels array and be trusted, so it is queried first and its data can skip validation. Can also be used for tests.
+  }
+  "In-memory Driver" .u.> "Channel Driver"
+}
+
+package "@librebase/driver-indexeddb" {
+  class "IndexedDB Driver" {
+    Local data persistence for web clients.
+  }
+  "IndexedDB Driver" .u.> "Channel Driver"
+}
+
+package "@librebase/driver-sqlite" {
+  class "SQLite Driver" {
+    Local data persistence for desktop or mobile apps and daemons.
+  }
+  "SQLite Driver" .u.> "Channel Driver"
+  "SQLite Driver" -u[hidden]-> "@librebase/driver-memory"
+}
+
+package "@librebase/driver-enclaves" {
+  class "Enclaves Driver" {
+    Remote data persistence, that we'll provide, in the cloud!
+  }
+  "Enclaves Driver" .u.> "Channel Driver"
+  "Enclaves Driver" -u[hidden]-> "@librebase/driver-indexeddb"
+}
+
+package "@librebase/codec-json" {
+  class "JSON Codec" {
+    - **plugins**
+  }
+
+  "JSON Codec" .d.> "Media Codec"
+  "JSON Codec" -d[hidden]-> Core
+
+  interface "JSON Middleware" {
+    Middleware for JSON parse and stringify which can validate and/or replace some or all of the JSON content.
+    __
+    **replace()**
+    **revive()**
+  }
+
+  "JSON Codec" o-u- "JSON Middleware"
+}
+
+"@librebase/codec-json" -d[hidden]-> "@librebase/core"
+
+package "@librebase/middleware-binary" {
+  class "Binary Middleware" {
+    Quietly swaps unsupported binary streams with base64 or base58 as appropriate.
+  }
+  "Binary Middleware" .d.> "JSON Middleware"
+}
+
+package "@librebase/wraps" {
+  object "Wrap API" as Wraps {
+    Implements serialization and deserialization for the wrap protocol, which is a schema for structured data to describe a "wrapped" (signed, encrypted, compressed, etc.) data object.
+    __
+    This system will become extensible in the future, allowing developers to define their own handlers and support additional algorithms.
+    __
+    **wrap()**
+    **unwrap()**
+  }
+
+  class "Wrap Middleware" {
+    Quietly processes wrapped objects.
+  }
+  "Wrap Middleware" ..> "JSON Middleware"
+  "Wrap Middleware" o-- Wraps
+}
+
+package "@librebase/identity" {
+  object "Identity API" as Identity {
+    + **activateKeyring()**
+    + **generateKeyring()**
+    + **getIdentity()**
+  }
+
+  Identity o-d- Core
+  Identity o-d- Wraps
+}
+
+"@librebase/identity" -d[hidden]-> "@librebase/wraps"
+
+@enduml

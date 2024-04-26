@@ -1,4 +1,5 @@
 .svelte-kit
 coverage
 dist
+docs/*.png
 node_modules

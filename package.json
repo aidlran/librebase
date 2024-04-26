@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces",
+    "build:docs": "plantuml docs/*.puml",
     "ci": "npm run build && npm run lint && npm run test",
     "cost": "npm run cost --workspaces --if-present",
     "coverage": "vitest run --coverage",
