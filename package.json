@@ -7,8 +7,7 @@
   "homepage": "https://github.com/aidlran/librebase#readme",
   "workspaces": [
     "lib/*",
-    "packages/*",
-    "website"
+    "packages/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
