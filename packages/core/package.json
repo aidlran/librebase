@@ -1,21 +1,21 @@
 {
   "name": "@librebase/core",
   "version": "0.1.0",
-  "description": "JavaScript implementation of the LibreBase protocol.",
+  "description": "Librebase engine core.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
-  "repository": "github:aidlran/librebase",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "homepage": "https://github.com/aidlran/librebase/tree/main/packages/js#readme",
-  "main": "dist/index.js",
-  "type": "module",
   "sideEffects": false,
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     }
   },
+  "main": "dist/index.js",
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
     "cost": "bun build --minify src/index.ts | gzip | wc -c",

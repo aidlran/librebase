@@ -36,9 +36,9 @@ module.exports = {
       },
     },
     {
-      files: ['packages/js/**/*.ts'],
+      files: ['packages/core/**/*.ts'],
       parserOptions: {
-        tsconfigRootDir: join(__dirname, 'packages/js'),
+        tsconfigRootDir: join(__dirname, 'packages/core'),
       },
     },
     {

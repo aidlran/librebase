@@ -1,37 +1,37 @@
 {
   "name": "librebase-svelte",
   "version": "0.1.0",
-  "description": "Cybernetically enhanced LibreBase apps.",
+  "description": "Cybernetically enhanced Librebase apps.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
-  "repository": "github:aidlran/librebase",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "homepage": "https://github.com/aidlran/librebase/tree/main/packages/svelte#readme",
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.ts | gzip | wc -c",
-    "lc": "echo LibreBase Svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
+  "type": "module",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"
     }
   },
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "dist",
     "!dist/**/*.test.*",
     "!dist/**/*.spec.*"
   ],
-  "peerDependencies": {
-    "librebase": "*",
-    "svelte": ">=3.44.2 <6.0.0"
+  "scripts": {
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/index.ts | gzip | wc -c",
+    "lc": "echo LibreBase Svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
     "@adamantjs/signals": "~0.2.0"
   },
-  "svelte": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "type": "module"
+  "peerDependencies": {
+    "@librebase/core": "*",
+    "svelte": ">=3.44.2 <6.0.0"
+  }
 }

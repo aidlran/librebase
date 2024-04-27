@@ -8,14 +8,5 @@
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "type": "module",
-  "bin": "./cli.js",
-  "scripts": {
-    "format": "sort-package-json",
-    "lint": "publint && sort-package-json --check"
-  },
-  "devDependencies": {
-    "@types/node": "^20.12.7",
-    "publint": "^0.2.7",
-    "sort-package-json": "^2.10.0"
-  }
+  "bin": "./cli.js"
 }
