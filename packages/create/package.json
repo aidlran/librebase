@@ -1,0 +1,21 @@
+{
+  "name": "create-librebase",
+  "version": "0.0.1",
+  "description": "Librebase app scaffolding tool.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "type": "module",
+  "bin": "./cli.js",
+  "scripts": {
+    "format": "sort-package-json",
+    "lint": "publint && sort-package-json --check"
+  },
+  "devDependencies": {
+    "@types/node": "^20.12.7",
+    "publint": "^0.2.7",
+    "sort-package-json": "^2.10.0"
+  }
+}

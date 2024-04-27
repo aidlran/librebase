@@ -61,6 +61,12 @@ module.exports = {
         'prefer-const': 'off',
       },
     },
+    {
+      files: ['packages/create/**/*'],
+      rules: {
+        'no-console': 'off',
+      },
+    },
   ],
   ignorePatterns: ['packages/*/coverage', 'packages/*/dist'],
   rules: {

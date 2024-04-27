@@ -1,5 +1,5 @@
 {
-  "name": "librebase",
+  "name": "@librebase/core",
   "version": "0.1.0",
   "description": "JavaScript implementation of the LibreBase protocol.",
   "license": "Apache-2.0",

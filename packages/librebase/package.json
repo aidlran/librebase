@@ -1,0 +1,19 @@
+{
+  "name": "librebase",
+  "version": "0.0.1",
+  "description": "Packages are published under the scope @librebase.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "type": "module",
+  "scripts": {
+    "format": "sort-package-json",
+    "lint": "publint && sort-package-json --check"
+  },
+  "devDependencies": {
+    "publint": "^0.2.7",
+    "sort-package-json": "^2.10.0"
+  }
+}
