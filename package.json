@@ -8,7 +8,8 @@
   "workspaces": [
     "lib/*",
     "packages/*",
-    "packages/codec/*"
+    "packages/codec/*",
+    "packages/driver/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",

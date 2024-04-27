@@ -5,7 +5,7 @@ export default defineConfig({
     environment: 'happy-dom',
     include: ['packages/**/*.{test,spec}.{js,ts}'],
     coverage: {
-      include: ['packages/**/src/**/*.{js,ts}'],
+      include: ['packages/**/*.{js,ts}'],
       exclude: ['**/index.{js,ts}'],
     },
   },
