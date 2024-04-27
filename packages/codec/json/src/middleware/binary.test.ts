@@ -1,42 +1,39 @@
-import { describe, expect, test } from 'vitest';
+import { Hash } from '@librebase/core';
+import { describe, expect, it, test } from 'vitest';
 import { encodes } from '../../../../core/testing/encodes';
 import { binary } from './binary';
 
-describe('JSON codec binary plugin', () => {
-  describe('Replacer', () => {
-    describe('Replaces Uint8Array or ArrayBuffer', () => {
-      for (const [ascii, bin, , b64] of encodes) {
-        test(ascii, () => {
-          const encoded = `$bin:b64:${b64}`;
-          expect(binary.replacer(undefined, bin)).toBe(encoded);
-          expect(binary.replacer(undefined, bin.buffer)).toBe(encoded);
-        });
-      }
+describe('JSON codec binary middleware', () => {
+  for (const [ascii, bin, b58, b64] of encodes) {
+    const b58Encoded = `$bin:b58:${b58}`;
+    const b64Encoded = `$bin:b64:${b64}`;
+    it('Replaces as ArrayBuffer - ' + ascii, () => {
+      expect(binary.replacer(undefined, bin.buffer)).toBe(b64Encoded);
     });
+    if (ascii) {
+      it('Replaces as Hash - ' + ascii, () => {
+        const hash = new Hash(bin[0], bin.subarray(1));
+        expect(binary.replacer(undefined, hash)).toBe(b58Encoded);
+      });
+    }
+    it('Replaces as Uint8Array - ' + ascii, () => {
+      expect(binary.replacer(undefined, bin)).toBe(b64Encoded);
+    });
+    it('Revives as base58 - ' + ascii, () => {
+      expect(binary.reviver(undefined, b58Encoded)).toEqual(bin);
+    });
+    it('Revives as base64 - ' + ascii, () => {
+      expect(binary.reviver(undefined, b64Encoded)).toEqual(bin);
+    });
+  }
 
-    describe('Ignores other types', () => {
-      for (const input of ['abc', {}, []]) {
-        test(typeof input === 'string' ? input : JSON.stringify(input), () => {
-          expect(binary.replacer(undefined, input)).toBe(input);
-        });
-      }
+  for (const input of ['abc', {}, []]) {
+    const inputAsString = JSON.stringify(input);
+    test('Replacer ignores ' + inputAsString, () => {
+      expect(binary.replacer(undefined, input)).toBe(input);
     });
-  });
-
-  describe('Reviver', () => {
-    describe('Revives valid string', () => {
-      for (const [ascii, bin, , b64] of encodes) {
-        const encoded = `$bin:b64:${b64}`;
-        test(ascii, () => expect(binary.reviver(undefined, encoded)).toEqual(bin));
-      }
+    test('Reviver ignores ' + inputAsString, () => {
+      expect(binary.reviver(undefined, input)).toBe(input);
     });
-
-    describe('Ignores other strings and types', () => {
-      for (const input of ['abc', {}, []]) {
-        test(typeof input === 'string' ? input : JSON.stringify(input), () => {
-          expect(binary.reviver(undefined, input)).toBe(input);
-        });
-      }
-    });
-  });
+  }
 });

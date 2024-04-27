@@ -1,6 +1,6 @@
 import { Hash, base58, base64 } from '@librebase/core';
 
-/** JSON codec plugin for storing arbitrary byte arrays as base encoded strings. */
+/** JSON codec middleware to swap binary streams for base encoded strings. */
 export const binary = {
   replacer(_: unknown, value: unknown) {
     if (value instanceof Hash) {

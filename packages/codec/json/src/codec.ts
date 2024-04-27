@@ -4,11 +4,7 @@ import type { JsonCodecMiddleware } from './types';
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 
-/**
- * Extensible JSON codec for the `application/json` media type with structured data values. Values
- * are first encoded as JSON strings before being converted to bytes. Plugins can provide replacer
- * and reviver functions that hook into the stringification and destringification processes.
- */
+/** Extensible JSON codec for the `application/json` media type. */
 export function json(...middlewares: JsonCodecMiddleware[]) {
   return {
     decode: decode.bind(middlewares) as <T>(payload: Uint8Array, props: CodecProps) => Promise<T>,
