@@ -1,0 +1,37 @@
+{
+  "name": "@librebase/codec-json",
+  "version": "0.1.0",
+  "description": "Extensible JSON codec for @librebase/core.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "default": "./dist/middleware/index.js"
+    },
+    "./recommended": {
+      "types": "./dist/recommended/index.d.ts",
+      "default": "./dist/recommended/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/recommended/index.ts | gzip | wc -c",
+    "lc": "echo @librebase/codec-json: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "npm run watch",
+    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
+  },
+  "peerDependencies": {
+    "@librebase/core": "*"
+  }
+}

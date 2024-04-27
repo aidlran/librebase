@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { encodes } from '../../../../testing/encodes';
-import { binaryPlugin } from './binary';
+import { encodes } from '../../../../core/testing/encodes';
+import { binary } from './binary';
 
 describe('JSON codec binary plugin', () => {
   describe('Replacer', () => {
@@ -8,8 +8,8 @@ describe('JSON codec binary plugin', () => {
       for (const [ascii, bin, , b64] of encodes) {
         test(ascii, () => {
           const encoded = `$bin:b64:${b64}`;
-          expect(binaryPlugin.replacer(undefined, bin)).toBe(encoded);
-          expect(binaryPlugin.replacer(undefined, bin.buffer)).toBe(encoded);
+          expect(binary.replacer(undefined, bin)).toBe(encoded);
+          expect(binary.replacer(undefined, bin.buffer)).toBe(encoded);
         });
       }
     });
@@ -17,7 +17,7 @@ describe('JSON codec binary plugin', () => {
     describe('Ignores other types', () => {
       for (const input of ['abc', {}, []]) {
         test(typeof input === 'string' ? input : JSON.stringify(input), () => {
-          expect(binaryPlugin.replacer(undefined, input)).toBe(input);
+          expect(binary.replacer(undefined, input)).toBe(input);
         });
       }
     });
@@ -27,14 +27,14 @@ describe('JSON codec binary plugin', () => {
     describe('Revives valid string', () => {
       for (const [ascii, bin, , b64] of encodes) {
         const encoded = `$bin:b64:${b64}`;
-        test(ascii, () => expect(binaryPlugin.reviver(undefined, encoded)).toEqual(bin));
+        test(ascii, () => expect(binary.reviver(undefined, encoded)).toEqual(bin));
       }
     });
 
     describe('Ignores other strings and types', () => {
       for (const input of ['abc', {}, []]) {
         test(typeof input === 'string' ? input : JSON.stringify(input), () => {
-          expect(binaryPlugin.reviver(undefined, input)).toBe(input);
+          expect(binary.reviver(undefined, input)).toBe(input);
         });
       }
     });

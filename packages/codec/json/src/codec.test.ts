@@ -1,7 +1,9 @@
 import { describe, expect, it, test } from 'vitest';
-import { textDecoder, textEncoder } from '../../shared';
-import { jsonCodec } from './codec';
-import type { JsonCodecPlugin } from './types';
+import { json } from './codec';
+import type { JsonCodecMiddleware } from './types';
+
+const textDecoder = new TextDecoder();
+const textEncoder = new TextEncoder();
 
 const props = { mediaType: { type: 'application/json' } };
 
@@ -11,17 +13,17 @@ const commonCases: [unknown, string][] = [
   { nested: { a: 1, b: 2 } },
 ].map((obj) => [obj, JSON.stringify(obj)]);
 
-const noOpPlugin: JsonCodecPlugin = {
+const noOpPlugin: JsonCodecMiddleware = {
   replacer: (_, value) => value,
   reviver: (_, value) => value,
 };
 
-const noOpAsyncPlugin: JsonCodecPlugin = {
+const noOpAsyncPlugin: JsonCodecMiddleware = {
   replacer: (_, value) => Promise.resolve(value),
   reviver: (_, value) => Promise.resolve(value),
 };
 
-const stringPlugin: JsonCodecPlugin = {
+const stringPlugin: JsonCodecMiddleware = {
   replacer: (_, value) => (value === 'abcdefg' ? 'replace_abcdefg' : value),
   reviver: (_, value) => (value === 'replace_abcdefg' ? 'abcdefg' : value),
 };
@@ -34,20 +36,20 @@ const stringReplaceCases: [unknown, string][] = [
 
 describe('JSON codec', () => {
   it('is defined', () => {
-    const json = jsonCodec();
-    expect(json.decode).toBeTypeOf('function');
-    expect(json.encode).toBeTypeOf('function');
+    const codec = json();
+    expect(codec.decode).toBeTypeOf('function');
+    expect(codec.encode).toBeTypeOf('function');
   });
 
   test('JSON encoder throws when circular reference encountered', () => {
-    const { encode } = jsonCodec();
+    const { encode } = json();
     const obj: Record<string, unknown> = {};
     obj.obj = obj;
     expect(encode(obj, props)).rejects.toThrow('Circular reference');
   });
 
   describe('JSON decoding (no plugins)', () => {
-    const { decode } = jsonCodec();
+    const { decode } = json();
     for (const [input, output] of commonCases) {
       test(output, async () => {
         const decoded = await decode(textEncoder.encode(output), props);
@@ -57,7 +59,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON encoding (no plugins)', () => {
-    const { encode } = jsonCodec();
+    const { encode } = json();
     for (const [input, output] of commonCases) {
       test(output, async () => {
         const encodedBin = await encode(input, props);
@@ -68,7 +70,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON decoding (no-op plugin)', () => {
-    const { decode } = jsonCodec(noOpPlugin);
+    const { decode } = json(noOpPlugin);
     for (const [input, output] of commonCases) {
       test(output, async () => {
         const decoded = await decode(textEncoder.encode(output), props);
@@ -78,7 +80,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON encoding (no-op plugin)', () => {
-    const { encode } = jsonCodec(noOpPlugin);
+    const { encode } = json(noOpPlugin);
     for (const [input, output] of commonCases) {
       test(output, async () => {
         const encodedBin = await encode(input, props);
@@ -89,7 +91,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON encoding (no-op async plugin)', () => {
-    const { encode } = jsonCodec(noOpAsyncPlugin);
+    const { encode } = json(noOpAsyncPlugin);
     for (const [input, output] of commonCases) {
       test(output, async () => {
         const encodedBin = await encode(input, props);
@@ -100,7 +102,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON decoding (string replacer plugin)', () => {
-    const { decode } = jsonCodec(stringPlugin);
+    const { decode } = json(stringPlugin);
     for (const [input, output] of [...commonCases, ...stringReplaceCases]) {
       test(output, async () => {
         const decoded = await decode(textEncoder.encode(output), props);
@@ -110,7 +112,7 @@ describe('JSON codec', () => {
   });
 
   describe('JSON encoding (string replacer plugin)', () => {
-    const { encode } = jsonCodec(stringPlugin);
+    const { encode } = json(stringPlugin);
     for (const [input, output] of [...commonCases, ...stringReplaceCases]) {
       test(output, async () => {
         const encodedBin = await encode(input, props);

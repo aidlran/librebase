@@ -1,5 +1,7 @@
 import { afterAll, describe, expect, test } from 'vitest';
+import { mockJSONCodec } from '../../testing/codecs';
 import { getChannels, type ChannelDriver } from '../channel';
+import { registerCodec } from '../codec';
 import { Hash, HashAlgorithm } from '../hash';
 import { deleteObject, getObject, putObject } from './crud';
 
@@ -9,6 +11,7 @@ describe('Object CRUD', () => {
   const mockDriverB: ChannelDriver = {};
   const channels = getChannels(instanceID);
   channels.push(mockDriverA, mockDriverB);
+  registerCodec('application/json', mockJSONCodec, instanceID);
 
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
@@ -17,6 +20,7 @@ describe('Object CRUD', () => {
   afterAll(() => {
     channels.pop();
     channels.pop();
+    registerCodec('application/json', undefined, instanceID);
   });
 
   describe('Delete object', () => {

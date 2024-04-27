@@ -7,11 +7,13 @@
   "homepage": "https://github.com/aidlran/librebase#readme",
   "workspaces": [
     "lib/*",
-    "packages/*"
+    "packages/*",
+    "packages/codec/*"
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "build:docs": "plantuml docs/*.puml",
+    "build:init": "npm run build -w lib/signals && npm run build -w packages/core",
     "ci": "npm run build && npm run lint && npm run test",
     "cost": "npm run cost --workspaces --if-present",
     "coverage": "vitest run --coverage",
@@ -22,7 +24,8 @@
     "lint:publint": "npx --workspaces publint",
     "lint:sort-package-json": "npx --workspaces sort-package-json --check",
     "start": "conc -k npm:start:*",
-    "start:js": "npm start -w packages/core",
+    "start:codec/json": "npm start -w packages/codec/json",
+    "start:core": "npm start -w packages/core",
     "start:svelte": "npm start -w packages/svelte",
     "test": "vitest run",
     "test:dev": "vitest --coverage"

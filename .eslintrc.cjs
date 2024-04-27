@@ -35,18 +35,12 @@ module.exports = {
         tsconfigRootDir: join(__dirname, 'packages/svelte'),
       },
     },
-    {
-      files: ['packages/core/**/*.ts'],
+    ...['codec/json', 'core', 'svelte'].map((path) => ({
+      files: [`packages/${path}/**/*.ts`],
       parserOptions: {
-        tsconfigRootDir: join(__dirname, 'packages/core'),
+        tsconfigRootDir: join(__dirname, `packages/${path}`),
       },
-    },
-    {
-      files: ['packages/svelte/**/*.ts'],
-      parserOptions: {
-        tsconfigRootDir: join(__dirname, 'packages/svelte'),
-      },
-    },
+    })),
     {
       files: ['*.test.*', '**/test/**/*', '**/testing/**/*'],
       rules: {
@@ -68,7 +62,7 @@ module.exports = {
       },
     },
   ],
-  ignorePatterns: ['packages/*/coverage', 'packages/*/dist'],
+  ignorePatterns: ['packages/*/coverage', 'packages/**/dist'],
   rules: {
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

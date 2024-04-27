@@ -1,23 +1,25 @@
-import { textDecoder, textEncoder } from '../../shared';
-import type { Codec } from '../types';
-import type { JsonCodecPlugin, JsonCodecProps } from './types';
+import type { CodecProps } from '@librebase/core';
+import type { JsonCodecMiddleware } from './types';
+
+const textDecoder = new TextDecoder();
+const textEncoder = new TextEncoder();
 
 /**
  * Extensible JSON codec for the `application/json` media type with structured data values. Values
  * are first encoded as JSON strings before being converted to bytes. Plugins can provide replacer
  * and reviver functions that hook into the stringification and destringification processes.
  */
-export function jsonCodec(...plugins: JsonCodecPlugin[]): Codec {
+export function json(...middlewares: JsonCodecMiddleware[]) {
   return {
-    decode: decode.bind(plugins),
-    encode: encode.bind(plugins),
+    decode: decode.bind(middlewares) as <T>(payload: Uint8Array, props: CodecProps) => Promise<T>,
+    encode: encode.bind(middlewares) as (data: unknown, props: CodecProps) => Promise<Uint8Array>,
   };
 }
 
 function decode(
-  this: JsonCodecPlugin[],
+  this: JsonCodecMiddleware[],
   payload: Uint8Array,
-  props: JsonCodecProps,
+  props: CodecProps,
 ): Promise<unknown> {
   const refTrack = new Set();
   const parsed = JSON.parse(textDecoder.decode(payload)) as unknown;
@@ -25,9 +27,9 @@ function decode(
 }
 
 async function encode(
-  this: JsonCodecPlugin[],
+  this: JsonCodecMiddleware[],
   data: unknown,
-  props: JsonCodecProps,
+  props: CodecProps,
 ): Promise<Uint8Array> {
   const refTrack = new Set();
   const replaced = await replace(this, 'replacer', props.instanceID, refTrack, data);
@@ -35,8 +37,8 @@ async function encode(
 }
 
 async function replace(
-  plugins: JsonCodecPlugin[],
-  fn: keyof JsonCodecPlugin,
+  plugins: JsonCodecMiddleware[],
+  fn: keyof JsonCodecMiddleware,
   instanceID: string | undefined,
   refTrack: Set<unknown>,
   value: unknown,
