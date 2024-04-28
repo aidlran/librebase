@@ -13,6 +13,18 @@
     ".": {
       "types": "./dist/wraps.d.ts",
       "default": "./dist/wraps.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware.d.ts",
+      "default": "./dist/middleware.js"
+    },
+    "./module": {
+      "types": "./dist/ecdsa.d.ts",
+      "default": "./dist/ecdsa.js"
+    },
+    "./recommended": {
+      "types": "./dist/recommended.d.ts",
+      "default": "./dist/recommended.js"
     }
   },
   "main": "dist/wraps.js",
@@ -23,10 +35,10 @@
     "start": "npm run watch",
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
-  "dependencies": {
-    "valibot": "^0.30.0"
-  },
   "peerDependencies": {
-    "@librebase/core": "*"
+    "@librebase/codec-json": "*",
+    "@librebase/core": "*",
+    "@noble/secp256k1": "^2.1.0",
+    "valibot": "^0.30.0"
   }
 }

@@ -1,6 +1,12 @@
+import { registerCodec } from '@librebase/core';
 import { json as codec } from '../codec';
 import { binary } from '../middleware';
 import type { JsonCodecMiddleware } from '../types';
+
+export function init(config?: { middlewares?: JsonCodecMiddleware[]; instanceID?: string }) {
+  const middlewares = config?.middlewares ?? [];
+  registerCodec('application/json', json(...middlewares), config?.instanceID);
+}
 
 /**
  * Extensible JSON codec for the `application/json` media type. This recommended configuration
