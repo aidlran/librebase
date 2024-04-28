@@ -1,0 +1,32 @@
+{
+  "name": "@librebase/wraps",
+  "version": "0.1.0",
+  "description": "Librebase wrap protocol implementation.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/wraps.d.ts",
+      "default": "./dist/wraps.js"
+    }
+  },
+  "main": "dist/wraps.js",
+  "scripts": {
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/wraps.ts | gzip | wc -c",
+    "lc": "echo @librebase/wraps: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "npm run watch",
+    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
+  },
+  "dependencies": {
+    "valibot": "^0.30.0"
+  },
+  "peerDependencies": {
+    "@librebase/core": "*"
+  }
+}

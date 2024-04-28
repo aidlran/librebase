@@ -13,6 +13,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./internal": {
+      "types": "./dist/modules/modules.d.ts",
+      "default": "./dist/modules/modules.js"
     }
   },
   "main": "dist/index.js",
