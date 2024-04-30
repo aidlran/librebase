@@ -56,5 +56,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm i --legacy-peer-deps -D svelte@${{ matrix.version }}
-      - run: npm run build:init
+      - run: npm run build -w lib/signals
+      - run: npm run build -w packages/core
       - run: npm run build -w packages/svelte
