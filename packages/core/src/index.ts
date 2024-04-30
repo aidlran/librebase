@@ -7,4 +7,5 @@ export * from './identity';
 export * from './keyring';
 export * from './logger';
 export * from './object';
+export * from './wire';
 export * from './wrap';
