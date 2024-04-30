@@ -1,5 +1,5 @@
 import { identifierToBytes } from '../buffer';
-import { getChannels, queryChannelsAsync, queryChannelsSync } from '../channel';
+import { queryChannelsAsync, queryChannelsSync } from '../channel';
 import { Hash } from '../hash';
 
 export async function getAddressHash(
@@ -7,11 +7,11 @@ export async function getAddressHash(
   instanceID?: string,
 ): Promise<Hash | void> {
   const addressBin = identifierToBytes(address);
-  const hash = await queryChannelsSync(getChannels(instanceID), (channel) => {
+  const hash = await queryChannelsSync((channel) => {
     if (channel.getAddressHash) {
       return channel.getAddressHash(addressBin);
     }
-  });
+  }, instanceID);
   if (hash) {
     const hashBin = new Uint8Array(hash);
     return new Hash(hashBin[0], hashBin.subarray(1));
@@ -25,9 +25,9 @@ export async function setAddressHash(
 ) {
   const addressBin = identifierToBytes(address);
   const hashBin = identifierToBytes(hash);
-  await queryChannelsAsync(getChannels(instanceID), (channel) => {
+  await queryChannelsAsync((channel) => {
     if (channel.setAddressHash) {
       return channel.setAddressHash(addressBin, hashBin);
     }
-  });
+  }, instanceID);
 }

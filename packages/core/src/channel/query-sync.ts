@@ -1,12 +1,16 @@
-import type { Channels } from './channels';
+import { getModule } from '../modules/modules';
+import { channels } from './channels';
 import type { Query } from './query-async';
 import type { ChannelDriver } from './types';
 
 /** Queries channels synchronously, one by one. Groups of channels are raced asynchronously. */
-export async function queryChannelsSync<T>(channels: Channels, query: Query<T>): Promise<T | void> {
-  for (const entry of channels) {
+export async function queryChannelsSync<T>(
+  query: Query<ChannelDriver, T>,
+  instanceID?: string,
+): Promise<T | void> {
+  for (const entry of getModule(channels, instanceID)) {
     const result = await race(entry instanceof Array ? entry : [entry], query);
-    if (result !== undefined || result !== null) {
+    if (result !== undefined && result !== null) {
       return result;
     }
   }
@@ -17,7 +21,7 @@ export async function queryChannelsSync<T>(channels: Channels, query: Query<T>):
  * return `null` or `undefined` or any that throw are ignored. If none return a valid result, the
  * resolved value is `undefined`.
  */
-function race<T>(channels: ChannelDriver[], query: Query<T>): Promise<T | void> {
+function race<T, R>(channels: T[], query: Query<T, R>): Promise<R | void> {
   return new Promise((resolve) => {
     let todo = channels.length;
     let resolved = false;

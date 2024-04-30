@@ -1,7 +1,7 @@
 import { parse, type MediaType, format } from 'content-type';
 import { getAddressHash, setAddressHash } from '../address';
 import { base58 } from '../buffer';
-import { getChannels, queryChannelsSync } from '../channel';
+import { queryChannelsSync } from '../channel';
 import { decodeWithCodec, encodeWithCodec } from '../codec';
 import { getModule } from '../modules/modules';
 import { parseObject, putObject, type PutOptions } from '../object';
@@ -25,7 +25,7 @@ export function getIdentityAddress(identityID: string, instanceID?: string) {
 export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {
   const hash = await getAddressHash(address, instanceID);
   if (hash) {
-    return queryChannelsSync(getChannels(instanceID), async (channel) => {
+    return queryChannelsSync(async (channel) => {
       if (channel.getObject) {
         const objectResult = await channel.getObject(hash.toBytes());
         if (objectResult) {
@@ -42,7 +42,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
           }
         }
       }
-    });
+    }, instanceID);
   }
 }
 

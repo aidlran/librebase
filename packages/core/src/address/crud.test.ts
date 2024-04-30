@@ -33,10 +33,12 @@ describe('Address CRUD', () => {
     mockDriverA.getAddressHash = getAddressHashMock;
     mockDriverB.getAddressHash = getAddressHashMock;
     await expect(getAddressHash(nonExistent, instanceID)).resolves.toBeUndefined();
+    // +2 calls as neither return
     const existingRequest = await getAddressHash(existing, instanceID);
+    // +1 call as returns after first
     expect(existingRequest).toBeInstanceOf(Hash);
     expect(existingRequest!.toBytes()).toEqual(existing);
-    expect(calls).toBe(2);
+    expect(calls).toBe(3);
   });
 
   test('Set address hash', async () => {

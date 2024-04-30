@@ -57,9 +57,11 @@ describe('Object CRUD', () => {
     }
     mockDriverA.getObject = getObjectMock;
     mockDriverB.getObject = getObjectMock;
+    // +2 calls as neither return
     await expect(getObject(nonExistent, instanceID)).resolves.toBeUndefined();
+    // +1 call as returns after first
     await expect(getObject(existing, instanceID)).resolves.toBe(existing);
-    expect(calls).toBe(2);
+    expect(calls).toBe(3);
   });
 
   test('Put object', async () => {

@@ -6,7 +6,8 @@ import {
   fakeVoidDriver,
 } from '../../testing/drivers';
 import { resolveBeforeTimeout } from '../../testing/utils';
-import type { Channels } from './channels';
+import { getModule } from '../modules/modules';
+import { channels, type Channels } from './channels';
 import { queryChannelsSync } from './query-sync';
 import type { Query } from './query-async';
 import type { ChannelDriver } from './types';
@@ -21,17 +22,21 @@ function throwQuery() {
 
 describe('Query channels sync', () => {
   it('resolves after first valid found in group', () => {
-    expect(
-      resolveBeforeTimeout(
-        queryChannelsSync([[fakeDelayedDriver, fakeValidDriver]], (channel) => {
-          if (channel.getObject!(new ArrayBuffer(0))) return 0;
-        }),
-        500,
-      ),
-    ).resolves.toBe(0);
+    const instanceID = 'query-channels-sync-resolve-first';
+    getModule(channels, instanceID).push(fakeDelayedDriver, fakeValidDriver);
+    const query = (channel: ChannelDriver) => {
+      if (channel.getObject!(new ArrayBuffer(0))) {
+        return 0;
+      }
+    };
+    expect(resolveBeforeTimeout(queryChannelsSync(query, instanceID), 500)).resolves.toBe(0);
   });
 
-  const shouldResolveVoid: [test: string, query: Query<unknown>, channels: Channels][] = [
+  const shouldResolveVoid: [
+    test: string,
+    query: Query<ChannelDriver, unknown>,
+    channels: Channels,
+  ][] = [
     ['no channels', normalQuery, []],
     ['no channels', normalQuery, [[]]],
     ['single driver returns void', normalQuery, [fakeVoidDriver]],
@@ -46,9 +51,10 @@ describe('Query channels sync', () => {
     ],
   ];
 
-  for (const [test, query, channels] of shouldResolveVoid) {
+  for (const [test, query, testChannels] of shouldResolveVoid) {
+    getModule(channels, test).push(...testChannels);
     it('should resolve void if ' + test, () => {
-      expect(queryChannelsSync(channels, query)).resolves.toBe(undefined);
+      expect(queryChannelsSync(query, test)).resolves.toBe(undefined);
     });
   }
 });
