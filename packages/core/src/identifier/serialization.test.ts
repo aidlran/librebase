@@ -1,7 +1,7 @@
 import { expect, test } from 'vitest';
-import { encodeWirePayload, parseWirePayload } from './payload';
+import { encodeIdentifier, parseIdentifier } from './serialization';
 
-test('Wire payload serialization', () => {
+test('Identifier serialization', () => {
   for (const {
     encoded,
     decoded: { type, payload },
@@ -15,7 +15,7 @@ test('Wire payload serialization', () => {
       decoded: { type: 1000, payload: [2, 3, 4] },
     },
   ]) {
-    expect(encodeWirePayload(type, payload)).toEqual(new Uint8Array(encoded));
-    expect(parseWirePayload(encoded)).toEqual([type, new Uint8Array(payload)]);
+    expect(encodeIdentifier(type, payload)).toEqual(new Uint8Array(encoded));
+    expect(parseIdentifier(encoded)).toEqual([type, new Uint8Array(payload)]);
   }
 });
