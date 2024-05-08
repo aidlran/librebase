@@ -1,13 +1,4 @@
 import { queryChannelsAsync } from './query-async';
-import { queryChannelsSync } from './query-sync';
-
-export function get(key: ArrayBuffer, instanceID?: string) {
-  return queryChannelsSync((channel) => {
-    if (channel.getObject) {
-      return channel.getObject(key);
-    }
-  }, instanceID);
-}
 
 export function put(key: ArrayBuffer, value: ArrayBuffer, instanceID?: string) {
   return queryChannelsAsync((channel) => {

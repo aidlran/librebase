@@ -1,14 +1,19 @@
 import type { MediaType } from 'content-type';
-import { get, put, remove } from '../channel/crud';
+import { put, remove } from '../channel/crud';
+import { FS } from '../fs';
 import { Hash, HashAlgorithm, hash } from '../hash';
+import { getByIdentifier } from '../identifier';
 import { serializeObject } from './serialize';
 
 export async function deleteObject(hash: ArrayBuffer | Hash, instanceID?: string) {
   return remove(hash instanceof Hash ? hash.toBytes() : hash, instanceID);
 }
 
-export async function getObject(hash: ArrayBuffer | Hash, instanceID?: string) {
-  return get(hash instanceof Hash ? hash.toBytes() : hash, instanceID);
+export async function getObject(
+  cid: ArrayLike<number> | ArrayBufferLike | Hash,
+  instanceID?: string,
+) {
+  return getByIdentifier(FS.type, cid instanceof Hash ? cid.toBytes() : cid, instanceID);
 }
 
 export interface PutOptions {

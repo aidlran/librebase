@@ -2,7 +2,10 @@ import { afterAll, describe, expect, test } from 'vitest';
 import { mockJSONCodec } from '../../testing/codecs';
 import { getChannels, type ChannelDriver } from '../channel';
 import { registerCodec } from '../codec';
+import { FS } from '../fs';
 import { Hash, HashAlgorithm } from '../hash';
+import { registerIdentifier } from '../identifier';
+import { getModule } from '../internal';
 import { deleteObject, getObject, putObject } from './crud';
 
 describe('Object CRUD', () => {
@@ -12,6 +15,7 @@ describe('Object CRUD', () => {
   const channels = getChannels(instanceID);
   channels.push(mockDriverA, mockDriverB);
   registerCodec('application/json', mockJSONCodec, instanceID);
+  registerIdentifier(FS, { instanceID });
 
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
@@ -45,23 +49,36 @@ describe('Object CRUD', () => {
   });
 
   test('Get object', async () => {
-    const existing = createHash();
-    const nonExistent = createHash();
-    let calls = 0;
-    function getObjectMock(hash: ArrayBuffer) {
-      calls++;
-      expect(hash).oneOf([existing, nonExistent]);
-      if (hash === existing) {
-        return hash;
-      }
+    const instanceID = 'test-get-object';
+
+    const existing = crypto.getRandomValues(new Uint8Array(16));
+    const existingCID = new Uint8Array([FS.type, ...existing]);
+
+    getModule(getChannels, instanceID).push({
+      getObject(identifier) {
+        const buffer = new Uint8Array(identifier);
+        if (buffer.length !== existingCID.length) {
+          return;
+        }
+        for (let i = 0; i < buffer.length; i++) {
+          if (buffer[i] !== existingCID[i]) {
+            return;
+          }
+        }
+        return identifier;
+      },
+    });
+
+    registerIdentifier({ type: 0, parse: (_, v) => v }, { instanceID });
+
+    for (const cid of [existing, new Hash(existing[0], existing.subarray(1))]) {
+      await expect(getObject(cid, instanceID)).resolves.toEqual(existingCID);
     }
-    mockDriverA.getObject = getObjectMock;
-    mockDriverB.getObject = getObjectMock;
-    // +2 calls as neither return
-    await expect(getObject(nonExistent, instanceID)).resolves.toBeUndefined();
-    // +1 call as returns after first
-    await expect(getObject(existing, instanceID)).resolves.toBe(existing);
-    expect(calls).toBe(3);
+
+    const nonExistent = crypto.getRandomValues(new Uint8Array(16));
+    for (const cid of [nonExistent, new Hash(nonExistent[0], nonExistent.subarray(1))]) {
+      await expect(getObject(cid, instanceID)).resolves.toBeUndefined();
+    }
   });
 
   test('Put object', async () => {

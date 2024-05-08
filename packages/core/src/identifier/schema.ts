@@ -2,9 +2,13 @@ import { getModule } from '../modules/modules';
 import { state } from '../state';
 
 /** Describes an identifier. */
-export interface IdentifierSchema {
+export interface IdentifierSchema<T = unknown> {
   /** The unique type integer. A table of known types will need to be maintained somewhere. */
   type: number;
+  parse(
+    key: ArrayLike<number> | ArrayBufferLike,
+    value: ArrayLike<number> | ArrayBufferLike,
+  ): T | void | Promise<T | void>;
 }
 
 export interface RegisterIdentifierOptions {
@@ -27,15 +31,18 @@ export interface RegisterIdentifierOptions {
  */
 export const ERROR_TYPE_MISSING = 0;
 
+/** An error code thrown if the identifier schema does not specify a parse function. */
+export const ERROR_PARSE_MISSING = 1;
+
 /**
  * An error code thrown if an identifier schema has already been registered with the target type
  * integer.
  */
-export const ERROR_TYPE_IN_USE = 1;
+export const ERROR_TYPE_IN_USE = 2;
 
 /** An error thrown during {@linkcode registerIdentifier}. */
 export class IdentifierRegistrationError extends TypeError {
-  constructor(readonly code: typeof ERROR_TYPE_MISSING | typeof ERROR_TYPE_IN_USE) {
+  constructor(readonly code: 0 | 1 | 2) {
     super();
   }
 }
@@ -51,6 +58,9 @@ export function registerIdentifier(schema: IdentifierSchema, options?: RegisterI
   const type = options?.asType ?? schema.type;
   if (!Number.isInteger(type)) {
     throw new IdentifierRegistrationError(ERROR_TYPE_MISSING);
+  }
+  if (typeof schema.parse !== 'function') {
+    throw new IdentifierRegistrationError(ERROR_PARSE_MISSING);
   }
   const identifiers = getModule(state, options?.instanceID).identifiers;
   if (!options?.force && identifiers[type]) {
