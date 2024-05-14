@@ -1,16 +1,16 @@
 import { hash } from '../hash';
 import type { IdentifierSchema } from '../identifier';
-import { parseObject, type ParsedObject } from '../object';
+import { parseFsContent, type ParsedFsContent } from './parse';
 
 /** Provides a content addressable file system. */
-export const FS: IdentifierSchema<ParsedObject> = {
+export const FsSchema: IdentifierSchema<ParsedFsContent> = {
   type: 0,
   async parse(rawCID, rawContent) {
     const cid = new Uint8Array(rawCID);
     const content = new Uint8Array(rawContent);
 
     // Will throw if content is malformed or unsupported
-    const parsed = parseObject(new Uint8Array(rawContent));
+    const parsed = parseFsContent(new Uint8Array(rawContent));
 
     // The content hash must match up with the CID
     const givenHash = cid.subarray(1);

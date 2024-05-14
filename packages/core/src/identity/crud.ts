@@ -3,8 +3,8 @@ import { getAddressHash, setAddressHash } from '../address';
 import { base58 } from '../buffer';
 import { queryChannelsSync } from '../channel';
 import { decodeWithCodec, encodeWithCodec } from '../codec';
+import { parseFsContent, putFsContent, type PutOptions } from '../fs';
 import { getModule } from '../modules/modules';
-import { parseObject, putObject, type PutOptions } from '../object';
 import type { WrapResult } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
 import { isWrap, type WrapValue } from '../wrap';
@@ -29,7 +29,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
       if (channel.getObject) {
         const objectResult = await channel.getObject(hash.toBytes());
         if (objectResult) {
-          const [, mediaType, payload] = parseObject(new Uint8Array(objectResult));
+          const [, mediaType, payload] = parseFsContent(new Uint8Array(objectResult));
           const value = await decodeWithCodec<WrapValue>(payload, parse(mediaType), instanceID);
           // It must be a signature wrap that has been signed by the address
           if (
@@ -94,7 +94,7 @@ export async function putIdentity(
   })) as WrapValue;
   signedWrapValue.mediaType = format(mediaTypeObj);
 
-  const hash = await putObject(signedWrapValue, jsonMediaType);
+  const hash = await putFsContent(signedWrapValue, jsonMediaType);
   await setAddressHash(addressBytes, hash);
   return hash;
 }

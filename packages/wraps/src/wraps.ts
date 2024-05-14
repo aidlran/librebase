@@ -4,8 +4,8 @@ import {
   base58,
   decodeWithCodec,
   hash,
-  parseObject,
-  serializeObject,
+  parseFsContent,
+  serializeFsContent,
 } from '@librebase/core';
 import { getModule, warn } from '@librebase/core/internal';
 import type { MediaType } from 'content-type';
@@ -101,7 +101,7 @@ export function getWrapStrategy(type: string, dir: 'unwrap' | 'wrap', instanceID
 }
 
 export async function wrap(config: WrapConfig, instanceID?: string): Promise<WrapValue> {
-  const unwrappedPayload = await serializeObject(config.value, config.mediaType, { instanceID });
+  const unwrappedPayload = await serializeFsContent(config.value, config.mediaType, { instanceID });
   const unwrappedHash = await hash(config.hashAlg ?? HashAlgorithm.SHA256, unwrappedPayload);
   const wrap = getWrapStrategy(config.type, 'wrap', instanceID);
   const [payload, metadata] = await Promise.resolve(
@@ -133,7 +133,7 @@ export async function unwrap(value: WrapValue, instanceID?: string): Promise<Wra
       payload: value.p,
     }),
   );
-  const [, mediaType, objectPayload] = parseObject(object);
+  const [, mediaType, objectPayload] = parseFsContent(object);
   const unwrappedValue = await decodeWithCodec(objectPayload, mediaType);
   return {
     hashAlg,

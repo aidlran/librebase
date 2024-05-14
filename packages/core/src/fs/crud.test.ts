@@ -2,19 +2,19 @@ import { afterAll, describe, expect, test } from 'vitest';
 import { mockJSONCodec } from '../../testing/codecs';
 import { getChannels, type ChannelDriver } from '../channel';
 import { registerCodec } from '../codec';
-import { FS } from '../fs';
+import { FsSchema } from '../fs';
 import { Hash, HashAlgorithm } from '../hash';
 import { registerIdentifier } from '../identifier';
-import { deleteObject, getObject, putObject } from './crud';
+import { deleteFsContent, getFsContent, putFsContent } from './crud';
 
-describe('Object CRUD', () => {
-  const instanceID = 'object-crud';
+describe('FS content CRUD', () => {
+  const instanceID = 'fs-content-crud';
   const mockDriverA: ChannelDriver = {};
   const mockDriverB: ChannelDriver = {};
   const channels = getChannels(instanceID);
   channels.push(mockDriverA, mockDriverB);
   registerCodec('application/json', mockJSONCodec, instanceID);
-  registerIdentifier(FS, { instanceID });
+  registerIdentifier(FsSchema, { instanceID });
 
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
@@ -26,7 +26,7 @@ describe('Object CRUD', () => {
     registerCodec('application/json', undefined, instanceID);
   });
 
-  describe('Delete object', () => {
+  describe('Delete FS content', () => {
     const baseHash = new Hash(HashAlgorithm.SHA256, createHash());
     const testCases = [
       ['Uint8Array', baseHash.toBytes()],
@@ -37,21 +37,21 @@ describe('Object CRUD', () => {
         let calls = 0;
         function deleteObjectMock(hash: ArrayBuffer) {
           calls++;
-          expect(hash).toEqual(baseHash.toBytes());
+          expect(hash.slice(1)).toEqual(baseHash.toBytes());
         }
         mockDriverA.deleteObject = deleteObjectMock;
         mockDriverB.deleteObject = deleteObjectMock;
-        await expect(deleteObject(requestHash, instanceID)).resolves.toBeInstanceOf(Array);
+        await expect(deleteFsContent(requestHash, instanceID)).resolves.toBeUndefined();
         expect(calls).toBe(2);
       });
     }
   });
 
-  test('Get object', async () => {
-    const instanceID = 'test-get-object';
+  test('Get FS content', async () => {
+    const instanceID = 'test-get-fs-content';
 
     const existing = crypto.getRandomValues(new Uint8Array(16));
-    const existingCID = new Uint8Array([FS.type, ...existing]);
+    const existingCID = new Uint8Array([FsSchema.type, ...existing]);
 
     getChannels(instanceID).push({
       getObject(identifier) {
@@ -71,16 +71,16 @@ describe('Object CRUD', () => {
     registerIdentifier({ type: 0, parse: (_, v) => v }, { instanceID });
 
     for (const cid of [existing, new Hash(existing[0], existing.subarray(1))]) {
-      await expect(getObject(cid, instanceID)).resolves.toEqual(existingCID);
+      await expect(getFsContent(cid, instanceID)).resolves.toEqual(existingCID);
     }
 
     const nonExistent = crypto.getRandomValues(new Uint8Array(16));
     for (const cid of [nonExistent, new Hash(nonExistent[0], nonExistent.subarray(1))]) {
-      await expect(getObject(cid, instanceID)).resolves.toBeUndefined();
+      await expect(getFsContent(cid, instanceID)).resolves.toBeUndefined();
     }
   });
 
-  test('Put object', async () => {
+  test('Put FS content', async () => {
     const value = { test: 'test' };
     const mediaType = 'application/json';
     let calls = 0;
@@ -91,7 +91,7 @@ describe('Object CRUD', () => {
     }
     mockDriverA.putObject = putObjectMock;
     mockDriverB.putObject = putObjectMock;
-    await expect(putObject(value, mediaType, { instanceID })).resolves.toBeInstanceOf(Hash);
+    await expect(putFsContent(value, mediaType, { instanceID })).resolves.toBeInstanceOf(Hash);
     expect(calls).toBe(2);
   });
 });

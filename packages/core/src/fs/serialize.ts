@@ -1,9 +1,9 @@
 import { format, type MediaType } from 'content-type';
 import { encodeWithCodec } from '../codec';
 import { textEncoder } from '../shared';
-import { validateSerializedObjectMediaType } from './validate';
+import { validateSerializedFsContentMediaType } from './validate';
 
-export interface SerializeObjectOptions {
+export interface SerializeFsContentOptions {
   /**
    * Set to true to use a encoded payload. When this option is enabled, the value must be a
    * `Uint8Array`.
@@ -20,20 +20,20 @@ export interface SerializeObjectOptions {
   trust?: boolean;
 }
 
-export async function serializeObject(
+export async function serializeFsContent(
   value: unknown,
   mediaType: string | MediaType,
-  options?: SerializeObjectOptions & { encoded?: false },
+  options?: SerializeFsContentOptions & { encoded?: false },
 ): Promise<Uint8Array>;
-export async function serializeObject(
+export async function serializeFsContent(
   payload: Uint8Array,
   mediaType: string | MediaType,
-  options: SerializeObjectOptions & { encoded: true },
+  options: SerializeFsContentOptions & { encoded: true },
 ): Promise<Uint8Array>;
-export async function serializeObject(
+export async function serializeFsContent(
   value: unknown,
   mediaType: string | MediaType,
-  options?: SerializeObjectOptions,
+  options?: SerializeFsContentOptions,
 ): Promise<Uint8Array> {
   let encodedPayload: Uint8Array;
 
@@ -50,7 +50,7 @@ export async function serializeObject(
     typeof mediaType === 'string' ? mediaType : format(mediaType),
   );
 
-  if (!options?.trust && !validateSerializedObjectMediaType(mediaTypeBytes)) {
+  if (!options?.trust && !validateSerializedFsContentMediaType(mediaTypeBytes)) {
     throw new Error('Bad media type');
   }
 
