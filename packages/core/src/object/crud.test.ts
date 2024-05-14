@@ -5,7 +5,6 @@ import { registerCodec } from '../codec';
 import { FS } from '../fs';
 import { Hash, HashAlgorithm } from '../hash';
 import { registerIdentifier } from '../identifier';
-import { getModule } from '../internal';
 import { deleteObject, getObject, putObject } from './crud';
 
 describe('Object CRUD', () => {
@@ -54,7 +53,7 @@ describe('Object CRUD', () => {
     const existing = crypto.getRandomValues(new Uint8Array(16));
     const existingCID = new Uint8Array([FS.type, ...existing]);
 
-    getModule(getChannels, instanceID).push({
+    getChannels(instanceID).push({
       getObject(identifier) {
         const buffer = new Uint8Array(identifier);
         if (buffer.length !== existingCID.length) {

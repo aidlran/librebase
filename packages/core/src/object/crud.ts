@@ -13,7 +13,10 @@ export async function getObject(
   cid: ArrayLike<number> | ArrayBufferLike | Hash,
   instanceID?: string,
 ) {
-  return getByIdentifier(FS.type, cid instanceof Hash ? cid.toBytes() : cid, instanceID);
+  return getByIdentifier(
+    [FS.type, ...(cid instanceof Hash ? cid.toBytes() : new Uint8Array(cid))],
+    instanceID,
+  );
 }
 
 export interface PutOptions {
