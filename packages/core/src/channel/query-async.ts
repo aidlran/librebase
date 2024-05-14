@@ -1,5 +1,6 @@
 import { getModule } from '../modules/modules';
-import { channels, type Channels } from './channels';
+import { state } from '../state';
+import type { Channels } from './channels';
 import type { ChannelDriver } from './types';
 
 export type Query<T, R> = (item: T) => R | Promise<R>;
@@ -10,7 +11,7 @@ export function queryChannelsAsync<T>(
   instanceID?: string,
 ): Promise<PromiseSettledResult<Awaited<T>>[]> {
   const promises: Promise<T>[] = [];
-  processOne(promises, getModule(channels, instanceID), query);
+  processOne(promises, getModule(state, instanceID).channels, query);
   return Promise.allSettled(promises);
 }
 

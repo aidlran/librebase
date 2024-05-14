@@ -1,5 +1,5 @@
 import { getModule } from '../modules/modules';
-import { channels } from './channels';
+import { state } from '../state';
 import type { Query } from './query-async';
 import type { ChannelDriver } from './types';
 
@@ -8,7 +8,7 @@ export async function queryChannelsSync<T>(
   query: Query<ChannelDriver, T>,
   instanceID?: string,
 ): Promise<T | void> {
-  for (const entry of getModule(channels, instanceID)) {
+  for (const entry of getModule(state, instanceID).channels) {
     const result = await race(entry instanceof Array ? entry : [entry], query);
     if (result !== undefined && result !== null) {
       return result;

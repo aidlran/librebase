@@ -1,4 +1,5 @@
 import { getModule } from '../modules/modules';
+import { state } from '../state';
 import type { ChannelDriver } from './types';
 
 /**
@@ -22,11 +23,6 @@ import type { ChannelDriver } from './types';
  */
 export type Channels = (ChannelDriver | ChannelDriver[])[];
 
-/** Used internally with the module loader to get the instance's registered channels. */
-export function channels(): Channels {
-  return [];
-}
-
 /**
  * Gets the array of channels registered for the instance. The returned array can be manipulated
  * directly to change the registered channels. See the type definition of `Channels` for more
@@ -43,5 +39,5 @@ export function channels(): Channels {
  * @returns {Channels} An array containing the channels registered for an instance.
  */
 export function getChannels(instanceID?: string): Channels {
-  return getModule(channels, instanceID);
+  return getModule(state, instanceID).channels;
 }
