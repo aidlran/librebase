@@ -12,9 +12,11 @@
     "packages/driver/*"
   ],
   "scripts": {
-    "build": "npm run build --workspaces --if-present",
+    "build": "conc \"npm run build -w lib/signals\" npm:build:2 && npm run build:4",
     "build:docs": "plantuml docs/*.puml",
-    "build:init": "npm run build -w lib/signals && npm run build -w packages/core && npm run build -w packages/codec/json && npm run build -w packages/wraps",
+    "build:2": "npm run build -w packages/core && conc \"npm run build -w packages/driver/indexeddb\" npm:build:3",
+    "build:3": "npm run build -w packages/fs && npm run build -w packages/codec/json && npm run build -w packages/wraps",
+    "build:4": "npm run build -w packages/keyrings && npm run build -w packages/svelte",
     "ci": "npm run build && npm run lint && npm run test",
     "cost": "npm run cost --workspaces --if-present",
     "coverage": "vitest run --coverage",
@@ -27,7 +29,11 @@
     "start": "conc -k npm:start:*",
     "start:codec/json": "npm start -w packages/codec/json",
     "start:core": "npm start -w packages/core",
+    "start:driver/indexeddb": "npm start -w packages/driver/indexeddb",
+    "start:fs": "npm start -w packages/fs",
+    "start:keyrings": "npm start -w packages/keyrings",
     "start:svelte": "npm start -w packages/svelte",
+    "start:wraps": "npm start -w packages/wraps",
     "test": "vitest run",
     "test:dev": "vitest --coverage"
   },

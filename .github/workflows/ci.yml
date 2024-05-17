@@ -18,7 +18,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build:init
       - run: npm run build
       - run: npm run lint
 
@@ -33,7 +32,6 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
-      - run: npm run build:init
       - run: npm run build
       - run: npm run test
 
@@ -56,6 +54,4 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm i --legacy-peer-deps -D svelte@${{ matrix.version }}
-      - run: npm run build -w lib/signals
-      - run: npm run build -w packages/core
-      - run: npm run build -w packages/svelte
+      - run: npm run build
