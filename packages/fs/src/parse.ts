@@ -1,10 +1,7 @@
-import { textDecoder } from '../shared';
 import { validateSerializedFsContentMediaType, validateFsContentVersion } from './validate';
 
-/** @deprecated Use `@librebase/fs` */
 export type ParsedFsContent = [version: number, mediaType: string, payload: Uint8Array];
 
-/** @deprecated Use `@librebase/fs` */
 export function parseFsContent(content: Uint8Array, trust = false): ParsedFsContent {
   const nulIndex = content.indexOf(0, 4);
 
@@ -24,5 +21,5 @@ export function parseFsContent(content: Uint8Array, trust = false): ParsedFsCont
     }
   }
 
-  return [version, textDecoder.decode(mediaTypeBytes), content.subarray(nulIndex + 1)];
+  return [version, new TextDecoder().decode(mediaTypeBytes), content.subarray(nulIndex + 1)];
 }

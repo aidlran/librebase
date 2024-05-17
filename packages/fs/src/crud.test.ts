@@ -1,17 +1,31 @@
+import {
+  Hash,
+  HashAlgorithm,
+  getChannels,
+  registerCodec,
+  registerIdentifier,
+  type ChannelDriver,
+  type Codec,
+} from '@librebase/core';
 import { afterAll, describe, expect, test } from 'vitest';
-import { mockJSONCodec } from '../../testing/codecs';
-import { getChannels, type ChannelDriver } from '../channel';
-import { registerCodec } from '../codec';
-import { FsSchema } from '../fs';
-import { Hash, HashAlgorithm } from '../hash';
-import { registerIdentifier } from '../identifier';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
+import { FsSchema } from './schema';
 
 describe('FS content CRUD', () => {
   const instanceID = 'fs-content-crud';
   const mockDriverA: ChannelDriver = {};
   const mockDriverB: ChannelDriver = {};
   const channels = getChannels(instanceID);
+
+  const mockJSONCodec: Codec = {
+    decode(data) {
+      return JSON.parse(new TextDecoder().decode(data));
+    },
+    encode(data) {
+      return new TextEncoder().encode(JSON.stringify(data));
+    },
+  };
+
   channels.push(mockDriverA, mockDriverB);
   registerCodec('application/json', mockJSONCodec, instanceID);
   registerIdentifier(FsSchema, { instanceID });

@@ -36,9 +36,9 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "peerDependencies": {
-    "@librebase/codec-json": "*",
-    "@librebase/core": "*",
-    "@noble/secp256k1": "^2.1.0",
+    "@librebase/codec-json": "^0.1.0",
+    "@librebase/core": "^0.1.0",
+    "@noble/secp256k1": "^1.7.1",
     "valibot": "^0.30.0"
   }
 }

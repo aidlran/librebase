@@ -1,9 +1,10 @@
 import mediaTypes from 'mime-db';
 import { describe, expect, it, test } from 'vitest';
-import { textEncoder } from '../shared';
 import { validateSerializedFsContentMediaType, validateFsContentVersion } from './validate';
 
 describe('Validate serialized FS content media type', () => {
+  const textEncoder = new TextEncoder();
+
   describe('Should pass valid media types', () => {
     for (const mediaType of Object.keys(mediaTypes)) {
       test(mediaType, () => {
