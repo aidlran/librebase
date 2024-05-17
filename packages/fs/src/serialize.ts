@@ -1,5 +1,5 @@
-import { encodeWithCodec } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
+import { encodeWithCodec } from './codec';
 import { validateSerializedFsContentMediaType } from './validate';
 
 export interface SerializeFsContentOptions {

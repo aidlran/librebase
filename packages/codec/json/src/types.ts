@@ -1,4 +1,4 @@
-import type { CodecProps } from '@librebase/core';
+import type { CodecProps } from '@librebase/fs';
 
 export type MiddlewareProps = Pick<CodecProps, 'instanceID'>;
 

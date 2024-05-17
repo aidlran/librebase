@@ -1,6 +1,6 @@
-import { registerCodec, type Codec } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
 import { afterAll, beforeAll, describe, expect, it, test } from 'vitest';
+import { registerCodec, type Codec } from './codec';
 import { serializeFsContent } from './serialize';
 
 describe('Serialize FS content', () => {

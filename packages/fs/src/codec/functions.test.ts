@@ -1,6 +1,6 @@
+import { getModule } from '@librebase/core/internal';
 import type { MediaType } from 'content-type';
 import { describe, expect, it } from 'vitest';
-import { getModule } from '../modules/modules';
 import { codecMap } from './codec-map';
 import { decodeWithCodec, encodeWithCodec, getCodec, registerCodec } from './functions';
 import type { Codec } from './types';

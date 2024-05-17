@@ -1,4 +1,4 @@
-import type { CodecProps } from '@librebase/core';
+import type { CodecProps } from '@librebase/fs';
 import type { JsonCodecMiddleware } from './types';
 
 const textDecoder = new TextDecoder();

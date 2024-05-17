@@ -2,12 +2,11 @@ import {
   Hash,
   HashAlgorithm,
   getChannels,
-  registerCodec,
   registerIdentifier,
   type ChannelDriver,
-  type Codec,
 } from '@librebase/core';
 import { afterAll, describe, expect, test } from 'vitest';
+import { registerCodec, type Codec } from './codec';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
 import { FsSchema } from './schema';
 

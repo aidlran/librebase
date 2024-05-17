@@ -1,4 +1,4 @@
-import { registerCodec } from '@librebase/core';
+import { registerCodec } from '@librebase/fs';
 import { json as codec } from '../codec';
 import { binary } from '../middleware';
 import type { JsonCodecMiddleware } from '../types';
