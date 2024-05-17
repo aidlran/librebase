@@ -13,12 +13,6 @@ export function bytesToString(bytes: Uint8Array): string {
   return output;
 }
 
-export function shred(buffer: Uint8Array) {
-  for (const i in buffer) {
-    buffer[i] = 0;
-  }
-}
-
 /**
  * Coerces an identifier (address or hash) to a byte array.
  *

@@ -1,4 +1,4 @@
-import { base58, shred } from '@librebase/core';
+import { base58 } from '@librebase/core';
 import { hash } from '@librebase/fs';
 import type { WrapValue, WrapValueMetadataMap } from '@librebase/wraps';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
@@ -68,7 +68,11 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           break;
         }
         case 'keyring.clear': {
-          if (keyring?.privateKey) shred(keyring.privateKey);
+          if (keyring?.privateKey) {
+            for (const i in keyring.privateKey) {
+              keyring.privateKey[i] = 0;
+            }
+          }
           keyring = identityPubKeyMap = undefined;
           break;
         }

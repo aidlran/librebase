@@ -1,12 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
 import { encodes } from '../../testing/encodes';
-import {
-  bytesToString,
-  identifierToBytes,
-  payloadToBytes,
-  shred,
-  stringToBytes,
-} from './buffer-utils';
+import { bytesToString, identifierToBytes, payloadToBytes, stringToBytes } from './buffer-utils';
 
 describe('Buffer utilities', () => {
   describe('bytesToString', () => {
@@ -23,17 +17,6 @@ describe('Buffer utilities', () => {
         expect(stringToBytes(string)).toEqual(bytes);
       });
     }
-  });
-
-  test('shred', () => {
-    // Initialise a buffer with random non-zero values
-    let buffer: Uint8Array;
-    do {
-      buffer = crypto.getRandomValues(new Uint8Array(32));
-    } while (buffer.find((v) => v == 0));
-    shred(buffer);
-    // After shredding, all values should be 0
-    expect(buffer.find((v) => v != 0)).toBe(undefined);
   });
 
   describe('identifierToBytes', () => {
