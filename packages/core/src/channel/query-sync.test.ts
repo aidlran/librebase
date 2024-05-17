@@ -14,7 +14,7 @@ import { queryChannelsSync } from './query-sync';
 import type { ChannelDriver } from './types';
 
 function normalQuery(channel: ChannelDriver) {
-  return channel.getObject!(new ArrayBuffer(0));
+  return channel.get!(new ArrayBuffer(0));
 }
 
 function throwQuery() {
@@ -26,7 +26,7 @@ describe('Query channels sync', () => {
     const instanceID = 'query-channels-sync-resolve-first';
     getModule(state, instanceID).channels.push(fakeDelayedDriver, fakeValidDriver);
     const query = (channel: ChannelDriver) => {
-      if (channel.getObject!(new ArrayBuffer(0))) {
+      if (channel.get!(new ArrayBuffer(0))) {
         return 0;
       }
     };

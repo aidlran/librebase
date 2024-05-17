@@ -1,20 +1,12 @@
 import { format, type MediaType } from 'content-type';
 import { afterAll, beforeAll, describe, expect, it, test } from 'vitest';
-import { registerCodec, type Codec } from './codec';
+import { mockJSONCodec } from '../testing/codecs';
+import { registerCodec } from './codec';
 import { serializeFsContent } from './serialize';
 
 describe('Serialize FS content', () => {
   const instanceID = 'serialize-object';
   const textEncoder = new TextEncoder();
-
-  const mockJSONCodec: Codec = {
-    decode(data) {
-      return JSON.parse(new TextDecoder().decode(data));
-    },
-    encode(data) {
-      return new TextEncoder().encode(JSON.stringify(data));
-    },
-  };
 
   beforeAll(() => {
     registerCodec('application/json', mockJSONCodec, instanceID);

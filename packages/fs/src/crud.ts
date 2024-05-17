@@ -9,7 +9,7 @@ export async function deleteFsContent(hash: ArrayBuffer | Hash, instanceID?: str
     FsSchema.type,
     ...(hash instanceof Hash ? hash.toBytes() : new Uint8Array(hash)),
   ]);
-  await queryChannelsAsync((channel) => channel.deleteObject?.(identifier), instanceID);
+  await queryChannelsAsync((channel) => channel.delete?.(identifier), instanceID);
 }
 
 export async function getFsContent(
@@ -36,9 +36,6 @@ export async function putFsContent(
   const hashAlg = options?.hashAlg ?? HashAlgorithm.SHA256;
   const objectHash = await hash(hashAlg, payload);
   const identifier = new Uint8Array([FsSchema.type, ...objectHash.toBytes()]);
-  await queryChannelsAsync(
-    (channel) => channel.putObject?.(identifier, payload),
-    options?.instanceID,
-  );
+  await queryChannelsAsync((channel) => channel.put?.(identifier, payload), options?.instanceID);
   return objectHash;
 }

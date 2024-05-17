@@ -2,9 +2,10 @@ import type { ChannelDriver } from '@librebase/core';
 
 /** Configuration object for the IndexedDB channel driver. */
 export interface IndexedDbChannelOptions {
+  /** @default 'librebase' */
   databaseName?: string;
-  addressTableName?: string;
-  objectTableName?: string;
+  /** @default 'librebase' */
+  tableName?: string;
 }
 
 /**
@@ -15,82 +16,56 @@ export interface IndexedDbChannelOptions {
  *   indexedDB connection has been established.
  */
 export async function indexeddb(config?: IndexedDbChannelOptions): Promise<IndexedDB> {
-  const databaseName = config?.databaseName ?? 'lbdata';
-  const addressTableName = config?.addressTableName ?? 'address';
-  const objectTableName = config?.objectTableName ?? 'object';
+  const databaseName = config?.databaseName ?? 'librebase';
+  const tableName = config?.tableName ?? 'librebase';
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(databaseName);
     request.onerror = () => reject(request.error);
     request.onsuccess = () => resolve(request.result);
     request.onupgradeneeded = () => {
-      request.result.createObjectStore(addressTableName, { keyPath: 'address' });
-      request.result.createObjectStore(objectTableName, { keyPath: 'hash' });
+      request.result.createObjectStore(tableName, { keyPath: 'id' });
     };
   });
-  return new IndexedDB(db, databaseName, addressTableName, objectTableName);
+  return new IndexedDB(db, databaseName, tableName);
 }
 
 class IndexedDB implements ChannelDriver {
   constructor(
     private readonly db: IDBDatabase,
     readonly databaseName: string,
-    readonly addressTableName: string,
-    readonly objectTableName: string,
+    readonly tableName: string,
   ) {}
 
-  private delete(store: string, key: IDBValidKey): Promise<void> {
+  delete(id: ArrayBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = this.db.transaction(store, 'readwrite').objectStore(store).delete(key);
+      const request = this.db
+        .transaction(this.tableName, 'readwrite')
+        .objectStore(this.tableName)
+        .delete(id);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });
   }
 
-  private get<T>(store: string, key: IDBValidKey): Promise<T | void> {
+  get<T>(id: ArrayBuffer): Promise<T | void> {
     return new Promise((resolve, reject) => {
-      const request = this.db.transaction(store, 'readonly').objectStore(store).get(key);
+      const request = this.db
+        .transaction(this.tableName, 'readonly')
+        .objectStore(this.tableName)
+        .get(id);
       request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result as T);
+      request.onsuccess = () => resolve((request.result as { value: T })?.value);
     });
   }
 
-  private put(store: string, value: unknown): Promise<void> {
+  put(id: ArrayBuffer, value: ArrayBuffer): Promise<void> {
     return new Promise((resolve, reject) => {
-      const request = this.db.transaction(store, 'readwrite').objectStore(store).put(value);
+      const request = this.db
+        .transaction(this.tableName, 'readwrite')
+        .objectStore(this.tableName)
+        .put({ id, value });
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });
-  }
-
-  deleteObject(hash: ArrayBuffer): Promise<void> {
-    return this.delete(this.objectTableName, hash);
-  }
-
-  async getObject(hash: ArrayBuffer): Promise<ArrayBuffer | void> {
-    const result = await this.get<{
-      hash: ArrayBuffer;
-      object: ArrayBuffer;
-    }>(this.objectTableName, hash);
-    return result?.object;
-  }
-
-  putObject(hash: ArrayBuffer, object: ArrayBuffer): Promise<void> {
-    return this.put(this.objectTableName, { hash, object });
-  }
-
-  async getAddressHash(address: ArrayBuffer): Promise<ArrayBuffer | void> {
-    const result = await this.get<{
-      address: ArrayBuffer;
-      hash: ArrayBuffer;
-    }>(this.addressTableName, address);
-    return result?.hash;
-  }
-
-  setAddressHash(address: ArrayBuffer, hash: ArrayBuffer): Promise<void> {
-    return this.put(this.addressTableName, { address, hash });
-  }
-
-  unsetAddressHash(address: ArrayBuffer): Promise<void> {
-    return this.delete(this.addressTableName, address);
   }
 }

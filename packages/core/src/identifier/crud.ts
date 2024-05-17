@@ -15,10 +15,7 @@ export function deleteByIdentifier(
   identifier: ArrayLike<number> | ArrayBufferLike,
   instanceID?: string,
 ) {
-  return queryChannelsAsync(
-    (channel) => channel.deleteObject?.(new Uint8Array(identifier)),
-    instanceID,
-  );
+  return queryChannelsAsync((channel) => channel.delete?.(new Uint8Array(identifier)), instanceID);
 }
 
 export function getByIdentifier<T>(
@@ -28,7 +25,7 @@ export function getByIdentifier<T>(
   identifier = new Uint8Array(identifier);
   const schema = getIdentifierSchema<T>((identifier as Uint8Array)[0], instanceID);
   return queryChannelsSync(async (channel) => {
-    const content = await channel.getObject?.(identifier as Uint8Array);
+    const content = await channel.get?.(identifier as Uint8Array);
     if (content) {
       return await Promise.resolve(schema.parse((identifier as Uint8Array).subarray(1), content));
     }
@@ -44,7 +41,7 @@ export function putByIdentifier(
   content = new Uint8Array(content);
   getIdentifierSchema((identifier as Uint8Array)[0], instanceID).parse(identifier, content);
   return queryChannelsAsync(
-    (channel) => channel.putObject?.(identifier as Uint8Array, content as Uint8Array),
+    (channel) => channel.put?.(identifier as Uint8Array, content as Uint8Array),
     instanceID,
   );
 }

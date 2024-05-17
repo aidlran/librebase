@@ -5,35 +5,22 @@ function throwError() {
 }
 
 export const fakeErrorDriver: Required<ChannelDriver> = {
-  deleteObject: throwError,
-  getObject: throwError,
-  putObject: throwError,
-  getAddressHash: throwError,
-  setAddressHash: throwError,
-  unsetAddressHash: throwError,
+  delete: throwError,
+  get: throwError,
+  put: throwError,
 };
 
 function returnVoid() {}
 export const fakeVoidDriver: Required<ChannelDriver> = {
-  deleteObject: returnVoid,
-  getObject: returnVoid,
-  putObject: returnVoid,
-  getAddressHash: returnVoid,
-  setAddressHash: returnVoid,
-  unsetAddressHash: returnVoid,
+  delete: returnVoid,
+  get: returnVoid,
+  put: returnVoid,
 };
 
 export const fakeValidDriver: Required<ChannelDriver> = {
-  deleteObject: returnVoid,
-  getObject() {
-    return new ArrayBuffer(0);
-  },
-  putObject: returnVoid,
-  getAddressHash() {
-    return new ArrayBuffer(0);
-  },
-  setAddressHash: returnVoid,
-  unsetAddressHash: returnVoid,
+  delete: returnVoid,
+  get: () => new ArrayBuffer(0),
+  put: returnVoid,
 };
 
 function returnDelayed<T>(this: T) {
@@ -45,10 +32,7 @@ function returnDelayed<T>(this: T) {
 }
 
 export const fakeDelayedDriver: Required<ChannelDriver> = {
-  deleteObject: returnDelayed,
-  getObject: returnDelayed.bind(new ArrayBuffer(0)),
-  putObject: returnDelayed,
-  getAddressHash: returnDelayed.bind(new ArrayBuffer(0)),
-  setAddressHash: returnDelayed,
-  unsetAddressHash: returnDelayed,
+  delete: returnDelayed,
+  get: returnDelayed.bind(new ArrayBuffer(0)),
+  put: returnDelayed,
 };

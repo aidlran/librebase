@@ -1,6 +1,7 @@
 import { getChannels, registerIdentifier, type ChannelDriver } from '@librebase/core';
 import { afterAll, describe, expect, test } from 'vitest';
-import { registerCodec, type Codec } from './codec';
+import { mockJSONCodec } from '../testing/codecs';
+import { registerCodec } from './codec';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
 import { Hash, HashAlgorithm } from './hash';
 import { FsSchema } from './schema';
@@ -10,15 +11,6 @@ describe('FS content CRUD', () => {
   const mockDriverA: ChannelDriver = {};
   const mockDriverB: ChannelDriver = {};
   const channels = getChannels(instanceID);
-
-  const mockJSONCodec: Codec = {
-    decode(data) {
-      return JSON.parse(new TextDecoder().decode(data));
-    },
-    encode(data) {
-      return new TextEncoder().encode(JSON.stringify(data));
-    },
-  };
 
   channels.push(mockDriverA, mockDriverB);
   registerCodec('application/json', mockJSONCodec, instanceID);
@@ -43,12 +35,12 @@ describe('FS content CRUD', () => {
     for (const [paramType, requestHash] of testCases) {
       test('With ' + paramType, async () => {
         let calls = 0;
-        function deleteObjectMock(hash: ArrayBuffer) {
+        function deleteMock(hash: ArrayBuffer) {
           calls++;
           expect(hash.slice(1)).toEqual(baseHash.toBytes());
         }
-        mockDriverA.deleteObject = deleteObjectMock;
-        mockDriverB.deleteObject = deleteObjectMock;
+        mockDriverA.delete = deleteMock;
+        mockDriverB.delete = deleteMock;
         await expect(deleteFsContent(requestHash, instanceID)).resolves.toBeUndefined();
         expect(calls).toBe(2);
       });
@@ -62,7 +54,7 @@ describe('FS content CRUD', () => {
     const existingCID = new Uint8Array([FsSchema.type, ...existing]);
 
     getChannels(instanceID).push({
-      getObject(identifier) {
+      get(identifier) {
         const buffer = new Uint8Array(identifier);
         if (buffer.length !== existingCID.length) {
           return;
@@ -92,13 +84,13 @@ describe('FS content CRUD', () => {
     const value = { test: 'test' };
     const mediaType = 'application/json';
     let calls = 0;
-    function putObjectMock(hash: Uint8Array, object: Uint8Array) {
+    function putMock(hash: Uint8Array, object: Uint8Array) {
       calls++;
       expect(hash).toBeInstanceOf(Uint8Array);
       expect(object).toBeInstanceOf(Uint8Array);
     }
-    mockDriverA.putObject = putObjectMock;
-    mockDriverB.putObject = putObjectMock;
+    mockDriverA.put = putMock;
+    mockDriverB.put = putMock;
     await expect(putFsContent(value, mediaType, { instanceID })).resolves.toBeInstanceOf(Hash);
     expect(calls).toBe(2);
   });

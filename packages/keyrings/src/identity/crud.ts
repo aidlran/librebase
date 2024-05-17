@@ -25,8 +25,8 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
   const hash = await getAddressHash(address, instanceID);
   if (hash) {
     return queryChannelsSync(async (channel) => {
-      if (channel.getObject) {
-        const objectResult = await channel.getObject(hash.toBytes());
+      if (channel.get) {
+        const objectResult = await channel.get(hash.toBytes());
         if (objectResult) {
           const [, mediaType, payload] = parseFsContent(new Uint8Array(objectResult));
           const value = await decodeWithCodec<WrapValue>(payload, mediaType, instanceID);

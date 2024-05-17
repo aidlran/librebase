@@ -23,15 +23,15 @@ describe('Address CRUD', () => {
     const existing = createBytes();
     const nonExistent = createBytes();
     let calls = 0;
-    function getAddressHashMock(address: ArrayBuffer) {
+    function getMock(address: ArrayBuffer) {
       calls++;
       expect(address).oneOf([existing, nonExistent]);
       if (address === existing) {
         return address;
       }
     }
-    mockDriverA.getAddressHash = getAddressHashMock;
-    mockDriverB.getAddressHash = getAddressHashMock;
+    mockDriverA.get = getMock;
+    mockDriverB.get = getMock;
     await expect(getAddressHash(nonExistent, instanceID)).resolves.toBeUndefined();
     // +2 calls as neither return
     const existingRequest = await getAddressHash(existing, instanceID);
@@ -45,13 +45,13 @@ describe('Address CRUD', () => {
     const inputAddress = createBytes();
     const inputHash = createBytes();
     let calls = 0;
-    function setAddressHashMock(address: ArrayBuffer, hash: ArrayBuffer) {
+    function putMock(address: ArrayBuffer, hash: ArrayBuffer) {
       calls++;
       expect(address).toBe(inputAddress);
       expect(hash).toBe(inputHash);
     }
-    mockDriverA.setAddressHash = setAddressHashMock;
-    mockDriverB.setAddressHash = setAddressHashMock;
+    mockDriverA.put = putMock;
+    mockDriverB.put = putMock;
     await expect(setAddressHash(inputAddress, inputHash, instanceID)).resolves.toBeUndefined();
     expect(calls).toBe(2);
   });
