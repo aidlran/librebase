@@ -13,6 +13,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./recommended": {
+      "types": "./dist/recommended/index.d.ts",
+      "default": "./dist/recommended/index.js"
     }
   },
   "main": "dist/index.js",
