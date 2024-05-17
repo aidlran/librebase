@@ -1,5 +1,4 @@
 import { parse, type MediaType, format } from 'content-type';
-import { getAddressHash, setAddressHash } from '../address';
 import { base58 } from '../buffer';
 import { queryChannelsSync } from '../channel';
 import { decodeWithCodec, encodeWithCodec } from '../codec';
@@ -8,6 +7,7 @@ import { getModule } from '../modules/modules';
 import type { WrapResult } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
 import { isWrap, type WrapValue } from '../wrap';
+import { getAddressHash, setAddressHash } from './address';
 
 // TODO: separate address hash CRUD module
 

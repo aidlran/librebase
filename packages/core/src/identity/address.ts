@@ -2,6 +2,10 @@ import { identifierToBytes } from '../buffer';
 import { queryChannelsAsync, queryChannelsSync } from '../channel';
 import { Hash } from '../hash';
 
+export const AddressType = {
+  BIP32: 0,
+} as const;
+
 export async function getAddressHash(
   address: string | Uint8Array | ArrayBuffer,
   instanceID?: string,

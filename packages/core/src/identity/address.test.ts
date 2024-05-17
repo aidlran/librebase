@@ -1,7 +1,7 @@
 import { afterAll, describe, expect, test } from 'vitest';
 import { getChannels, type ChannelDriver } from '../channel';
 import { Hash } from '../hash';
-import { getAddressHash, setAddressHash } from './crud';
+import { getAddressHash, setAddressHash } from './address';
 
 describe('Address CRUD', () => {
   const instanceID = 'address-crud';
