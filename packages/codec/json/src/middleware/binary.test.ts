@@ -1,4 +1,4 @@
-import { Hash } from '@librebase/core';
+import { Hash } from '@librebase/fs';
 import { describe, expect, it, test } from 'vitest';
 import { encodes } from '../../../../core/testing/encodes';
 import { binary } from './binary';

@@ -1,13 +1,8 @@
-import {
-  Hash,
-  HashAlgorithm,
-  getChannels,
-  registerIdentifier,
-  type ChannelDriver,
-} from '@librebase/core';
+import { getChannels, registerIdentifier, type ChannelDriver } from '@librebase/core';
 import { afterAll, describe, expect, test } from 'vitest';
 import { registerCodec, type Codec } from './codec';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
+import { Hash, HashAlgorithm } from './hash';
 import { FsSchema } from './schema';
 
 describe('FS content CRUD', () => {

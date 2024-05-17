@@ -35,12 +35,14 @@ module.exports = {
         tsconfigRootDir: join(__dirname, 'packages/svelte'),
       },
     },
-    ...['codec/json', 'core', 'driver/indexeddb', 'fs', 'svelte', 'wraps'].map((path) => ({
-      files: [`packages/${path}/**/*.ts`],
-      parserOptions: {
-        tsconfigRootDir: join(__dirname, `packages/${path}`),
-      },
-    })),
+    ...['codec/json', 'core', 'driver/indexeddb', 'fs', 'keyrings', 'svelte', 'wraps'].map(
+      (path) => ({
+        files: [`packages/${path}/**/*.ts`],
+        parserOptions: {
+          tsconfigRootDir: join(__dirname, `packages/${path}`),
+        },
+      }),
+    ),
     {
       files: ['*.test.*', '**/test/**/*', '**/testing/**/*'],
       rules: {

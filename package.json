@@ -37,6 +37,7 @@
     "@librebase/core": "file:packages/core",
     "@librebase/driver-indexeddb": "file:packages/driver/indexeddb",
     "@librebase/fs": "file:packages/fs",
+    "@librebase/keyrings": "file:packages/keyrings",
     "@librebase/wraps": "file:packages/wraps",
     "@noble/secp256k1": "^1.7.1",
     "@types/content-type": "^1.1.8",

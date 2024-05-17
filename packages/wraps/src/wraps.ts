@@ -1,13 +1,13 @@
+import { base58 } from '@librebase/core';
+import { getModule, warn } from '@librebase/core/internal';
 import {
   Hash,
   HashAlgorithm,
-  base58,
   decodeWithCodec,
   hash,
   parseFsContent,
   serializeFsContent,
-} from '@librebase/core';
-import { getModule, warn } from '@librebase/core/internal';
+} from '@librebase/fs';
 import type { MediaType } from 'content-type';
 
 export type WrapFn<T = unknown, R = unknown> = (config: {
@@ -24,23 +24,23 @@ export interface WrapModule<TUnwrappedMetadata = any, TWrappedMetadata = any> {
   wrap?: WrapFn<TUnwrappedMetadata, TWrappedMetadata>;
 }
 
-export interface WrapConfig<T = unknown> {
+export interface WrapConfig<TName extends string = string, TMetadata = unknown> {
   /** The hashing algorithm to use. */
   hashAlg?: HashAlgorithm;
   /** The media type of the value. */
   mediaType: MediaType | string;
-  metadata: T;
-  type: string;
+  metadata: TMetadata;
+  type: TName;
   value: unknown;
 }
 
-export interface WrapValue<T = unknown> {
+export interface WrapValue<TName extends string = string, TMetadata = unknown> {
   /** Type. */
-  $: `wrap:${string}`;
+  $: `wrap:${TName}`;
   /** The hash of the unwrapped payload. */
   h: string;
   /** Metadata. */
-  m: T;
+  m: TMetadata;
   /** The wrapped payload. */
   p: Uint8Array;
   /** Version number. */

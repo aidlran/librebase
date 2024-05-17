@@ -1,4 +1,5 @@
-import { hash, type IdentifierSchema } from '@librebase/core';
+import { type IdentifierSchema } from '@librebase/core';
+import { hash } from './hash';
 import { parseFsContent, type ParsedFsContent } from './parse';
 
 /** Provides a content addressable file system. */

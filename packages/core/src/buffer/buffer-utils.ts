@@ -1,4 +1,3 @@
-import { Hash } from '../hash';
 import { base58, base64 } from './base-encode';
 
 export function stringToBytes(string: string): Uint8Array {
@@ -26,13 +25,11 @@ export function shred(buffer: Uint8Array) {
  * @param address A buffer or base 58 encoded string.
  * @returns {Uint8Array}
  */
-export function identifierToBytes(input: string | Hash | Uint8Array | ArrayBuffer): Uint8Array {
+export function identifierToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {
   if (typeof input === 'string') {
     return base58.decode(input);
   } else if (input instanceof Uint8Array) {
     return input;
-  } else if (input instanceof Hash) {
-    return input.toBytes();
   } else {
     return new Uint8Array(input);
   }

@@ -1,5 +1,6 @@
-import { getByIdentifier, Hash, HashAlgorithm, hash, queryChannelsAsync } from '@librebase/core';
+import { getByIdentifier, queryChannelsAsync } from '@librebase/core';
 import type { MediaType } from 'content-type';
+import { Hash, HashAlgorithm, hash } from './hash';
 import { FsSchema } from './schema';
 import { serializeFsContent } from './serialize';
 

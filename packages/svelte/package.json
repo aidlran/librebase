@@ -31,7 +31,7 @@
     "@adamantjs/signals": "~0.2.0"
   },
   "peerDependencies": {
-    "@librebase/core": "^0.1.0",
+    "@librebase/keyrings": "^0.1.0",
     "svelte": ">=3.44.2 <6.0.0"
   }
 }

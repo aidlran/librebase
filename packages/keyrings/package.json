@@ -1,0 +1,39 @@
+{
+  "name": "@librebase/keyrings",
+  "version": "0.1.0",
+  "description": "A keyring and identity system for Librebase.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/index.ts | gzip | wc -c",
+    "lc": "echo @librebase/keyrings: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "npm run watch",
+    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
+  },
+  "dependencies": {
+    "@adamantjs/signals": "~0.2.0",
+    "@bitcoinerlab/secp256k1": "1.1.1",
+    "@noble/secp256k1": "1.7.1",
+    "bip32": "4.0.0",
+    "buffer": "6.0.3",
+    "valibot": "^0.30.0"
+  },
+  "peerDependencies": {
+    "@librebase/core": "^0.1.0",
+    "@librebase/fs": "^0.1.0",
+    "@librebase/wraps": "^0.1.0"
+  }
+}

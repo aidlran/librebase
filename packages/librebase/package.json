@@ -1,11 +1,20 @@
 {
   "name": "librebase",
-  "version": "0.0.1",
-  "description": "Packages are published under the scope @librebase.",
+  "version": "0.1.0",
+  "description": "A decentralized multi-user data engine and SDK for intragalactic scale apps.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
   "repository": "github:aidlran/librebase",
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
-  "type": "module"
+  "sideEffects": false,
+  "type": "module",
+  "dependencies": {
+    "@librebase/codec-json": "0.1.0",
+    "@librebase/core": "0.1.0",
+    "@librebase/driver-indexeddb": "0.1.0",
+    "@librebase/fs": "0.1.0",
+    "@librebase/keyrings": "0.1.0",
+    "@librebase/wraps": "0.1.0"
+  }
 }
