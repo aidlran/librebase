@@ -3,7 +3,7 @@ import { getModule } from '../internal';
 import { state } from '../state';
 import type { IdentifierSchema } from './schema';
 
-function getIdentifierSchema<T>(type: number, instanceID?: string) {
+export function getIdentifierSchema<T>(type: number, instanceID?: string) {
   const schema = getModule(state, instanceID).identifiers[type] as IdentifierSchema<T>;
   if (!schema) {
     throw new ReferenceError('No schema registered for identifier type ' + type);
@@ -11,37 +11,37 @@ function getIdentifierSchema<T>(type: number, instanceID?: string) {
   return schema;
 }
 
-export function deleteByIdentifier(
-  identifier: ArrayLike<number> | ArrayBufferLike,
-  instanceID?: string,
-) {
-  return queryChannelsAsync((channel) => channel.delete?.(new Uint8Array(identifier)), instanceID);
+export async function deleteOne(id: ArrayLike<number> | ArrayBufferLike, instanceID?: string) {
+  await queryChannelsAsync((channel) => channel.delete?.(new Uint8Array(id)), instanceID);
 }
 
-export function getByIdentifier<T>(
-  identifier: ArrayLike<number> | ArrayBufferLike,
-  instanceID?: string,
-) {
-  identifier = new Uint8Array(identifier);
-  const schema = getIdentifierSchema<T>((identifier as Uint8Array)[0], instanceID);
+export function getOne<T>(id: ArrayLike<number> | ArrayBufferLike, instanceID?: string) {
+  id = new Uint8Array(id);
+  const schema = getIdentifierSchema<T>((id as Uint8Array)[0], instanceID);
   return queryChannelsSync(async (channel) => {
-    const content = await channel.get?.(identifier as Uint8Array);
+    const content = await channel.get?.(id as Uint8Array);
     if (content) {
-      return await Promise.resolve(schema.parse((identifier as Uint8Array).subarray(1), content));
+      return await Promise.resolve(
+        schema.parse((id as Uint8Array).subarray(1), content, instanceID),
+      );
     }
   }, instanceID);
 }
 
-export function putByIdentifier(
-  identifier: ArrayLike<number> | ArrayBufferLike,
-  content: ArrayLike<number> | ArrayBufferLike,
+export async function putOne(
+  id: ArrayLike<number> | ArrayBufferLike,
+  value: ArrayLike<number> | ArrayBufferLike,
   instanceID?: string,
 ) {
-  identifier = new Uint8Array(identifier);
-  content = new Uint8Array(content);
-  getIdentifierSchema((identifier as Uint8Array)[0], instanceID).parse(identifier, content);
-  return queryChannelsAsync(
-    (channel) => channel.put?.(identifier as Uint8Array, content as Uint8Array),
+  id = new Uint8Array(id);
+  value = new Uint8Array(value);
+  getIdentifierSchema((id as Uint8Array)[0], instanceID).parse(
+    (id as Uint8Array).subarray(1),
+    value,
+    instanceID,
+  );
+  await queryChannelsAsync(
+    (channel) => channel.put?.(id as Uint8Array, value as Uint8Array),
     instanceID,
   );
 }

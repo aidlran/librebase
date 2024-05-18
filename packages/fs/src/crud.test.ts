@@ -1,5 +1,5 @@
 import { getChannels, registerIdentifier, type ChannelDriver } from '@librebase/core';
-import { afterAll, describe, expect, test } from 'vitest';
+import { describe, expect, test } from 'vitest';
 import { mockJSONCodec } from '../testing/codecs';
 import { registerCodec } from './codec';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
@@ -19,12 +19,6 @@ describe('FS content CRUD', () => {
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
   }
-
-  afterAll(() => {
-    channels.pop();
-    channels.pop();
-    registerCodec('application/json', undefined, instanceID);
-  });
 
   describe('Delete FS content', () => {
     const baseHash = new Hash(HashAlgorithm.SHA256, createHash());
@@ -68,7 +62,7 @@ describe('FS content CRUD', () => {
       },
     });
 
-    registerIdentifier({ type: 0, parse: (_, v) => v }, { instanceID });
+    registerIdentifier({ type: FsSchema.type, parse: (_, v) => v }, { instanceID });
 
     for (const cid of [existing, new Hash(existing[0], existing.subarray(1))]) {
       await expect(getFsContent(cid, instanceID)).resolves.toEqual(existingCID);

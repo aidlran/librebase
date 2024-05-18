@@ -8,6 +8,7 @@ export interface IdentifierSchema<T = unknown> {
   parse(
     key: ArrayLike<number> | ArrayBufferLike,
     value: ArrayLike<number> | ArrayBufferLike,
+    instanceID?: string,
   ): T | void | Promise<T | void>;
 }
 

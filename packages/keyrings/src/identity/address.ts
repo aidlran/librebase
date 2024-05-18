@@ -1,4 +1,4 @@
-import { identifierToBytes, queryChannelsAsync, queryChannelsSync } from '@librebase/core';
+import { encodeIdentifier, getOne, identifierToBytes, putOne } from '@librebase/core';
 import { Hash } from '@librebase/fs';
 
 export const AddressType = {
@@ -9,10 +9,11 @@ export async function getAddressHash(
   address: string | Uint8Array | ArrayBuffer,
   instanceID?: string,
 ): Promise<Hash | void> {
-  const addressBin = identifierToBytes(address);
-  const hash = await queryChannelsSync((channel) => channel.get?.(addressBin), instanceID);
-  if (hash) {
-    const hashBin = new Uint8Array(hash);
+  address = identifierToBytes(address);
+  const id = encodeIdentifier(2, address);
+  const cid = await getOne<ArrayBuffer>(id, instanceID);
+  if (cid) {
+    const hashBin = new Uint8Array(cid);
     return new Hash(hashBin[0], hashBin.subarray(1));
   }
 }
@@ -22,7 +23,8 @@ export async function setAddressHash(
   hash: Hash | string | Uint8Array | ArrayBuffer,
   instanceID?: string,
 ) {
-  const addressBin = identifierToBytes(address);
+  address = identifierToBytes(address);
+  const id = encodeIdentifier(2, address);
   const hashBin = hash instanceof Hash ? hash.toBytes() : identifierToBytes(hash);
-  await queryChannelsAsync((channel) => channel.put?.(addressBin, hashBin), instanceID);
+  return putOne(id, hashBin, instanceID);
 }
