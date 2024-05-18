@@ -15,8 +15,8 @@
       "default": "./dist/index.js"
     },
     "./recommended": {
-      "types": "./dist/recommended/index.d.ts",
-      "default": "./dist/recommended/index.js"
+      "types": "./dist/recommended.d.ts",
+      "default": "./dist/recommended.js"
     }
   },
   "main": "dist/index.js",

@@ -1,6 +1,6 @@
 import { Base58, queryChannelsSync } from '@librebase/core';
 import { getModule } from '@librebase/core/internal';
-import { decodeWithCodec, parseFsContent, putFsContent, type PutOptions } from '@librebase/fs';
+import { decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
 import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
@@ -28,7 +28,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
       if (channel.get) {
         const objectResult = await channel.get(hash.toBytes());
         if (objectResult) {
-          const [, mediaType, payload] = parseFsContent(new Uint8Array(objectResult));
+          const [, mediaType, payload] = parseFileContent(new Uint8Array(objectResult));
           const value = await decodeWithCodec<WrapValue>(payload, mediaType, instanceID);
           // It must be a signature wrap that has been signed by the address
           if (
@@ -65,7 +65,7 @@ export async function putIdentity(
     value = await wrap({ type: 'encrypt', metadata: { pubKey }, value, mediaType });
   }
   value = await wrap({ type: 'ecdsa', metadata: pubKey, value, mediaType: 'application/json' });
-  const hash = await putFsContent(value, 'application/json');
+  const hash = await putFile(value, 'application/json');
   await setAddressHash(pubKey, hash);
   return hash;
 }

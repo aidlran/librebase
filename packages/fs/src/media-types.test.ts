@@ -1,14 +1,14 @@
 import mediaTypes from 'mime-db';
-import { describe, expect, it, test } from 'vitest';
-import { validateSerializedFsContentMediaType, validateFsContentVersion } from './validate';
+import { describe, expect, test } from 'vitest';
+import { validateMediaType } from './media-types';
 
-describe('Validate serialized FS content media type', () => {
+describe('Validate raw media type', () => {
   const textEncoder = new TextEncoder();
 
   describe('Should pass valid media types', () => {
     for (const mediaType of Object.keys(mediaTypes)) {
       test(mediaType, () => {
-        expect(validateSerializedFsContentMediaType(textEncoder.encode(mediaType))).toBe(true);
+        expect(validateMediaType(textEncoder.encode(mediaType))).toBe(true);
       });
     }
   });
@@ -26,7 +26,7 @@ describe('Validate serialized FS content media type', () => {
     for (const byte of disallowedBytes) {
       test(byte.toString(16).padStart(2, '0'), () => {
         const mediaType = new Uint8Array([...baseMediaType, byte]);
-        expect(validateSerializedFsContentMediaType(mediaType)).toBe(false);
+        expect(validateMediaType(mediaType)).toBe(false);
       });
     }
   });
@@ -34,7 +34,7 @@ describe('Validate serialized FS content media type', () => {
   describe('Should fail if there there are 0 or 2 or more forward slash', () => {
     for (const mediaType of ['abc', 'a/b/c', 'a/b/c/']) {
       test(mediaType, () => {
-        expect(validateSerializedFsContentMediaType(textEncoder.encode(mediaType))).toBe(false);
+        expect(validateMediaType(textEncoder.encode(mediaType))).toBe(false);
       });
     }
   });
@@ -42,26 +42,8 @@ describe('Validate serialized FS content media type', () => {
   describe('Should fail if first character is a slash', () => {
     for (const mediaType of ['/abc', '/a/bc']) {
       test(mediaType, () => {
-        expect(validateSerializedFsContentMediaType(textEncoder.encode(mediaType))).toBe(false);
+        expect(validateMediaType(textEncoder.encode(mediaType))).toBe(false);
       });
-    }
-  });
-});
-
-describe('Validate FS content version', () => {
-  it('Should pass known versions', () => {
-    expect(validateFsContentVersion(1)).toBe(true);
-  });
-
-  it("Should fail future versions we don't know about", () => {
-    for (let n = 2; n < 256; n++) {
-      expect(validateFsContentVersion(n)).toBe(false);
-    }
-  });
-
-  it('Should fail invalid versions', () => {
-    for (let n = 0; n > -999; n--) {
-      expect(validateFsContentVersion(n)).toBe(false);
     }
   });
 });

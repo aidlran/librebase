@@ -1,7 +1,10 @@
 import { Base58 } from '@librebase/core';
-import type { HashAlgorithm } from './algorithm.enum';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };
+
+export enum HashAlgorithm {
+  SHA256 = 0,
+}
 
 export class Hash {
   constructor(
@@ -28,4 +31,17 @@ export class Hash {
   toString(): string {
     return this.toBase58();
   }
+}
+
+export async function hash(alg: HashAlgorithm, payload: BufferSource): Promise<Hash> {
+  switch (alg) {
+    case HashAlgorithm.SHA256:
+      return new Hash(alg, new Uint8Array(await sha256(payload)));
+    default:
+      throw new TypeError('Unsupported algorithm');
+  }
+}
+
+export function sha256(payload: BufferSource) {
+  return self.crypto.subtle.digest('SHA-256', payload);
 }

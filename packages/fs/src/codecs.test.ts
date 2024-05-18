@@ -1,8 +1,7 @@
 import { RegistryError } from '@librebase/core/internal';
 import mediaTypes from 'mime-db';
 import { describe, expect, it, test } from 'vitest';
-import { CodecRegistry, decodeWithCodec, encodeWithCodec } from './functions';
-import type { Codec } from './types';
+import { CodecRegistry, decodeWithCodec, encodeWithCodec, type Codec } from './codecs';
 
 describe('Codec functions', () => {
   const instanceID = 'codec-functions';

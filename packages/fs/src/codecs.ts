@@ -1,11 +1,20 @@
 import { stringToBytes } from '@librebase/core';
-import { Registry } from '@librebase/core/internal';
+import { Registry, type RegistryValue } from '@librebase/core/internal';
 import { parse, type MediaType } from 'content-type';
-import { validateSerializedFsContentMediaType } from '../validate';
-import type { Codec } from './types';
+import { validateMediaType } from './media-types';
+
+export interface CodecProps {
+  instanceID?: string;
+  mediaType: MediaType;
+}
+
+export interface Codec<T = unknown> extends RegistryValue<string> {
+  encode(data: T, props: CodecProps): Uint8Array | Promise<Uint8Array>;
+  decode(payload: Uint8Array, props: CodecProps): T | Promise<T>;
+}
 
 export const CodecRegistry = new Registry<string, Codec>({
-  validateKey: (key) => validateSerializedFsContentMediaType(stringToBytes(key)),
+  validateKey: (key) => validateMediaType(stringToBytes(key)),
   validateValue: (value) =>
     typeof value.decode === 'function' && typeof value.encode === 'function',
 });

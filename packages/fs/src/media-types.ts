@@ -1,4 +1,4 @@
-export function validateSerializedFsContentMediaType(mediaType: Uint8Array): boolean {
+export function validateMediaType(mediaType: Uint8Array): boolean {
   let once = false;
   let slashCount = 0;
 
@@ -19,8 +19,4 @@ export function validateSerializedFsContentMediaType(mediaType: Uint8Array): boo
   }
 
   return slashCount == 1;
-}
-
-export function validateFsContentVersion(version: number): boolean {
-  return version === 1;
 }
