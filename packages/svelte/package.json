@@ -14,12 +14,11 @@
       "svelte": "./dist/index.js"
     }
   },
+  "main": "./dist/index.js",
   "svelte": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "!dist/**/*.test.*",
-    "!dist/**/*.spec.*"
+    "./dist"
   ],
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",

@@ -15,7 +15,11 @@
       "default": "./dist/indexeddb.js"
     }
   },
-  "main": "dist/indexeddb.js",
+  "main": "./dist/indexeddb.js",
+  "types": "./dist/indexeddb.d.ts",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
     "cost": "bun build --minify indexeddb.ts | gzip | wc -c",

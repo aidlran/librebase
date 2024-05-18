@@ -19,7 +19,11 @@
       "default": "./dist/internal/index.js"
     }
   },
-  "main": "dist/public/index.js",
+  "main": "./dist/public/index.js",
+  "types": "./dist/public/index.d.ts",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
     "cost": "bun build --minify src/public/index.ts | gzip | wc -c",

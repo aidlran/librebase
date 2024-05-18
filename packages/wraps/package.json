@@ -27,7 +27,11 @@
       "default": "./dist/recommended.js"
     }
   },
-  "main": "dist/wraps.js",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
     "cost": "bun build --minify src/wraps.ts | gzip | wc -c",
