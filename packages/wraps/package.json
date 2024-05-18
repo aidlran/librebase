@@ -1,6 +1,7 @@
 {
   "name": "@librebase/wraps",
   "version": "0.1.0",
+  "private": true,
   "description": "Librebase wrap protocol implementation.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",

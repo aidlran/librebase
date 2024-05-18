@@ -1,6 +1,7 @@
 {
   "name": "@librebase/keyrings",
   "version": "0.1.0",
+  "private": true,
   "description": "A keyring and identity system for Librebase.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",

@@ -1,7 +1,7 @@
 {
   "name": "@librebase/driver-indexeddb",
   "version": "0.1.0",
-  "description": "IndexedDB channel driver for @librebase/core.",
+  "description": "An IndexedDB storage driver for @librebase/core.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
   "repository": "github:aidlran/librebase",
@@ -13,6 +13,10 @@
     ".": {
       "types": "./dist/indexeddb.d.ts",
       "default": "./dist/indexeddb.js"
+    },
+    "./recommended": {
+      "types": "./dist/recommended.d.ts",
+      "default": "./dist/recommended.js"
     }
   },
   "main": "./dist/indexeddb.js",
@@ -28,6 +32,6 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "peerDependencies": {
-    "@librebase/core": "*"
+    "@librebase/core": "~0.1.0"
   }
 }

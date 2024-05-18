@@ -23,8 +23,6 @@
     "@librebase/codec-json": "0.1.0",
     "@librebase/core": "0.1.0",
     "@librebase/driver-indexeddb": "0.1.0",
-    "@librebase/fs": "0.1.0",
-    "@librebase/keyrings": "0.1.0",
-    "@librebase/wraps": "0.1.0"
+    "@librebase/fs": "0.1.0"
   }
 }

@@ -1,7 +1,7 @@
 {
   "name": "@librebase/fs",
   "version": "0.1.0",
-  "description": "A content addressed file system protocol for Librebase",
+  "description": "A content addressable file system protocol with an extensible codec system.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
   "repository": "github:aidlran/librebase",
@@ -32,9 +32,9 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
-    "content-type": "^1.0.5"
+    "content-type": "1.0.5"
   },
   "peerDependencies": {
-    "@librebase/core": "^0.1.0"
+    "@librebase/core": "~0.1.0"
   }
 }

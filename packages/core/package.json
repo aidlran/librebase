@@ -1,7 +1,7 @@
 {
   "name": "@librebase/core",
   "version": "0.1.0",
-  "description": "Librebase engine core.",
+  "description": "The Librebase core engine and primitives.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
   "repository": "github:aidlran/librebase",

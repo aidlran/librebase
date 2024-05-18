@@ -1,7 +1,7 @@
 {
   "name": "@librebase/codec-json",
   "version": "0.1.0",
-  "description": "Extensible JSON codec for @librebase/fs.",
+  "description": "A JSON codec for @librebase/fs with an extensible middleware system.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
   "repository": "github:aidlran/librebase",
@@ -36,6 +36,6 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "peerDependencies": {
-    "@librebase/fs": "^0.1.0"
+    "@librebase/fs": "~0.1.0"
   }
 }
