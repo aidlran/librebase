@@ -7,6 +7,7 @@ const currentDependencies = new Set<Constructor>();
 const injectors: Record<string, Injector> = {};
 const instances: Record<string, Map<Constructor, unknown>> = {};
 
+/** @deprecated */
 export function getModule<T extends Constructor>(module: T, instanceID = '') {
   if (currentDependencies.has(module)) {
     throw new Error('Circular dependency detected');

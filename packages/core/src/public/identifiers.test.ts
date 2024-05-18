@@ -1,6 +1,11 @@
 import { describe, expect, test } from 'vitest';
-import { IdentifierRegistry, type IdentifierSchema } from './schema';
-import { RegistryError } from '../registry';
+import {
+  IdentifierRegistry,
+  encodeIdentifier,
+  parseIdentifier,
+  type IdentifierSchema,
+} from './identifiers';
+import { RegistryError } from '../internal/registry';
 
 describe('Identifier Registry', () => {
   const instanceID = 'Identifier Registry';
@@ -24,4 +29,23 @@ describe('Identifier Registry', () => {
       RegistryError,
     );
   });
+});
+
+test('Identifier serialization', () => {
+  for (const {
+    encoded,
+    decoded: { type, payload },
+  } of [
+    {
+      encoded: [1, 2, 3, 4],
+      decoded: { type: 1, payload: [2, 3, 4] },
+    },
+    {
+      encoded: [232, 7, 2, 3, 4],
+      decoded: { type: 1000, payload: [2, 3, 4] },
+    },
+  ]) {
+    expect(encodeIdentifier(type, payload)).toEqual(new Uint8Array(encoded));
+    expect(parseIdentifier(encoded)).toEqual([type, new Uint8Array(payload)]);
+  }
 });

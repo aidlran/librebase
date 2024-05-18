@@ -1,5 +1,5 @@
 import { Base58 } from '@librebase/core';
-import { getModule, warn } from '@librebase/core/internal';
+import { getModule, log } from '@librebase/core/internal';
 import {
   Hash,
   HashAlgorithm,
@@ -52,7 +52,7 @@ function wrapModuleMap(): Record<string, Pick<WrapModule, 'wrap' | 'unwrap'>> {
 }
 
 export function validateWrapModule(module: WrapModule) {
-  void warn(() => {
+  void log(() => {
     const warnings: string[] = [];
     if (module.canWrap && !module.wrap) {
       warnings.push('Defines `canWrap` but not `wrap`.');
@@ -64,7 +64,7 @@ export function validateWrapModule(module: WrapModule) {
       warnings.unshift('Wrap module format is invalid:');
     }
     return warnings;
-  });
+  }, 'warn');
 }
 
 export function registerWrapModule<T extends WrapModule>(

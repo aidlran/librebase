@@ -11,18 +11,18 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/public/index.d.ts",
+      "default": "./dist/public/index.js"
     },
     "./internal": {
-      "types": "./dist/internal.d.ts",
-      "default": "./dist/internal.js"
+      "types": "./dist/internal/index.d.ts",
+      "default": "./dist/internal/index.js"
     }
   },
-  "main": "dist/index.js",
+  "main": "dist/public/index.js",
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.ts | gzip | wc -c",
+    "cost": "bun build --minify src/public/index.ts | gzip | wc -c",
     "lc": "echo @librebase/core: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },

@@ -1,5 +1,5 @@
-import { queryChannelsAsync, queryChannelsSync } from '../channel';
-import { IdentifierRegistry, type IdentifierSchema } from './schema';
+import { queryChannelsAsync, queryChannelsSync } from './channels';
+import { IdentifierRegistry, type IdentifierSchema } from './identifiers';
 
 export async function deleteOne(id: ArrayLike<number> | ArrayBufferLike, instanceID?: string) {
   await queryChannelsAsync((channel) => channel.delete?.(new Uint8Array(id)), instanceID);

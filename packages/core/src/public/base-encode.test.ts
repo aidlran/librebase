@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { encodes } from '../testing/encodes';
+import { encodes } from '../../testing/encodes';
 import { Base58, Base64 } from './base-encode';
 
 describe('Base58', () => {

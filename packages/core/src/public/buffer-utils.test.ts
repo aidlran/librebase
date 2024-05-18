@@ -1,5 +1,5 @@
 import { describe, expect, it, test } from 'vitest';
-import { encodes } from '../testing/encodes';
+import { encodes } from '../../testing/encodes';
 import { bytesToString, identifierToBytes, payloadToBytes, stringToBytes } from './buffer-utils';
 
 describe('Buffer utilities', () => {
