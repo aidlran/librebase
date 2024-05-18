@@ -1,15 +1,5 @@
 import { queryChannelsAsync, queryChannelsSync } from '../channel';
-import { getModule } from '../internal';
-import { state } from '../state';
-import type { IdentifierSchema } from './schema';
-
-export function getIdentifierSchema<T>(type: number, instanceID?: string) {
-  const schema = getModule(state, instanceID).identifiers[type] as IdentifierSchema<T>;
-  if (!schema) {
-    throw new ReferenceError('No schema registered for identifier type ' + type);
-  }
-  return schema;
-}
+import { IdentifierRegistry, type IdentifierSchema } from './schema';
 
 export async function deleteOne(id: ArrayLike<number> | ArrayBufferLike, instanceID?: string) {
   await queryChannelsAsync((channel) => channel.delete?.(new Uint8Array(id)), instanceID);
@@ -17,7 +7,10 @@ export async function deleteOne(id: ArrayLike<number> | ArrayBufferLike, instanc
 
 export function getOne<T>(id: ArrayLike<number> | ArrayBufferLike, instanceID?: string) {
   id = new Uint8Array(id);
-  const schema = getIdentifierSchema<T>((id as Uint8Array)[0], instanceID);
+  const schema = IdentifierRegistry.getStrict(
+    (id as Uint8Array)[0],
+    instanceID,
+  ) as IdentifierSchema<T>;
   return queryChannelsSync(async (channel) => {
     const content = await channel.get?.(id as Uint8Array);
     if (content) {
@@ -35,7 +28,7 @@ export async function putOne(
 ) {
   id = new Uint8Array(id);
   value = new Uint8Array(value);
-  getIdentifierSchema((id as Uint8Array)[0], instanceID).parse(
+  IdentifierRegistry.getStrict((id as Uint8Array)[0], instanceID).parse(
     (id as Uint8Array).subarray(1),
     value,
     instanceID,

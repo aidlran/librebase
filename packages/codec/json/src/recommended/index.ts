@@ -1,11 +1,11 @@
-import { registerCodec } from '@librebase/fs';
+import { CodecRegistry } from '@librebase/fs';
 import { json as codec } from '../codec';
 import { binary } from '../middleware';
 import type { JsonCodecMiddleware } from '../types';
 
 export function init(config?: { middlewares?: JsonCodecMiddleware[]; instanceID?: string }) {
   const middlewares = config?.middlewares ?? [];
-  registerCodec(json(...middlewares), { instanceID: config?.instanceID });
+  CodecRegistry.register(json(...middlewares), { instanceID: config?.instanceID });
 }
 
 /**

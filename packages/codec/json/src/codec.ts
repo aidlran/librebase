@@ -5,12 +5,12 @@ const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 
 /** Extensible JSON codec for the `application/json` media type. */
-export function json(...middlewares: JsonCodecMiddleware[]): Codec {
+export function json(...middlewares: JsonCodecMiddleware[]) {
   return {
-    mediaType: 'application/json',
+    key: 'application/json',
     decode: decode.bind(middlewares) as <T>(payload: Uint8Array, props: CodecProps) => Promise<T>,
     encode: encode.bind(middlewares) as (data: unknown, props: CodecProps) => Promise<Uint8Array>,
-  };
+  } satisfies Codec;
 }
 
 function decode(

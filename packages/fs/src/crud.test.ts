@@ -1,7 +1,7 @@
-import { getChannels, registerIdentifier, type ChannelDriver } from '@librebase/core';
+import { getChannels, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { describe, expect, test } from 'vitest';
 import { mockJSONCodec } from '../testing/codecs';
-import { registerCodec } from './codec';
+import { CodecRegistry } from './codec';
 import { deleteFsContent, getFsContent, putFsContent } from './crud';
 import { Hash, HashAlgorithm } from './hash';
 import { FsSchema } from './schema';
@@ -13,8 +13,8 @@ describe('FS content CRUD', () => {
   const channels = getChannels(instanceID);
 
   channels.push(mockDriverA, mockDriverB);
-  registerCodec(mockJSONCodec, { instanceID });
-  registerIdentifier(FsSchema, { instanceID });
+  CodecRegistry.register(mockJSONCodec, { instanceID });
+  IdentifierRegistry.register(FsSchema, { instanceID });
 
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
@@ -45,7 +45,7 @@ describe('FS content CRUD', () => {
     const instanceID = 'test-get-fs-content';
 
     const existing = crypto.getRandomValues(new Uint8Array(16));
-    const existingCID = new Uint8Array([FsSchema.type, ...existing]);
+    const existingCID = new Uint8Array([FsSchema.key, ...existing]);
 
     getChannels(instanceID).push({
       get(identifier) {
@@ -62,7 +62,7 @@ describe('FS content CRUD', () => {
       },
     });
 
-    registerIdentifier({ type: FsSchema.type, parse: (_, v) => v }, { instanceID });
+    IdentifierRegistry.register({ key: FsSchema.key, parse: (_, v) => v }, { instanceID });
 
     for (const cid of [existing, new Hash(existing[0], existing.subarray(1))]) {
       await expect(getFsContent(cid, instanceID)).resolves.toEqual(existingCID);

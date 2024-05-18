@@ -1,4 +1,4 @@
-import { getChannels, registerIdentifier, type ChannelDriver } from '@librebase/core';
+import { getChannels, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { Hash } from '@librebase/fs';
 import { afterAll, describe, expect, test } from 'vitest';
 import { getAddressHash, setAddressHash } from './address';
@@ -10,7 +10,7 @@ describe('Address CRUD', () => {
   const channels = getChannels(instanceID);
   channels.push(mockDriverA, mockDriverB);
 
-  registerIdentifier({ type: 2, parse: (_, v) => v }, { instanceID });
+  IdentifierRegistry.register({ key: 2, parse: (_, v) => v }, { instanceID });
 
   function createBytes() {
     return crypto.getRandomValues(new Uint8Array(33));

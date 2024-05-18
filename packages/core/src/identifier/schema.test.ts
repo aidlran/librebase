@@ -1,69 +1,27 @@
-import { describe, expect, it } from 'vitest';
-import { getModule } from '../modules/modules';
-import { state } from '../state';
-import {
-  IdentifierRegistrationError,
-  registerIdentifier,
-  type RegisterIdentifierOptions,
-} from './schema';
+import { describe, expect, test } from 'vitest';
+import { IdentifierRegistry, type IdentifierSchema } from './schema';
+import { RegistryError } from '../registry';
 
-describe('Identifier schema registration', () => {
-  const goodSchema = { type: 0, parse: () => true };
+describe('Identifier Registry', () => {
+  const instanceID = 'Identifier Registry';
+  const parse: IdentifierSchema['parse'] = (_, v) => v;
 
-  it('Registers valid schemas', () => {
-    const instanceID = 'identifier-register-valid';
-    expect(registerIdentifier(goodSchema, { instanceID })).toBeUndefined();
-    expect(getModule(state, instanceID).identifiers[goodSchema.type]).toBe(goodSchema);
-  });
-
-  it('Registers with a valid asType provided', () => {
-    const instanceID = 'identifier-register-valid-asType';
-    const badSchema = { parse: () => true } as never;
-    expect(registerIdentifier(goodSchema, { asType: 1, instanceID })).toBeUndefined();
-    expect(registerIdentifier(badSchema, { asType: 2, instanceID })).toBeUndefined();
-    const { identifiers } = getModule(state, instanceID);
-    expect(identifiers[0]).toBeUndefined();
-    expect(identifiers[1]).toBe(goodSchema);
-    expect(identifiers[2]).toBe(badSchema);
-  });
-
-  it('Throws if the type is missing or invalid', () => {
-    const instanceID = 'identifier-register-bad-type';
-    expect(() => registerIdentifier({ parse: () => true } as never, { instanceID })).toThrow(
-      IdentifierRegistrationError,
-    );
-    for (const type of [3.14, 'abc']) {
-      const options: RegisterIdentifierOptions = { instanceID };
-      expect(() => {
-        registerIdentifier({ type, parse: () => true } as never, options);
-      }).toThrow(IdentifierRegistrationError);
-      options.asType = type as number;
-      expect(() => registerIdentifier(goodSchema, options)).toThrow(IdentifierRegistrationError);
+  test('Key validation', () => {
+    for (const key of [0, 2]) {
+      expect(IdentifierRegistry.register({ key, parse }, { instanceID })).toBeUndefined();
+    }
+    for (const key of [2.1, '2.1', '2'] as never[]) {
+      expect(() => IdentifierRegistry.register({ key, parse }, { instanceID })).toThrow(
+        RegistryError,
+      );
     }
   });
 
-  it('Throws if the parse function is missing', () => {
-    const instanceID = 'identifier-register-bad-parse';
-    expect(() => registerIdentifier({ type: 0 } as never, { instanceID })).toThrow(
-      IdentifierRegistrationError,
+  test('Value validation', () => {
+    expect(IdentifierRegistry.register({ key: 3, parse })).toBeUndefined();
+    expect(() => IdentifierRegistry.register({ key: 4 } as never)).toThrow(RegistryError);
+    expect(() => IdentifierRegistry.register({ key: 4, parse: '' } as never)).toThrow(
+      RegistryError,
     );
-    for (const parse of [3.14, 'abc']) {
-      const options: RegisterIdentifierOptions = { instanceID };
-      expect(() => {
-        registerIdentifier({ type: 0, parse } as never, options);
-      }).toThrow(IdentifierRegistrationError);
-    }
-  });
-
-  it('Throws if type is in use', () => {
-    const instanceID = 'identifier-register-used-type';
-    const options: RegisterIdentifierOptions = { instanceID };
-    expect(registerIdentifier(goodSchema, options)).toBeUndefined();
-    expect(() => registerIdentifier(goodSchema, options)).toThrow(IdentifierRegistrationError);
-    options.asType = goodSchema.type;
-    expect(() => registerIdentifier({ type: 2, parse: () => true }, options)).toThrow(
-      IdentifierRegistrationError,
-    );
-    expect(getModule(state, instanceID).identifiers[goodSchema.type]).toBe(goodSchema);
   });
 });

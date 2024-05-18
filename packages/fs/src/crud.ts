@@ -6,7 +6,7 @@ import { serializeFsContent } from './serialize';
 
 export async function deleteFsContent(cid: ArrayBuffer | Hash, instanceID?: string) {
   cid = cid instanceof Hash ? cid.toBytes() : new Uint8Array(cid);
-  const id = encodeIdentifier(FsSchema.type, cid);
+  const id = encodeIdentifier(FsSchema.key, cid);
   return deleteOne(id, instanceID);
 }
 
@@ -15,7 +15,7 @@ export async function getFsContent(
   instanceID?: string,
 ) {
   cid = cid instanceof Hash ? cid.toBytes() : new Uint8Array(cid);
-  const id = encodeIdentifier(FsSchema.type, cid);
+  const id = encodeIdentifier(FsSchema.key, cid);
   return getOne(id, instanceID);
 }
 
@@ -32,7 +32,7 @@ export async function putFsContent(
   const payload = await serializeFsContent(value, mediaType, { instanceID: options?.instanceID });
   const hashAlg = options?.hashAlg ?? HashAlgorithm.SHA256;
   const objectHash = await hash(hashAlg, payload);
-  const id = encodeIdentifier(FsSchema.type, objectHash.toBytes());
+  const id = encodeIdentifier(FsSchema.key, objectHash.toBytes());
   await putOne(id, payload, options?.instanceID);
   return objectHash;
 }

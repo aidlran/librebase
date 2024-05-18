@@ -4,8 +4,8 @@ import { hash } from './hash';
 import { parseFsContent } from './parse';
 
 /** Provides a content addressable file system. */
-export const FsSchema: IdentifierSchema<unknown> = {
-  type: 1,
+export const FsSchema = {
+  key: 1,
   async parse(cid, content, instanceID?: string) {
     cid = new Uint8Array(cid);
     content = new Uint8Array(content);
@@ -28,4 +28,4 @@ export const FsSchema: IdentifierSchema<unknown> = {
 
     return decodeWithCodec(payload, mediaType, instanceID);
   },
-};
+} satisfies IdentifierSchema;

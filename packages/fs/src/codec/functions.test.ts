@@ -1,8 +1,7 @@
-import { getModule } from '@librebase/core/internal';
-import type { MediaType } from 'content-type';
-import { describe, expect, it } from 'vitest';
-import { codecMap } from './codec-map';
-import { decodeWithCodec, encodeWithCodec, getCodec, registerCodec } from './functions';
+import { RegistryError } from '@librebase/core/internal';
+import mediaTypes from 'mime-db';
+import { describe, expect, it, test } from 'vitest';
+import { CodecRegistry, decodeWithCodec, encodeWithCodec } from './functions';
 import type { Codec } from './types';
 
 describe('Codec functions', () => {
@@ -12,49 +11,81 @@ describe('Codec functions', () => {
     encode: (data) => data as Uint8Array,
   };
 
-  describe('Register and get codec', () => {
-    it.todo('Registers with codec-provided media type');
-    it.todo('Registers with media type arrays');
-
-    it('Registers with media type string', () => {
-      const asMediaType = 'test/string';
-
-      expect(getModule(codecMap, instanceID)[asMediaType]).toBeUndefined();
-      expect(() => getCodec(asMediaType, instanceID)).toThrow('No codec');
-
-      expect(registerCodec(mockCodec, { asMediaType, instanceID })).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[asMediaType]).toBe(mockCodec);
-      expect(getCodec(asMediaType, instanceID)).toBe(mockCodec);
-    });
-
-    it('Registers with media type object', () => {
-      const asMediaType: MediaType = { type: 'test/object' };
-
-      expect(getModule(codecMap, instanceID)[asMediaType.type]).toBeUndefined();
-      expect(() => getCodec(asMediaType, instanceID)).toThrow('No codec');
-
-      expect(registerCodec(mockCodec, { asMediaType, instanceID })).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[asMediaType.type]).toBe(mockCodec);
-      expect(getCodec(asMediaType, instanceID)).toBe(mockCodec);
-    });
-  });
-
   const input = crypto.getRandomValues(new Uint8Array(8));
   const noCodecMediaType = 'test/no-codec';
+
+  describe('Registration', () => {
+    const decode: Codec['decode'] = (v) => v;
+    const encode: Codec['encode'] = (v) => v as Uint8Array;
+
+    describe('Key validation', () => {
+      const options = { instanceID: 'Codec Registration Key Validation' };
+
+      describe('Valid keys', () => {
+        const valid = Object.keys(mediaTypes);
+
+        for (const key of valid) {
+          test(key, () => {
+            const codec = { key, decode, encode };
+            expect(CodecRegistry.register(codec, options)).toBeUndefined();
+          });
+        }
+      });
+
+      describe('Invalid keys', () => {
+        const invalid = [23, 'applicationjson', 'application/json/'] as never[];
+
+        for (const key of invalid) {
+          test(key, () => {
+            const codec = { key, decode, encode };
+            expect(() => CodecRegistry.register(codec, options)).toThrow(RegistryError);
+          });
+        }
+      });
+    });
+
+    describe('Codec validation', () => {
+      const options = { instanceID: 'Codec Registration Value Validation' };
+
+      describe('Valid codecs', () => {
+        const valid = [{ key: 'test/a', decode, encode }];
+
+        for (const codec of valid) {
+          test(JSON.stringify(codec), () => {
+            expect(CodecRegistry.register(codec, options)).toBeUndefined();
+          });
+        }
+      });
+
+      describe('Invalid codecs', () => {
+        const invalid = [
+          { key: 'test/b' },
+          { key: 'test/c', decode },
+          { key: 'test/d', encode },
+        ] as never[];
+
+        for (const codec of invalid) {
+          test(JSON.stringify(codec), () => {
+            expect(() => CodecRegistry.register(codec, options)).toThrow(RegistryError);
+          });
+        }
+      });
+    });
+  });
 
   describe('Decode with codec', () => {
     it('Throws if no codec', () => {
       for (const mediaType of [noCodecMediaType, { type: noCodecMediaType }]) {
         const request = decodeWithCodec(new Uint8Array(), mediaType, instanceID);
-        expect(request).rejects.toThrow('No codec');
+        expect(request).rejects.toThrow(RegistryError);
       }
     });
 
     it('Decodes', async () => {
-      const asMediaType = 'test/decode';
-      registerCodec(mockCodec, { asMediaType, instanceID });
-      await expect(decodeWithCodec(input, asMediaType, instanceID)).resolves.toBe(input);
-      await expect(decodeWithCodec(input, { type: asMediaType }, instanceID)).resolves.toBe(input);
+      const key = 'test/decode';
+      CodecRegistry.register(mockCodec, { key, instanceID });
+      await expect(decodeWithCodec(input, key, instanceID)).resolves.toBe(input);
+      await expect(decodeWithCodec(input, { type: key }, instanceID)).resolves.toBe(input);
     });
   });
 
@@ -62,15 +93,15 @@ describe('Codec functions', () => {
     it('Throws if no codec', () => {
       for (const mediaType of [noCodecMediaType, { type: noCodecMediaType }]) {
         const request = encodeWithCodec({}, mediaType, instanceID);
-        expect(request).rejects.toThrow('No codec');
+        expect(request).rejects.toThrow(RegistryError);
       }
     });
 
     it('Encodes', async () => {
-      const asMediaType = 'test/encode';
-      registerCodec(mockCodec, { asMediaType, instanceID });
-      await expect(encodeWithCodec(input, asMediaType, instanceID)).resolves.toBe(input);
-      await expect(encodeWithCodec(input, { type: asMediaType }, instanceID)).resolves.toBe(input);
+      const key = 'test/encode';
+      CodecRegistry.register(mockCodec, { key, instanceID });
+      await expect(encodeWithCodec(input, key, instanceID)).resolves.toBe(input);
+      await expect(encodeWithCodec(input, { type: key }, instanceID)).resolves.toBe(input);
     });
   });
 });
