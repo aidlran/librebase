@@ -1,4 +1,4 @@
-import { base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core';
 import type { HashAlgorithm } from './algorithm.enum';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };
@@ -21,7 +21,7 @@ export class Hash {
 
   /** Returns the hash encoded into base58. */
   toBase58(): string {
-    return base58.encode(this.toBytes());
+    return Base58.encode(this.toBytes());
   }
 
   /** Returns the hash encoded into base58. */

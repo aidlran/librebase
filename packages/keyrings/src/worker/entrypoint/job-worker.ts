@@ -1,4 +1,4 @@
-import { base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core';
 import { hash } from '@librebase/fs';
 import type { WrapValue, WrapValueMetadataMap } from '@librebase/wraps';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
@@ -96,7 +96,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
           switch (job.payload.$) {
             case 'wrap:ecdsa': {
               const wrap = job.payload as WrapValue<'ecdsa', ECDSAWrappedMetadata>;
-              const hashBin = base58.decode(wrap.h);
+              const hashBin = Base58.decode(wrap.h);
               resultPayload = verify(
                 wrap.m.sig,
                 (await hash(hashBin[0], wrap.p)).value,
@@ -142,7 +142,7 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
                 ),
               );
 
-              const givenHashBin = base58.decode(wrap.h);
+              const givenHashBin = Base58.decode(wrap.h);
               const givenHash = givenHashBin.subarray(1);
               const checkHash = (await hash(givenHashBin[0], payload)).value;
               if (givenHash.length != checkHash.length) throw new Error('Hash is not valid');

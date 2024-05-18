@@ -1,4 +1,4 @@
-import { base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core';
 import { getModule, warn } from '@librebase/core/internal';
 import {
   Hash,
@@ -123,7 +123,7 @@ export async function wrap(config: WrapConfig, instanceID?: string): Promise<Wra
 export async function unwrap(value: WrapValue, instanceID?: string): Promise<WrapConfig> {
   const type = value.$.slice(5);
   const unwrap = getWrapStrategy(type, 'unwrap', instanceID);
-  const hashBytes = base58.decode(value.h);
+  const hashBytes = Base58.decode(value.h);
   const hashAlg = hashBytes[0];
   const hash = new Hash(hashAlg, hashBytes.subarray(1));
   const [object, meta] = await Promise.resolve(

@@ -1,4 +1,4 @@
-import { base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core';
 import { verify } from '@noble/secp256k1';
 import type { WrapModule } from './wraps';
 
@@ -17,6 +17,6 @@ export const ECDSAWrapModule: WrapModule<ECDSAUnwrappedMetadata, ECDSAWrappedMet
     if (!verify(metadata.sig, hash.toBytes(), metadata.pub)) {
       throw new Error('ECDSA signature failed to verify');
     }
-    return [payload, base58.decode(metadata.pub)];
+    return [payload, Base58.decode(metadata.pub)];
   },
 };

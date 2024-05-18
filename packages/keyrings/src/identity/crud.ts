@@ -1,4 +1,4 @@
-import { base58, queryChannelsSync } from '@librebase/core';
+import { Base58, queryChannelsSync } from '@librebase/core';
 import { getModule } from '@librebase/core/internal';
 import { decodeWithCodec, parseFsContent, putFsContent, type PutOptions } from '@librebase/fs';
 import { wrap, type WrapValue } from '@librebase/wraps';
@@ -35,7 +35,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
             isWrap(value) &&
             value.$ === 'wrap:ecdsa' &&
             (value.m as ECDSAWrappedMetadata).pub ===
-              (typeof address === 'string' ? address : base58.encode(address))
+              (typeof address === 'string' ? address : Base58.encode(address))
           ) {
             return value;
           }
@@ -60,7 +60,7 @@ export async function putIdentity(
   mediaType: string | MediaType,
   options?: IdentityPutOptions,
 ) {
-  const pubKey = typeof address === 'string' ? base58.decode(address) : new Uint8Array(address);
+  const pubKey = typeof address === 'string' ? Base58.decode(address) : new Uint8Array(address);
   if (options?.encrypt) {
     value = await wrap({ type: 'encrypt', metadata: { pubKey }, value, mediaType });
   }

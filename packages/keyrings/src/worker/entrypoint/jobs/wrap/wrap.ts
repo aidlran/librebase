@@ -1,4 +1,4 @@
-import { base58, base64 } from '@librebase/core';
+import { Base58, Base64 } from '@librebase/core';
 import { HashAlgorithm, hash } from '@librebase/fs';
 import type { WrapConfigMetadataMap } from '@librebase/wraps';
 import type { ECDSAUnwrappedMetadata } from '@librebase/wraps/module';
@@ -11,14 +11,14 @@ export async function wrap(request: WrapRequest): Promise<WrapResult> {
   const payloadHash = await hash(hashAlg, request.payload);
   if (request.wrapType === 'ecdsa') {
     const publicKey = request.metadata as ECDSAUnwrappedMetadata;
-    const pubKeyBin = typeof publicKey === 'string' ? base58.decode(publicKey) : publicKey;
+    const pubKeyBin = typeof publicKey === 'string' ? Base58.decode(publicKey) : publicKey;
     const privateKey = await findPrivateKey(pubKeyBin);
     const signature = await sign(payloadHash.value, privateKey);
-    return base64.encode(signature);
+    return Base64.encode(signature);
   } else if (request.wrapType === 'encrypt') {
     const config = request.metadata as WrapConfigMetadataMap['encrypt'];
     const publicKey = config.pubKey;
-    const pubKeyBin = typeof publicKey === 'string' ? base58.decode(publicKey) : publicKey;
+    const pubKeyBin = typeof publicKey === 'string' ? Base58.decode(publicKey) : publicKey;
     const privateKey = await findPrivateKey(pubKeyBin);
     const encryptionHashAlg = config.hashAlg ?? 'SHA-256';
     const iterations = config.iterations ?? 600000;
