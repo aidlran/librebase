@@ -40,11 +40,32 @@ export function getCodec<T>(mediaType: string | MediaType, instanceID?: string):
   return codec;
 }
 
-export function registerCodec(
-  mediaType: string | MediaType,
-  codec?: Codec,
-  instanceID?: string,
-): void {
-  const mediaTypeString = (typeof mediaType === 'string' ? parse(mediaType) : mediaType).type;
-  getModule(codecMap, instanceID)[mediaTypeString] = codec;
+export interface RegisterCodecOptions {
+  /** When specified, overrides the media type that the codec is registered as. */
+  asMediaType?: string | MediaType | Array<string | MediaType>;
+  /**
+   * When set to true, if a codec is already registered with the target media type, that codec will
+   * be replaced with the one being registered.
+   */
+  force?: boolean;
+  instanceID?: string;
+}
+
+export function registerCodec(codec: Codec, options?: RegisterCodecOptions): void {
+  const targetMediaType = options?.asMediaType ?? codec.mediaType;
+  if (!targetMediaType) {
+    throw new TypeError('ERROR_MEDIA_TYPE_MISSING');
+  }
+  if (typeof codec.decode !== 'function' || typeof codec.encode !== 'function') {
+    throw new TypeError('ERROR_INVALID_CODEC');
+  }
+  const registered = getModule(codecMap, options?.instanceID);
+  const toRegister = targetMediaType instanceof Array ? targetMediaType : [targetMediaType];
+  for (const mediaType of toRegister) {
+    const mediaTypeString = (typeof mediaType === 'string' ? parse(mediaType) : mediaType).type;
+    if (!options?.force && registered[mediaTypeString]) {
+      throw new TypeError('ERROR_MEDIA_TYPE_IN_USE');
+    }
+    registered[mediaTypeString] = codec;
+  }
 }

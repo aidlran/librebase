@@ -1,12 +1,13 @@
-import type { CodecProps } from '@librebase/fs';
+import type { Codec, CodecProps } from '@librebase/fs';
 import type { JsonCodecMiddleware } from './types';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();
 
 /** Extensible JSON codec for the `application/json` media type. */
-export function json(...middlewares: JsonCodecMiddleware[]) {
+export function json(...middlewares: JsonCodecMiddleware[]): Codec {
   return {
+    mediaType: 'application/json',
     decode: decode.bind(middlewares) as <T>(payload: Uint8Array, props: CodecProps) => Promise<T>,
     encode: encode.bind(middlewares) as (data: unknown, props: CodecProps) => Promise<Uint8Array>,
   };

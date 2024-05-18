@@ -5,7 +5,7 @@ import type { JsonCodecMiddleware } from '../types';
 
 export function init(config?: { middlewares?: JsonCodecMiddleware[]; instanceID?: string }) {
   const middlewares = config?.middlewares ?? [];
-  registerCodec('application/json', json(...middlewares), config?.instanceID);
+  registerCodec(json(...middlewares), { instanceID: config?.instanceID });
 }
 
 /**

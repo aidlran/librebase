@@ -1,5 +1,5 @@
 import { format, type MediaType } from 'content-type';
-import { afterAll, beforeAll, describe, expect, it, test } from 'vitest';
+import { beforeAll, describe, expect, it, test } from 'vitest';
 import { mockJSONCodec } from '../testing/codecs';
 import { registerCodec } from './codec';
 import { serializeFsContent } from './serialize';
@@ -9,11 +9,7 @@ describe('Serialize FS content', () => {
   const textEncoder = new TextEncoder();
 
   beforeAll(() => {
-    registerCodec('application/json', mockJSONCodec, instanceID);
-  });
-
-  afterAll(() => {
-    registerCodec('application/json', undefined, instanceID);
+    registerCodec(mockJSONCodec, { instanceID });
   });
 
   describe('Serializes valid FS content', () => {

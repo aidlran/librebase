@@ -13,7 +13,7 @@ describe('FS content CRUD', () => {
   const channels = getChannels(instanceID);
 
   channels.push(mockDriverA, mockDriverB);
-  registerCodec('application/json', mockJSONCodec, instanceID);
+  registerCodec(mockJSONCodec, { instanceID });
   registerIdentifier(FsSchema, { instanceID });
 
   function createHash() {

@@ -13,34 +13,29 @@ describe('Codec functions', () => {
   };
 
   describe('Register and get codec', () => {
+    it.todo('Registers with codec-provided media type');
+    it.todo('Registers with media type arrays');
+
     it('Registers with media type string', () => {
-      const mediaType = 'test/string';
+      const asMediaType = 'test/string';
 
-      expect(getModule(codecMap, instanceID)[mediaType]).toBeUndefined();
-      expect(() => getCodec(mediaType, instanceID)).toThrow('No codec');
+      expect(getModule(codecMap, instanceID)[asMediaType]).toBeUndefined();
+      expect(() => getCodec(asMediaType, instanceID)).toThrow('No codec');
 
-      expect(registerCodec(mediaType, mockCodec, instanceID)).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[mediaType]).toBe(mockCodec);
-      expect(getCodec(mediaType, instanceID)).toBe(mockCodec);
-
-      expect(registerCodec(mediaType, undefined, instanceID)).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[mediaType]).toBeUndefined();
-      expect(() => getCodec(mediaType, instanceID)).toThrow('No codec');
+      expect(registerCodec(mockCodec, { asMediaType, instanceID })).toBeUndefined();
+      expect(getModule(codecMap, instanceID)[asMediaType]).toBe(mockCodec);
+      expect(getCodec(asMediaType, instanceID)).toBe(mockCodec);
     });
 
     it('Registers with media type object', () => {
-      const mediaType: MediaType = { type: 'test/object' };
+      const asMediaType: MediaType = { type: 'test/object' };
 
-      expect(getModule(codecMap, instanceID)[mediaType.type]).toBeUndefined();
-      expect(() => getCodec(mediaType, instanceID)).toThrow('No codec');
+      expect(getModule(codecMap, instanceID)[asMediaType.type]).toBeUndefined();
+      expect(() => getCodec(asMediaType, instanceID)).toThrow('No codec');
 
-      expect(registerCodec(mediaType, mockCodec, instanceID)).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[mediaType.type]).toBe(mockCodec);
-      expect(getCodec(mediaType, instanceID)).toBe(mockCodec);
-
-      expect(registerCodec(mediaType, undefined, instanceID)).toBeUndefined();
-      expect(getModule(codecMap, instanceID)[mediaType.type]).toBeUndefined();
-      expect(() => getCodec(mediaType, instanceID)).toThrow('No codec');
+      expect(registerCodec(mockCodec, { asMediaType, instanceID })).toBeUndefined();
+      expect(getModule(codecMap, instanceID)[asMediaType.type]).toBe(mockCodec);
+      expect(getCodec(asMediaType, instanceID)).toBe(mockCodec);
     });
   });
 
@@ -56,11 +51,10 @@ describe('Codec functions', () => {
     });
 
     it('Decodes', async () => {
-      const mediaType = 'test/decode';
-      registerCodec(mediaType, mockCodec, instanceID);
-      await expect(decodeWithCodec(input, mediaType, instanceID)).resolves.toBe(input);
-      await expect(decodeWithCodec(input, { type: mediaType }, instanceID)).resolves.toBe(input);
-      registerCodec(mediaType, undefined, instanceID);
+      const asMediaType = 'test/decode';
+      registerCodec(mockCodec, { asMediaType, instanceID });
+      await expect(decodeWithCodec(input, asMediaType, instanceID)).resolves.toBe(input);
+      await expect(decodeWithCodec(input, { type: asMediaType }, instanceID)).resolves.toBe(input);
     });
   });
 
@@ -73,11 +67,10 @@ describe('Codec functions', () => {
     });
 
     it('Encodes', async () => {
-      const mediaType = 'test/encode';
-      registerCodec(mediaType, mockCodec, instanceID);
-      await expect(encodeWithCodec(input, mediaType, instanceID)).resolves.toBe(input);
-      await expect(encodeWithCodec(input, { type: mediaType }, instanceID)).resolves.toBe(input);
-      registerCodec(mediaType, undefined, instanceID);
+      const asMediaType = 'test/encode';
+      registerCodec(mockCodec, { asMediaType, instanceID });
+      await expect(encodeWithCodec(input, asMediaType, instanceID)).resolves.toBe(input);
+      await expect(encodeWithCodec(input, { type: asMediaType }, instanceID)).resolves.toBe(input);
     });
   });
 });
