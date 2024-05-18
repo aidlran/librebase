@@ -9,6 +9,16 @@
   "author": "Aidan Loughran",
   "sideEffects": false,
   "type": "module",
+  "exports": {
+    ".": {
+      "default": "./index.js"
+    }
+  },
+  "main": "index.js",
+  "scripts": {
+    "cost": "bun build --minify index.js | gzip | wc -c",
+    "lc": "echo librebase: $(find -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines"
+  },
   "dependencies": {
     "@librebase/codec-json": "0.1.0",
     "@librebase/core": "0.1.0",

@@ -23,7 +23,7 @@
   "scripts": {
     "build": "rm -dr dist; tsc --project tsconfig.build.json",
     "cost": "bun build --minify src/index.ts | gzip | wc -c",
-    "lc": "echo LibreBase JS: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "lc": "echo @librebase/core: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
