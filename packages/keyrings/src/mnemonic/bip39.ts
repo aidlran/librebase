@@ -1,6 +1,8 @@
 import { sha256 } from '@librebase/fs';
 import WORDLIST from './bip39-wordlist-english.json';
 
+export { WORDLIST as BIP39_WORDLIST_ENGLISH };
+
 /**
  * Generate a BIP39 mnemonic code.
  *
