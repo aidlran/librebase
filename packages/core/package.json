@@ -33,5 +33,8 @@
   "dependencies": {
     "base-x": "4.0.0",
     "varint": "6.0.0"
+  },
+  "devDependencies": {
+    "@types/varint": "^6.0.3"
   }
 }

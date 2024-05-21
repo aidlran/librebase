@@ -34,6 +34,9 @@
   "dependencies": {
     "content-type": "1.0.5"
   },
+  "devDependencies": {
+    "@types/content-type": "^1.1.8"
+  },
   "peerDependencies": {
     "@librebase/core": "~0.1.0"
   }
