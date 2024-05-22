@@ -1,9 +1,6 @@
 import type { Codec, CodecProps } from '@librebase/fs';
 import type { JsonCodecMiddleware } from './types';
 
-const textDecoder = new TextDecoder();
-const textEncoder = new TextEncoder();
-
 /** Extensible JSON codec for the `application/json` media type. */
 export function json(...middlewares: JsonCodecMiddleware[]) {
   return {
@@ -19,7 +16,7 @@ function decode(
   props: CodecProps,
 ): Promise<unknown> {
   const refTrack = new Set();
-  const parsed = JSON.parse(textDecoder.decode(payload)) as unknown;
+  const parsed = JSON.parse(new TextDecoder().decode(payload)) as unknown;
   return Promise.resolve(replace(this, 'reviver', props.instanceID, refTrack, parsed));
 }
 
@@ -30,7 +27,7 @@ async function encode(
 ): Promise<Uint8Array> {
   const refTrack = new Set();
   const replaced = await replace(this, 'replacer', props.instanceID, refTrack, data);
-  return textEncoder.encode(JSON.stringify(replaced));
+  return new TextEncoder().encode(JSON.stringify(replaced));
 }
 
 async function replace(
@@ -44,18 +41,15 @@ async function replace(
   if (refTrack.has(value)) {
     throw new Error('Circular reference');
   }
-  refTrack.add(value);
   if (value instanceof Array) {
-    const replaced = await Promise.all(
+    refTrack.add(value);
+    value = await Promise.all(
       value.map((entry, index) => replace(plugins, fn, instanceID, refTrack, entry, index)),
     );
-    refTrack.delete(value);
-    return replaced;
-  }
-  if (value !== null && typeof value === 'object') {
-    const replaceObj: Record<string, unknown> = {};
+  } else if (value !== null && typeof value === 'object') {
+    refTrack.add(value);
     for (const key of Object.keys(value)) {
-      replaceObj[key] = await replace(
+      (value as Record<string, unknown>)[key] = await replace(
         plugins,
         fn,
         instanceID,
@@ -64,17 +58,11 @@ async function replace(
         key,
       );
     }
-    refTrack.delete(value);
-    return replaceObj;
   }
   for (const plugin of plugins) {
     const func = plugin[fn];
     if (func) {
-      const result = await Promise.resolve(func(key, value, { instanceID }));
-      if (result !== value) {
-        refTrack.delete(value);
-        return result;
-      }
+      value = await Promise.resolve(func(key, value, { instanceID }));
     }
   }
   refTrack.delete(value);
