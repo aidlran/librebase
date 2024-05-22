@@ -34,7 +34,7 @@
     "@noble/secp256k1": "1.7.1",
     "bip32": "4.0.0",
     "buffer": "6.0.3",
-    "valibot": "^0.30.0"
+    "valibot": "~0.30.0"
   },
   "peerDependencies": {
     "@librebase/core": "^0.1.0",

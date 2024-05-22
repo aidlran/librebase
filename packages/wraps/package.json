@@ -45,6 +45,6 @@
     "@librebase/core": "^0.1.0",
     "@librebase/fs": "^0.1.0",
     "@noble/secp256k1": "^1.7.1",
-    "valibot": "^0.30.0"
+    "valibot": "~0.30.0"
   }
 }
