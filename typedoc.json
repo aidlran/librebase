@@ -1,0 +1,14 @@
+{
+  "extends": ["./typedoc.base.json"],
+  "entryPoints": [
+    "./packages/codec/json",
+    "./packages/core",
+    "./packages/driver/indexeddb",
+    "./packages/fs",
+    "./packages/keyrings",
+    "./packages/svelte",
+    "./packages/wraps"
+  ],
+  "entryPointStrategy": "packages",
+  "out": "docs/api"
+}

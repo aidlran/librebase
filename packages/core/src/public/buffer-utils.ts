@@ -16,7 +16,7 @@ export function bytesToString(bytes: Uint8Array): string {
 /**
  * Coerces an identifier (address or hash) to a byte array.
  *
- * @param address A buffer or base 58 encoded string.
+ * @param input A buffer or base 58 encoded string.
  * @returns {Uint8Array}
  */
 export function identifierToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {
@@ -32,7 +32,7 @@ export function identifierToBytes(input: string | Uint8Array | ArrayBuffer): Uin
 /**
  * Coerces a payload to a byte array.
  *
- * @param address A buffer or base 64 encoded string.
+ * @param input A buffer or base 64 encoded string.
  * @returns {Uint8Array}
  */
 export function payloadToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {

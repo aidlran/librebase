@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 
 /** Log levels from least to most verbose. */
-const logLevels = ['none', 'error', 'warn', 'log', 'all'] as const;
+export const logLevels = ['none', 'error', 'warn', 'log', 'all'] as const;
 const enabledLogLevels = new Set<LogLevel>();
 export type LogLevel = (typeof logLevels)[number];
 

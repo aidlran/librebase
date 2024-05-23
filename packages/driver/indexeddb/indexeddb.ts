@@ -69,3 +69,5 @@ class IndexedDB implements ChannelDriver {
     });
   }
 }
+
+export type { IndexedDB };

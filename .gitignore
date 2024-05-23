@@ -2,4 +2,6 @@
 coverage
 dist
 docs/*.png
+docs/api
 node_modules
+packages/**/docs
