@@ -10,8 +10,8 @@ export async function deleteFile(cid: CIDLike, instanceID?: string) {
   return deleteOne(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
-export async function getFile(cid: CIDLike, instanceID?: string) {
-  return getOne(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
+export async function getFile<T = unknown>(cid: CIDLike, instanceID?: string) {
+  return getOne<T>(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
 export interface PutOptions {
