@@ -7,6 +7,6 @@
     "./packages/fs"
   ],
   "entryPointStrategy": "packages",
-  "name": "Librebase JS API Reference",
+  "name": "Librebase JS Documentation",
   "out": "docs/api"
 }
