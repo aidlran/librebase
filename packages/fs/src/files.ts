@@ -1,23 +1,17 @@
 import { deleteOne, encodeIdentifier, getOne, putOne } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
+import { cidToBytes, type CIDLike } from './cid';
 import { encodeWithCodec } from './codecs';
 import { Hash, HashAlgorithm, hash } from './hashes';
 import { validateMediaType } from './media-types';
 import { FS } from './schema';
 
-export async function deleteFile(cid: ArrayBuffer | Hash, instanceID?: string) {
-  cid = cid instanceof Hash ? cid.toBytes() : new Uint8Array(cid);
-  const id = encodeIdentifier(FS.key, cid);
-  return deleteOne(id, instanceID);
+export async function deleteFile(cid: CIDLike, instanceID?: string) {
+  return deleteOne(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
-export async function getFile(
-  cid: ArrayLike<number> | ArrayBufferLike | Hash,
-  instanceID?: string,
-) {
-  cid = cid instanceof Hash ? cid.toBytes() : new Uint8Array(cid);
-  const id = encodeIdentifier(FS.key, cid);
-  return getOne(id, instanceID);
+export async function getFile(cid: CIDLike, instanceID?: string) {
+  return getOne(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
 export interface PutOptions {

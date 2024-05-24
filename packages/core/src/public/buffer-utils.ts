@@ -1,46 +1,49 @@
 import { Base58, Base64 } from './base-encode';
 
-export function stringToBytes(string: string): Uint8Array {
-  const { length } = string;
-  return new Uint8Array(Array.from({ length }, (_, k) => string.charCodeAt(k)));
+/**
+ * Decode a a string to individual bytes by char code.
+ *
+ * @category Buffer Utilities
+ * @param string A string.
+ * @returns A `Uint8Array`.
+ */
+export function stringToBytes(string: string) {
+  return new Uint8Array(Array.from(string, (_, k) => string.charCodeAt(k)));
 }
 
-export function bytesToString(bytes: Uint8Array): string {
+/**
+ * Encode individual bytes to string by char code.
+ *
+ * @category Buffer Utilities
+ * @param bytes An array of byte values or `ArrayBufferLike`.
+ * @returns A string.
+ */
+export function bytesToString(bytes: ArrayLike<number> | ArrayBufferLike) {
   let output = '';
-  for (const byte of bytes) {
+  for (const byte of new Uint8Array(bytes)) {
     output += String.fromCharCode(byte);
   }
   return output;
 }
 
 /**
- * Coerces an identifier (address or hash) to a byte array.
+ * Coerces an identifier-like value to a `Uint8Array`.
  *
- * @param input A buffer or base 58 encoded string.
- * @returns {Uint8Array}
+ * @category Buffer Utilities
+ * @param input An array of byte values, `ArrayBufferLike`, or base58 encoded string.
+ * @returns A `Uint8Array`.
  */
-export function identifierToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {
-  if (typeof input === 'string') {
-    return Base58.decode(input);
-  } else if (input instanceof Uint8Array) {
-    return input;
-  } else {
-    return new Uint8Array(input);
-  }
+export function identifierToBytes(input: ArrayLike<number> | ArrayBufferLike | string) {
+  return typeof input === 'string' ? Base58.decode(input) : new Uint8Array(input);
 }
 
 /**
- * Coerces a payload to a byte array.
+ * Coerces a payload-like value to a `Uint8Array`.
  *
- * @param input A buffer or base 64 encoded string.
- * @returns {Uint8Array}
+ * @category Buffer Utilities
+ * @param input An array of byte values, `ArrayBufferLike`, or base64 encoded string.
+ * @returns A `Uint8Array`.
  */
-export function payloadToBytes(input: string | Uint8Array | ArrayBuffer): Uint8Array {
-  if (typeof input === 'string') {
-    return Base64.decode(input);
-  } else if (input instanceof Uint8Array) {
-    return input;
-  } else {
-    return new Uint8Array(input);
-  }
+export function payloadToBytes(input: ArrayLike<number> | ArrayBufferLike | string) {
+  return typeof input === 'string' ? Base64.decode(input) : new Uint8Array(input);
 }
