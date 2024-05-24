@@ -4,11 +4,9 @@
     "./packages/codec/json",
     "./packages/core",
     "./packages/driver/indexeddb",
-    "./packages/fs",
-    "./packages/keyrings",
-    "./packages/svelte",
-    "./packages/wraps"
+    "./packages/fs"
   ],
   "entryPointStrategy": "packages",
+  "name": "Librebase JS API Reference",
   "out": "docs/api"
 }
