@@ -1,4 +1,13 @@
+/**
+ * @deprecated
+ * @category Modules
+ */
 export type Constructor = (this: Injector) => unknown;
+
+/**
+ * @deprecated
+ * @category Modules
+ */
 export type Injector = (<T extends Constructor>(module: T) => ReturnType<T>) & {
   instanceID: string;
 };
@@ -7,7 +16,10 @@ const currentDependencies = new Set<Constructor>();
 const injectors: Record<string, Injector> = {};
 const instances: Record<string, Map<Constructor, unknown>> = {};
 
-/** @deprecated */
+/**
+ * @deprecated
+ * @category Modules
+ */
 export function getModule<T extends Constructor>(module: T, instanceID = '') {
   if (currentDependencies.has(module)) {
     throw new Error('Circular dependency detected');

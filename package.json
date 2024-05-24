@@ -19,7 +19,7 @@
     "build:docs": "conc npm:build:docs:*",
     "build:docs:plantuml": "plantuml docs/*.puml",
     "build:docs:typedoc": "typedoc",
-    "ci": "npm run build && npm run lint && npm run test",
+    "ci": "npm run build && npm run build:docs && npm run lint && npm run test",
     "cost": "npm run cost --workspaces --if-present",
     "coverage": "vitest run --coverage",
     "format": "prettier --write . && npx --workspaces sort-package-json",

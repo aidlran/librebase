@@ -1,6 +1,11 @@
+/** @category Channels */
 export type MaybePromise<T> = T | Promise<T>;
 
-/** Interface for a channel implementation. */
+/**
+ * Interface for a channel implementation.
+ *
+ * @category Channels
+ */
 export interface ChannelDriver {
   delete?(id: ArrayBuffer): MaybePromise<void>;
   get?(id: ArrayBuffer): MaybePromise<ArrayBuffer | void>;
@@ -25,9 +30,12 @@ export interface ChannelDriver {
  *   [remoteSource1, remoteSource2],
  * ];
  * ```
+ *
+ * @category Channels
  */
 export type Channels = (ChannelDriver | ChannelDriver[])[];
 
+/** @category Channels */
 export type ChannelQuery<T, R> = (item: T) => R | Promise<R>;
 
 const channels: Record<string, Channels> = {};
@@ -37,6 +45,7 @@ const channels: Record<string, Channels> = {};
  * directly to change the registered channels. See the type definition of `Channels` for more
  * information about how it is used.
  *
+ * @category Channels
  * @example Push to the array to register new channels:
  *
  * ```js
@@ -51,7 +60,11 @@ export function getChannels(instanceID?: string): Channels {
   return (channels[instanceID ?? ''] ??= []);
 }
 
-/** Queries channels synchronously, one by one. Groups of channels are raced asynchronously. */
+/**
+ * Queries channels synchronously, one by one. Groups of channels are raced asynchronously.
+ *
+ * @category Channels
+ */
 export async function queryChannelsSync<T>(
   query: ChannelQuery<ChannelDriver, T>,
   instanceID?: string,
@@ -103,7 +116,11 @@ function race<T, R>(channels: T[], query: ChannelQuery<T, R>): Promise<R | void>
   });
 }
 
-/** Queries all channels asynchronously. */
+/**
+ * Queries all channels asynchronously.
+ *
+ * @category Channels
+ */
 export function queryChannelsAsync<T>(
   query: ChannelQuery<ChannelDriver, T>,
   instanceID?: string,
