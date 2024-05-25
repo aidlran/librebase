@@ -12,7 +12,7 @@ export interface ECDSAWrappedMetadata {
 }
 
 export const ECDSAWrapModule: WrapModule<ECDSAUnwrappedMetadata, ECDSAWrappedMetadata> = {
-  canUnwrap: ['ecdsa'],
+  key: 'ecdsa',
   unwrap({ hash, metadata, payload }) {
     if (!verify(metadata.sig, hash.toBytes(), metadata.pub)) {
       throw new Error('ECDSA signature failed to verify');

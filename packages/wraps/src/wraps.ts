@@ -1,5 +1,5 @@
 import { Base58 } from '@librebase/core';
-import { getModule, log } from '@librebase/core/internal';
+import { Registry, type RegistryModule } from '@librebase/core/internal';
 import {
   Hash,
   HashAlgorithm,
@@ -17,9 +17,8 @@ export type WrapFn<T = unknown, R = unknown> = (config: {
 }) => [payload: Uint8Array, metadata: R] | Promise<[payload: Uint8Array, metadata: R]>;
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface WrapModule<TUnwrappedMetadata = any, TWrappedMetadata = any> {
-  canUnwrap?: string[];
-  canWrap?: string[];
+export interface WrapModule<TUnwrappedMetadata = any, TWrappedMetadata = any>
+  extends RegistryModule<string> {
   unwrap?: WrapFn<TWrappedMetadata, TUnwrappedMetadata>;
   wrap?: WrapFn<TUnwrappedMetadata, TWrappedMetadata>;
 }
@@ -47,65 +46,43 @@ export interface WrapValue<TName extends string = string, TMetadata = unknown> {
   v: number;
 }
 
-function wrapModuleMap(): Record<string, Pick<WrapModule, 'wrap' | 'unwrap'>> {
-  return {};
-}
+export const WrapRegistry = new Registry<string, WrapModule>({
+  validateKey: (key) => typeof key === 'string',
+});
 
-export function validateWrapModule(module: WrapModule) {
-  void log(() => {
-    const warnings: string[] = [];
-    if (module.canWrap && !module.wrap) {
-      warnings.push('Defines `canWrap` but not `wrap`.');
-    }
-    if (module.canUnwrap && !module.unwrap) {
-      warnings.push('Defines `canUnwrap` but not `unwrap`.');
-    }
-    if (warnings.length) {
-      warnings.unshift('Wrap module format is invalid:');
-    }
-    return warnings;
-  }, 'warn');
-}
+export const WrapErrorCode = {
+  StrategyUnavailable: 0,
+} as const;
 
-export function registerWrapModule<T extends WrapModule>(
-  module: T,
-  options?: { instanceID?: string; type?: string },
-) {
-  validateWrapModule(module);
-  const moduleConfig = getModule(wrapModuleMap, options?.instanceID);
-  if (options?.type) {
-    moduleConfig[options.type].unwrap = module.unwrap;
-    moduleConfig[options.type].wrap = module.wrap;
-  } else {
-    if (module.canUnwrap && module.unwrap) {
-      for (const type of module.canUnwrap) {
-        const configModule = (moduleConfig[type] ??= {});
-        configModule.unwrap = module.unwrap;
-      }
-    }
-    if (module.canWrap && module.wrap) {
-      for (const type of module.canWrap) {
-        const configModule = (moduleConfig[type] ??= {});
-        configModule.wrap = module.wrap;
-      }
-    }
+/**
+ * An error thrown by `@librebase/wraps`.
+ *
+ * @category Wraps
+ */
+export class WrapError extends Error {
+  /** The {@linkcode WrapErrorCode}. */
+  readonly code: (typeof WrapErrorCode)[keyof typeof WrapErrorCode];
+
+  constructor(readonly message: keyof typeof WrapErrorCode) {
+    super(message);
+    this.code = WrapErrorCode[message];
   }
 }
 
-export function getWrapStrategy(type: string, dir: 'unwrap' | 'wrap', instanceID?: string): WrapFn {
-  const module = getModule(wrapModuleMap, instanceID)[type];
-  if (!module?.[dir]) {
-    throw new ReferenceError(`No strategy found for ${dir} ${type}`);
+export function getWrapStrategy(type: string, strategy: 'wrap' | 'unwrap', instanceID?: string) {
+  const wrap = WrapRegistry.getStrict(type, instanceID)[strategy];
+  if (!wrap) {
+    throw new WrapError('StrategyUnavailable');
   }
-  return module[dir]!;
+  return wrap;
 }
 
 export async function wrap(config: WrapConfig, instanceID?: string): Promise<WrapValue> {
+  const wrap = getWrapStrategy(config.type, 'wrap', instanceID);
   const unwrappedPayload = await serializeFileContent(config.value, config.mediaType, {
     instanceID,
   });
   const unwrappedHash = await hash(config.hashAlg ?? HashAlgorithm.SHA256, unwrappedPayload);
-  const wrap = getWrapStrategy(config.type, 'wrap', instanceID);
   const [payload, metadata] = await Promise.resolve(
     wrap({
       hash: unwrappedHash,
