@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { Registry, RegistryError, type RegistryValue } from './registry';
+import { Registry, RegistryError, type RegistryModule } from './registry';
 
 describe('Registry', () => {
   describe('Get', () => {
@@ -39,8 +39,8 @@ describe('Registry', () => {
 
   describe('Register', () => {
     test('Value validator', () => {
-      const registry = new Registry<number, RegistryValue<number> & { test: string }>({
-        validateValue: (v) => v.test === 'test',
+      const registry = new Registry<number, RegistryModule<number> & { test: string }>({
+        validateModule: (v) => v.test === 'test',
       });
 
       const validThing = { key: 1, test: 'test' };

@@ -1,5 +1,5 @@
 import { stringToBytes } from '@librebase/core';
-import { Registry, type RegistryValue } from '@librebase/core/internal';
+import { Registry, type RegistryModule } from '@librebase/core/internal';
 import { parse, type MediaType } from 'content-type';
 import { validateMediaType } from './media-types';
 
@@ -8,14 +8,14 @@ export interface CodecProps {
   mediaType: MediaType;
 }
 
-export interface Codec<T = unknown> extends RegistryValue<string> {
+export interface Codec<T = unknown> extends RegistryModule<string> {
   encode(data: T, props: CodecProps): Uint8Array | Promise<Uint8Array>;
   decode(payload: Uint8Array, props: CodecProps): T | Promise<T>;
 }
 
 export const CodecRegistry = new Registry<string, Codec>({
   validateKey: (key) => validateMediaType(stringToBytes(key)),
-  validateValue: (value) =>
+  validateModule: (value) =>
     typeof value.decode === 'function' && typeof value.encode === 'function',
 });
 

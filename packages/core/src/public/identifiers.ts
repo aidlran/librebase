@@ -1,8 +1,8 @@
 import { decode, encode, encodingLength } from 'varint';
-import { Registry, type RegistryValue } from '../internal/registry';
+import { Registry, type RegistryModule } from '../internal/registry';
 
 /** Describes an identifier. */
-export interface IdentifierSchema<T = unknown> extends RegistryValue<number> {
+export interface IdentifierSchema<T = unknown> extends RegistryModule<number> {
   parse(
     key: ArrayLike<number> | ArrayBufferLike,
     value: ArrayLike<number> | ArrayBufferLike,
@@ -12,7 +12,7 @@ export interface IdentifierSchema<T = unknown> extends RegistryValue<number> {
 
 export const IdentifierRegistry = new Registry<number, IdentifierSchema>({
   validateKey: (key) => Number.isInteger(key),
-  validateValue: (value) => typeof value.parse === 'function',
+  validateModule: (value) => typeof value.parse === 'function',
 });
 
 /**
