@@ -1,11 +1,7 @@
 import type { Codec, CodecProps } from '@librebase/fs';
 import type { JsonCodecMiddleware } from './types';
 
-/**
- * An extensible JSON codec for the `application/json` media type.
- *
- * @category Codec
- */
+/** An extensible JSON codec for the `application/json` media type. */
 export interface JSONCodec extends Codec {
   key: 'application/json';
   decode<T>(payload: Uint8Array, props: CodecProps): Promise<T>;
@@ -15,7 +11,6 @@ export interface JSONCodec extends Codec {
 /**
  * Creates a {@linkcode JSONCodec}.
  *
- * @category Codec
  * @param middlewares Middlewares can be registered here at creation time.
  * @returns The {@linkcode JSONCodec} instance.
  */

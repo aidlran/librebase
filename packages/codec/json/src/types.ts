@@ -1,17 +1,9 @@
 import type { CodecProps } from '@librebase/fs';
 
-/**
- * Additional properties provided to the middleware.
- *
- * @category Middleware
- */
+/** Additional properties provided to the middleware. */
 export type MiddlewareProps = Pick<CodecProps, 'instanceID'>;
 
-/**
- * A middleware that hooks into the JSON parse and stringification processes.
- *
- * @category Middleware
- */
+/** A middleware that hooks into the JSON parse and stringification processes. */
 export interface JsonCodecMiddleware {
   /**
    * A function that may alter the value that ends up in the stringified output. This function

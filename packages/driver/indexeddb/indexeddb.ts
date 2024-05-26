@@ -2,14 +2,22 @@ import type { ChannelDriver } from '@librebase/core';
 
 /** Configuration object for the IndexedDB channel driver. */
 export interface IndexedDbChannelOptions {
-  /** @default 'librebase' */
+  /**
+   * The IndexedDB database name.
+   *
+   * @default 'librebase'
+   */
   databaseName?: string;
-  /** @default 'librebase' */
+  /**
+   * The IndexedDB table name.
+   *
+   * @default 'librebase'
+   */
   tableName?: string;
 }
 
 /**
- * Creates an IndexedDB channel driver.
+ * Creates an IndexedDB {@linkcode ChannelDriver}.
  *
  * @param {IndexedDbChannelOptions} [config] An optional configuration object.
  * @returns {Promise<ChannelDriver>} A promise that resolves with the `Channel` interface once the
@@ -31,8 +39,11 @@ export async function indexeddb(config?: IndexedDbChannelOptions): Promise<Index
 
 class IndexedDB implements ChannelDriver {
   constructor(
+    /** @ignore */
     private readonly db: IDBDatabase,
+    /** The IndexedDB database name. */
     readonly databaseName: string,
+    /** The IndexedDB table name. */
     readonly tableName: string,
   ) {}
 

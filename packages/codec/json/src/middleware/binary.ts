@@ -2,11 +2,7 @@ import { Base58, Base64 } from '@librebase/core/internal';
 import { Hash } from '@librebase/fs';
 import type { JsonCodecMiddleware } from '../types';
 
-/**
- * A middleware to swap binary streams for base encoded strings.
- *
- * @category Middlewares
- */
+/** A middleware to swap binary streams for base encoded strings. */
 export interface BinaryMiddleware extends JsonCodecMiddleware {
   /** Detects and replaces byte arrays and hash instances with encoded strings. */
   replacer(key: unknown, value: unknown): unknown;
@@ -14,11 +10,7 @@ export interface BinaryMiddleware extends JsonCodecMiddleware {
   reviver(key: unknown, value: unknown): unknown;
 }
 
-/**
- * A middleware to swap binary streams for base encoded strings.
- *
- * @category Middlewares
- */
+/** A middleware to swap binary streams for base encoded strings. */
 export const binary: BinaryMiddleware = {
   replacer(_: unknown, value: unknown) {
     if (value instanceof Hash) {
