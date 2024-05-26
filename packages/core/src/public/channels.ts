@@ -1,4 +1,8 @@
-/** @category Channels */
+/**
+ * A value that may or may not be in Promise form.
+ *
+ * @category General
+ */
 export type MaybePromise<T> = T | Promise<T>;
 
 /**

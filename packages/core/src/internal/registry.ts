@@ -12,6 +12,7 @@ export type RegistryKey = string | number | symbol;
  * @category Registry
  */
 export interface RegistryModule<K extends RegistryKey> {
+  /** A key or array of keys that this module can automatically be registered with. */
   key?: K | Array<K>;
 }
 

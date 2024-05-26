@@ -1,8 +1,21 @@
 import { decode, encode, encodingLength } from 'varint';
 import { Registry, type RegistryModule } from '../internal/registry';
 
-/** Describes an identifier. */
+/**
+ * This interface describes an identifier type and how the application should handle those
+ * identifiers and associated values as they come into the engine and out through channels.
+ *
+ * @category Identifiers
+ */
 export interface IdentifierSchema<T = unknown> extends RegistryModule<number> {
+  /**
+   * Defines a function that takes a key/value pair, validates it, and then returns a parsed value.
+   *
+   * @param key The Identifier value as bytes. The type varint prefix is omitted.
+   * @param value The value as bytes.
+   * @param instanceID The ID of the instance where the function was called.
+   * @returns The parsed value or, if performing some validation which fails, return `void`.
+   */
   parse(
     key: ArrayLike<number> | ArrayBufferLike,
     value: ArrayLike<number> | ArrayBufferLike,
@@ -10,16 +23,23 @@ export interface IdentifierSchema<T = unknown> extends RegistryModule<number> {
   ): T | void | Promise<T | void>;
 }
 
+/**
+ * A {@linkcode Registry} for storing {@linkcode IdentifierSchema} instances and associating them with
+ * a type integer.
+ *
+ * @category Identifiers
+ */
 export const IdentifierRegistry = new Registry<number, IdentifierSchema>({
   validateKey: (key) => Number.isInteger(key),
   validateModule: (value) => typeof value.parse === 'function',
 });
 
 /**
- * Parses an identifier buffer.
+ * Parses an identifier.
  *
- * @param identifier An identifier buffer.
- * @returns A tuple consisting of the identifier's type integer and value.
+ * @category Identifiers
+ * @param identifier An identifier as a byte array.
+ * @returns A tuple consisting of the identifier's type integer and value as bytes.
  */
 export function parseIdentifier(
   identifier: ArrayLike<number> | ArrayBufferLike,
@@ -33,9 +53,10 @@ export function parseIdentifier(
 /**
  * Encodes an identifier buffer.
  *
+ * @category Identifiers
  * @param type The identifier type integer.
- * @param value The identifier value.
- * @returns An identifier buffer.
+ * @param value The identifier value as a byte array.
+ * @returns The identifier as bytes.
  */
 export function encodeIdentifier(type: number, value: ArrayLike<number> | ArrayBufferLike) {
   const typeBuf = encode(type);
