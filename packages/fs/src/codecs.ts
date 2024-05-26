@@ -1,5 +1,4 @@
-import { stringToBytes } from '@librebase/core';
-import { Registry, type RegistryModule } from '@librebase/core/internal';
+import { Registry, stringToBytes, type RegistryModule } from '@librebase/core/internal';
 import { parse, type MediaType } from 'content-type';
 import { validateMediaType } from './media-types';
 

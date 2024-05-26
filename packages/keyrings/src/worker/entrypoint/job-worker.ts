@@ -1,4 +1,4 @@
-import { Base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core/internal';
 import { hash } from '@librebase/fs';
 import type { WrapValue, WrapValueMetadataMap } from '@librebase/wraps';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';

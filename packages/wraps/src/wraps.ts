@@ -1,5 +1,4 @@
-import { Base58 } from '@librebase/core';
-import { Registry, type RegistryModule } from '@librebase/core/internal';
+import { Base58, Registry, type RegistryModule } from '@librebase/core/internal';
 import {
   Hash,
   HashAlgorithm,

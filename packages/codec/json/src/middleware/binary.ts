@@ -1,4 +1,4 @@
-import { Base58, Base64 } from '@librebase/core';
+import { Base58, Base64 } from '@librebase/core/internal';
 import { Hash } from '@librebase/fs';
 
 /** JSON codec middleware to swap binary streams for base encoded strings. */

@@ -36,7 +36,10 @@ export interface RegisterOptions<K extends RegistryKey> {
   instanceID?: string;
 }
 
-/** @deprecated Use {@linkcode RegistryModule} */
+/**
+ * @deprecated Use {@linkcode RegistryModule}
+ * @category Registry
+ */
 export type RegistryValue<K extends RegistryKey> = RegistryModule<K>;
 
 /**

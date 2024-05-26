@@ -1,5 +1,5 @@
-import { Base58, queryChannelsSync } from '@librebase/core';
-import { getModule } from '@librebase/core/internal';
+import { queryChannelsSync } from '@librebase/core';
+import { Base58, getModule } from '@librebase/core/internal';
 import { decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
 import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';

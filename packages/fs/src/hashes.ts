@@ -1,4 +1,4 @@
-import { Base58 } from '@librebase/core';
+import { Base58 } from '@librebase/core/internal';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };
 

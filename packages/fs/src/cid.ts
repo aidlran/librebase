@@ -1,4 +1,4 @@
-import { identifierToBytes, payloadToBytes } from '@librebase/core';
+import { identifierToBytes, payloadToBytes } from '@librebase/core/internal';
 import { Hash, hash } from './hashes';
 
 /**

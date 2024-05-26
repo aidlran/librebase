@@ -1,4 +1,5 @@
-import { encodeIdentifier, getOne, identifierToBytes, putOne } from '@librebase/core';
+import { encodeIdentifier, getOne, putOne } from '@librebase/core';
+import { identifierToBytes } from '@librebase/core/internal';
 import { Hash } from '@librebase/fs';
 
 export const AddressType = {

@@ -1,9 +1,62 @@
-import { Base58, Base64 } from './base-encode';
+import base from 'base-x';
+
+/**
+ * Implements an encoder that converts values to and from base-x strings and `Uint8Array`.
+ *
+ * @category Encoding
+ */
+export interface BaseEncoder {
+  /**
+   * Decodes the encoded string to bytes.
+   *
+   * @param encoded The encoded string.
+   * @returns The raw bytes.
+   */
+  decode(encoded: string): Uint8Array;
+  /**
+   * Encodes bytes into a string.
+   *
+   * @param input The bytes to encode.
+   * @returns The encoded string.
+   */
+  encode(input: Uint8Array): string;
+}
+
+/**
+ * A base58 (Bitcoin) encoder.
+ *
+ * @category Encoding
+ */
+export const Base58: BaseEncoder = base(
+  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz',
+);
+
+/**
+ * A base64 encoder.
+ *
+ * @category Encoding
+ */
+export const Base64: BaseEncoder = {
+  /**
+   * Decodes the base64 encoded string to bytes.
+   *
+   * @param encoded The base64 encoded string.
+   * @returns The raw bytes.
+   */
+  decode: (encoded: string) => stringToBytes(atob(encoded)),
+  /**
+   * Encodes bytes into a base64 string.
+   *
+   * @param input The bytes to encode.
+   * @returns A base64 encoded string.
+   */
+  encode: (input: Uint8Array) => btoa(bytesToString(input)),
+};
 
 /**
  * Decode a a string to individual bytes by char code.
  *
- * @category Buffer Utilities
+ * @category Encoding
  * @param string A string.
  * @returns A `Uint8Array`.
  */
@@ -14,7 +67,7 @@ export function stringToBytes(string: string) {
 /**
  * Encode individual bytes to string by char code.
  *
- * @category Buffer Utilities
+ * @category Encoding
  * @param bytes An array of byte values or `ArrayBufferLike`.
  * @returns A string.
  */
@@ -29,7 +82,7 @@ export function bytesToString(bytes: ArrayLike<number> | ArrayBufferLike) {
 /**
  * Coerces an identifier-like value to a `Uint8Array`.
  *
- * @category Buffer Utilities
+ * @category Encoding
  * @param input An array of byte values, `ArrayBufferLike`, or base58 encoded string.
  * @returns A `Uint8Array`.
  */
@@ -40,7 +93,7 @@ export function identifierToBytes(input: ArrayLike<number> | ArrayBufferLike | s
 /**
  * Coerces a payload-like value to a `Uint8Array`.
  *
- * @category Buffer Utilities
+ * @category Encoding
  * @param input An array of byte values, `ArrayBufferLike`, or base64 encoded string.
  * @returns A `Uint8Array`.
  */
