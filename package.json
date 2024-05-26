@@ -28,8 +28,6 @@
     "lint:eslint": "eslint packages",
     "lint:publint": "npx --workspaces publint",
     "lint:sort-package-json": "npx --workspaces sort-package-json --check",
-    "--- TODO: re-enable typedoc --validation": "",
-    "lint:typedoc": "typedoc --treatWarningsAsErrors",
     "start": "conc -k npm:start:*",
     "start:codec/json": "npm start -w packages/codec/json",
     "start:core": "npm start -w packages/core",
