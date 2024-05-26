@@ -60,9 +60,9 @@ export async function putOne(
     (id as Uint8Array).subarray(1),
     value,
     instanceID,
-  );
-  await queryChannelsAsync(
-    (channel) => channel.put?.(id as Uint8Array, value as Uint8Array),
-    instanceID,
-  );
+  ) &&
+    (await queryChannelsAsync(
+      (channel) => channel.put?.(id as Uint8Array, value as Uint8Array),
+      instanceID,
+    ));
 }
