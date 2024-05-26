@@ -7,3 +7,6 @@
 export * from './channels';
 export * from './identifiers';
 export * from './repository';
+
+/** @category Logging */
+export { setLogLevel, type LogLevel } from '../internal/logging';

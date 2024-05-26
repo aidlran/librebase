@@ -10,6 +10,6 @@
  */
 
 export * from './encoding';
-export * from './logger';
+export * from './logging';
 export * from './modules';
 export * from './registry';

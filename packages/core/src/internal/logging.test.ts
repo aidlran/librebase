@@ -1,5 +1,5 @@
 import { describe, vi, it, expect } from 'vitest';
-import { log, setLogLevel } from './logger';
+import { log, setLogLevel } from './logging';
 
 describe('Logger', () => {
   for (const fn of ['error', 'log', 'warn'] as const) {
