@@ -1,6 +1,7 @@
 import { Registry, stringToBytes, type RegistryModule } from '@librebase/core/internal';
 import { parse, type MediaType } from 'content-type';
 import { validateMediaType } from './media-types';
+import type { MaybePromise } from '@librebase/core';
 
 export interface CodecProps {
   instanceID?: string;
@@ -8,8 +9,22 @@ export interface CodecProps {
 }
 
 export interface Codec<T = unknown> extends RegistryModule<string> {
-  encode(data: T, props: CodecProps): Uint8Array | Promise<Uint8Array>;
-  decode(payload: Uint8Array, props: CodecProps): T | Promise<T>;
+  /**
+   * Decodes bytes into the value.
+   *
+   * @param payload The bytes to decode.
+   * @param props Additional properties that may be needed.
+   * @returns The decoded value or a promise that resolves with the decoded value.
+   */
+  decode(payload: Uint8Array, props: CodecProps): MaybePromise<T>;
+  /**
+   * Encodes a value to bytes.
+   *
+   * @param data The value to encode.
+   * @param props Additional properties that may be needed.
+   * @returns The encoded bytes or a promise that resolves with the encoded bytes.
+   */
+  encode(data: T, props: CodecProps): MaybePromise<Uint8Array>;
 }
 
 export const CodecRegistry = new Registry<string, Codec>({

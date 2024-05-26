@@ -1,13 +1,30 @@
 import type { Codec, CodecProps } from '@librebase/fs';
 import type { JsonCodecMiddleware } from './types';
 
-/** Extensible JSON codec for the `application/json` media type. */
-export function json(...middlewares: JsonCodecMiddleware[]) {
+/**
+ * An extensible JSON codec for the `application/json` media type.
+ *
+ * @category Codec
+ */
+export interface JSONCodec extends Codec {
+  key: 'application/json';
+  decode<T>(payload: Uint8Array, props: CodecProps): Promise<T>;
+  encode(data: unknown, props: CodecProps): Promise<Uint8Array>;
+}
+
+/**
+ * Creates a {@linkcode JSONCodec}.
+ *
+ * @category Codec
+ * @param middlewares Middlewares can be registered here at creation time.
+ * @returns The {@linkcode JSONCodec} instance.
+ */
+export function json(...middlewares: JsonCodecMiddleware[]): JSONCodec {
   return {
     key: 'application/json',
-    decode: decode.bind(middlewares) as <T>(payload: Uint8Array, props: CodecProps) => Promise<T>,
-    encode: encode.bind(middlewares) as (data: unknown, props: CodecProps) => Promise<Uint8Array>,
-  } satisfies Codec;
+    decode: decode.bind(middlewares) as JSONCodec['decode'],
+    encode: encode.bind(middlewares),
+  };
 }
 
 function decode(

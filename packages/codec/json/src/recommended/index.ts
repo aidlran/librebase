@@ -1,16 +1,30 @@
+/**
+ * Includes functions for automatically registering middleware and the codec.
+ *
+ * @module Recommended
+ */
+
 import { CodecRegistry } from '@librebase/fs';
 import { json as codec } from '../codec';
 import { binary } from '../middleware';
 import type { JsonCodecMiddleware } from '../types';
 
+/**
+ * Automatically registers the JSON codec and the binary middleware.
+ *
+ * @param config Configuration options.
+ */
 export function init(config?: { middlewares?: JsonCodecMiddleware[]; instanceID?: string }) {
   const middlewares = config?.middlewares ?? [];
   CodecRegistry.register(json(...middlewares), { instanceID: config?.instanceID });
 }
 
 /**
- * Extensible JSON codec for the `application/json` media type. This recommended configuration
- * automatically registers the binary middleware.
+ * Creates a JSON codec. This recommended configuration automatically registers the binary
+ * middleware.
+ *
+ * @param middlewares Additional middlewares to register.
+ * @returns A JSON codec.
  */
 export function json(...middlewares: JsonCodecMiddleware[]) {
   return codec(binary, ...middlewares);
