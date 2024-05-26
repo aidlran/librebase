@@ -1,4 +1,4 @@
-import { deleteOne, encodeIdentifier, getOne, putOne } from '@librebase/core';
+import { Identifier, deleteOne, getOne, putOne } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
 import { cidToBytes, type CIDLike } from './cid';
 import { encodeWithCodec } from './codecs';
@@ -7,11 +7,11 @@ import { validateMediaType } from './media-types';
 import { FS } from './schema';
 
 export async function deleteFile(cid: CIDLike, instanceID?: string) {
-  return deleteOne(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
+  return deleteOne(new Identifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
 export async function getFile<T = unknown>(cid: CIDLike, instanceID?: string) {
-  return getOne<T>(encodeIdentifier(FS.key, cidToBytes(cid)), instanceID);
+  return getOne<T>(new Identifier(FS.key, cidToBytes(cid)), instanceID);
 }
 
 export interface PutOptions {
@@ -27,7 +27,7 @@ export async function putFile(
   const payload = await serializeFileContent(value, mediaType, { instanceID: options?.instanceID });
   const hashAlg = options?.hashAlg ?? HashAlgorithm.SHA256;
   const objectHash = await hash(hashAlg, payload);
-  const id = encodeIdentifier(FS.key, objectHash.toBytes());
+  const id = new Identifier(FS.key, objectHash.toBytes());
   await putOne(id, payload, options?.instanceID);
   return objectHash;
 }

@@ -1,11 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import {
-  IdentifierRegistry,
-  encodeIdentifier,
-  parseIdentifier,
-  type IdentifierSchema,
-} from './identifiers';
-import { RegistryError } from '../internal/registry';
+import { Base58, RegistryError } from '../internal';
+import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers';
 
 describe('Identifier Registry', () => {
   const instanceID = 'Identifier Registry';
@@ -31,21 +26,30 @@ describe('Identifier Registry', () => {
   });
 });
 
-test('Identifier serialization', () => {
-  for (const {
-    encoded,
-    decoded: { type, payload },
-  } of [
+test('Identifier class', () => {
+  for (const { bytes, type, value, b58 } of [
     {
-      encoded: [1, 2, 3, 4],
-      decoded: { type: 1, payload: [2, 3, 4] },
+      bytes: [1, 2, 3, 4],
+      type: 1,
+      value: [2, 3, 4],
+      b58: '2VfUX',
     },
     {
-      encoded: [232, 7, 2, 3, 4],
-      decoded: { type: 1000, payload: [2, 3, 4] },
+      bytes: [232, 7, 2, 3, 4],
+      type: 1000,
+      value: [2, 3, 4],
+      b58: 'TBJiAGb',
     },
   ]) {
-    expect(encodeIdentifier(type, payload)).toEqual(new Uint8Array(encoded));
-    expect(parseIdentifier(encoded)).toEqual([type, new Uint8Array(payload)]);
+    for (const id of [new Identifier(type, value), new Identifier(bytes), new Identifier(b58)]) {
+      for (const i in id.bytes) {
+        expect(id.bytes[i]).toBe(bytes[i]);
+      }
+      expect(id.type).toBe(type);
+      for (const i in id.value) {
+        expect(id.value[i]).toBe(value[i]);
+      }
+      expect(id.toBase58()).toEqual(Base58.encode(new Uint8Array(bytes)));
+    }
   }
 });

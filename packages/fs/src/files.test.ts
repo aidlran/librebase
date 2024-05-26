@@ -1,4 +1,4 @@
-import { getChannels, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
+import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import { mockJSONCodec } from '../testing/codecs';
@@ -37,9 +37,9 @@ describe('File operations', () => {
     for (const [paramType, requestHash] of testCases) {
       test('With ' + paramType, async () => {
         let calls = 0;
-        function deleteMock(hash: ArrayBuffer) {
+        function deleteMock(id: Identifier) {
           calls++;
-          expect(hash.slice(1)).toEqual(baseHash.toBytes());
+          expect(id.value).toEqual(baseHash.toBytes());
         }
         mockDriverA.delete = deleteMock;
         mockDriverB.delete = deleteMock;
@@ -56,17 +56,16 @@ describe('File operations', () => {
     const existingCID = new Uint8Array([FS.key, ...existing]);
 
     getChannels(instanceID).push({
-      get(identifier) {
-        const buffer = new Uint8Array(identifier);
-        if (buffer.length !== existingCID.length) {
+      get(id) {
+        if (id.bytes.length !== existingCID.length) {
           return;
         }
-        for (let i = 0; i < buffer.length; i++) {
-          if (buffer[i] !== existingCID[i]) {
+        for (let i = 0; i < id.bytes.length; i++) {
+          if (id.bytes[i] !== existingCID[i]) {
             return;
           }
         }
-        return identifier;
+        return id.bytes;
       },
     });
 
@@ -86,9 +85,9 @@ describe('File operations', () => {
     const value = { test: 'test' };
     const mediaType = 'application/json';
     let calls = 0;
-    function putMock(hash: Uint8Array, object: Uint8Array) {
+    function putMock(id: Identifier, object: Uint8Array) {
       calls++;
-      expect(hash).toBeInstanceOf(Uint8Array);
+      expect(id.value).toBeInstanceOf(Uint8Array);
       expect(object).toBeInstanceOf(Uint8Array);
     }
     mockDriverA.put = putMock;

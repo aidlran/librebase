@@ -1,4 +1,4 @@
-import { encodeIdentifier, getOne, putOne } from '@librebase/core';
+import { Identifier, getOne, putOne } from '@librebase/core';
 import { identifierToBytes } from '@librebase/core/internal';
 import { Hash } from '@librebase/fs';
 
@@ -11,7 +11,7 @@ export async function getAddressHash(
   instanceID?: string,
 ): Promise<Hash | void> {
   address = identifierToBytes(address);
-  const id = encodeIdentifier(2, address);
+  const id = new Identifier(2, address);
   const cid = await getOne<ArrayBuffer>(id, instanceID);
   if (cid) {
     const hashBin = new Uint8Array(cid);
@@ -25,7 +25,7 @@ export async function setAddressHash(
   instanceID?: string,
 ) {
   address = identifierToBytes(address);
-  const id = encodeIdentifier(2, address);
+  const id = new Identifier(2, address);
   const hashBin = hash instanceof Hash ? hash.toBytes() : identifierToBytes(hash);
   return putOne(id, hashBin, instanceID);
 }

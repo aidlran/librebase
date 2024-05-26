@@ -1,4 +1,4 @@
-import type { ChannelDriver } from '@librebase/core';
+import type { ChannelDriver, Identifier } from '@librebase/core';
 
 /** Configuration object for the IndexedDB channel driver. */
 export interface IndexedDbChannelOptions {
@@ -47,34 +47,34 @@ class IndexedDB implements ChannelDriver {
     readonly tableName: string,
   ) {}
 
-  delete(id: ArrayBuffer): Promise<void> {
+  delete(id: Identifier): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = this.db
         .transaction(this.tableName, 'readwrite')
         .objectStore(this.tableName)
-        .delete(id);
+        .delete(id.bytes);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });
   }
 
-  get<T>(id: ArrayBuffer): Promise<T | void> {
+  get<T>(id: Identifier): Promise<T | void> {
     return new Promise((resolve, reject) => {
       const request = this.db
         .transaction(this.tableName, 'readonly')
         .objectStore(this.tableName)
-        .get(id);
+        .get(id.bytes);
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve((request.result as { value: T })?.value);
     });
   }
 
-  put(id: ArrayBuffer, value: ArrayBuffer): Promise<void> {
+  put(id: Identifier, value: Uint8Array): Promise<void> {
     return new Promise((resolve, reject) => {
       const request = this.db
         .transaction(this.tableName, 'readwrite')
         .objectStore(this.tableName)
-        .put({ id, value });
+        .put({ id: id.bytes, value });
       request.onerror = () => reject(request.error);
       request.onsuccess = () => resolve();
     });

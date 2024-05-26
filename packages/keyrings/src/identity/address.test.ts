@@ -1,4 +1,4 @@
-import { getChannels, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
+import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { Hash } from '@librebase/fs';
 import { afterAll, describe, expect, test } from 'vitest';
 import { getAddressHash, setAddressHash } from './address';
@@ -25,9 +25,9 @@ describe('Address CRUD', () => {
     const existing = createBytes();
     const nonExistent = createBytes();
     let calls = 0;
-    function getMock(id: ArrayBuffer) {
+    function getMock(id: Identifier) {
       calls++;
-      const address = new Uint8Array(id).subarray(1);
+      const address = id.value;
       for (const i in address) {
         if (address[i] !== existing[i]) {
           return;
@@ -50,9 +50,9 @@ describe('Address CRUD', () => {
     const inputAddress = createBytes();
     const inputHash = createBytes();
     let calls = 0;
-    function putMock(address: ArrayBuffer, hash: ArrayBuffer) {
+    function putMock(id: Identifier, hash: ArrayBuffer) {
       calls++;
-      expect(new Uint8Array(address).subarray(1)).toEqual(inputAddress);
+      expect(id.value).toEqual(inputAddress);
       expect(hash).toEqual(inputHash);
     }
     mockDriverA.put = putMock;

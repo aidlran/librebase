@@ -1,6 +1,6 @@
-import { queryChannelsSync } from '@librebase/core';
+import { Identifier, queryChannelsSync } from '@librebase/core';
 import { Base58, getModule } from '@librebase/core/internal';
-import { decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
+import { FS, decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
 import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
@@ -26,7 +26,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
   if (hash) {
     return queryChannelsSync(async (channel) => {
       if (channel.get) {
-        const objectResult = await channel.get(hash.toBytes());
+        const objectResult = await channel.get(new Identifier(FS.key, hash.toBytes()));
         if (objectResult) {
           const [, mediaType, payload] = parseFileContent(new Uint8Array(objectResult));
           const value = await decodeWithCodec<WrapValue>(payload, mediaType, instanceID);

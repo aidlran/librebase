@@ -7,7 +7,7 @@ import { parseFileContent } from './files';
 export const FS = {
   key: 1,
   async parse(cid, content, instanceID?: string) {
-    if (!(await validateCID(cid, content))) {
+    if (!(await validateCID(cid.value, content))) {
       return;
     }
     // Will throw if content is malformed or unsupported

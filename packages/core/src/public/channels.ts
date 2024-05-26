@@ -1,3 +1,5 @@
+import type { Identifier } from './identifiers';
+
 /**
  * A value that may or may not be in Promise form.
  *
@@ -18,7 +20,7 @@ export interface ChannelDriver {
    * @returns `void`, but if the function is asynchronous it should return a promise that resolves
    *   once the action has been completed.
    */
-  delete?(id: ArrayBuffer): MaybePromise<void>;
+  delete?(id: Identifier): MaybePromise<void>;
   /**
    * A function that handles a get request.
    *
@@ -26,7 +28,7 @@ export interface ChannelDriver {
    * @returns The value or a promise that resolves with the value. If the value cannot be retrieved
    *   becuase it doesn't exist or for some other reason, we should return `void` instead.
    */
-  get?(id: ArrayBuffer): MaybePromise<ArrayBuffer | void>;
+  get?(id: Identifier): MaybePromise<ArrayLike<number> | ArrayBufferLike | void>;
   /**
    * A function that handles a put request (to store an identifier/value pair).
    *
@@ -35,7 +37,7 @@ export interface ChannelDriver {
    * @returns `void`, but if the function is asynchronous it should return a promise that resolves
    *   once the action has been completed.
    */
-  put?(id: ArrayBuffer, value: ArrayBuffer): MaybePromise<void>;
+  put?(id: Identifier, value: Uint8Array): MaybePromise<void>;
 }
 
 /**

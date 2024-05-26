@@ -13,6 +13,7 @@ import {
   type Channels,
   type ChannelQuery,
 } from './channels';
+import { Identifier } from './identifiers';
 
 test('getChannels', () => {
   const value = getChannels();
@@ -23,7 +24,7 @@ test('getChannels', () => {
 
 describe('Query channels sync', () => {
   function normalQuery(channel: ChannelDriver) {
-    return channel.get!(new ArrayBuffer(0));
+    return channel.get!(new Identifier([]));
   }
 
   function throwQuery() {
@@ -34,7 +35,7 @@ describe('Query channels sync', () => {
     const instanceID = 'query-channels-sync-resolve-first';
     getChannels(instanceID).push(fakeDelayedDriver, fakeValidDriver);
     const query = (channel: ChannelDriver) => {
-      if (channel.get!(new ArrayBuffer(0))) {
+      if (channel.get!(new Identifier([]))) {
         return 0;
       }
     };
