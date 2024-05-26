@@ -145,6 +145,7 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
  * @template T The type used for modules.
  */
 export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
+  /** @ignore */
   private readonly registry: Partial<Record<string, Partial<Record<K, T>>>> = {};
 
   /**

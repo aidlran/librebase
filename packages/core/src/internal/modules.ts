@@ -9,6 +9,7 @@ export type Constructor = (this: Injector) => unknown;
  * @category Modules
  */
 export type Injector = (<T extends Constructor>(module: T) => ReturnType<T>) & {
+  /** The ID of the instance. */
   instanceID: string;
 };
 

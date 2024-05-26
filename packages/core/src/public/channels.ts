@@ -6,13 +6,35 @@
 export type MaybePromise<T> = T | Promise<T>;
 
 /**
- * Interface for a channel implementation.
+ * Interface for a channel implementation. All functionality is optional to implement.
  *
  * @category Channels
  */
 export interface ChannelDriver {
+  /**
+   * A function that handles a delete request.
+   *
+   * @param id The identifier of the value requested to be deleted.
+   * @returns `void`, but if the function is asynchronous it should return a promise that resolves
+   *   once the action has been completed.
+   */
   delete?(id: ArrayBuffer): MaybePromise<void>;
+  /**
+   * A function that handles a get request.
+   *
+   * @param id The identifier of the requested value.
+   * @returns The value or a promise that resolves with the value. If the value cannot be retrieved
+   *   becuase it doesn't exist or for some other reason, we should return `void` instead.
+   */
   get?(id: ArrayBuffer): MaybePromise<ArrayBuffer | void>;
+  /**
+   * A function that handles a put request (to store an identifier/value pair).
+   *
+   * @param id The identifier.
+   * @param value The value.
+   * @returns `void`, but if the function is asynchronous it should return a promise that resolves
+   *   once the action has been completed.
+   */
   put?(id: ArrayBuffer, value: ArrayBuffer): MaybePromise<void>;
 }
 
@@ -39,8 +61,16 @@ export interface ChannelDriver {
  */
 export type Channels = (ChannelDriver | ChannelDriver[])[];
 
-/** @category Channels */
-export type ChannelQuery<T, R> = (item: T) => R | Promise<R>;
+/**
+ * A query function that is called per item.
+ *
+ * @category Channels
+ * @template T The type of the item.
+ * @template R The type of the return value.
+ * @param item One of the items to query.
+ * @returns A value or a promise that resolves to a value.
+ */
+export type ChannelQuery<T, R> = (item: T) => MaybePromise<R>;
 
 const channels: Record<string, Channels> = {};
 
