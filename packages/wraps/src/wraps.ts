@@ -68,7 +68,21 @@ export class WrapError extends Error {
   }
 }
 
-export function getWrapStrategy(type: string, strategy: 'wrap' | 'unwrap', instanceID?: string) {
+export function getWrapStrategy<TConfigMetadata = unknown, TValueMetadata = unknown>(
+  type: string,
+  strategy: 'wrap',
+  instanceID?: string,
+): WrapFn<TConfigMetadata, TValueMetadata>;
+export function getWrapStrategy<TConfigMetadata = unknown, TValueMetadata = unknown>(
+  type: string,
+  strategy: 'unwrap',
+  instanceID?: string,
+): WrapFn<TValueMetadata, TConfigMetadata>;
+export function getWrapStrategy(
+  type: string,
+  strategy: 'wrap' | 'unwrap',
+  instanceID?: string,
+): WrapFn {
   const wrap = WrapRegistry.getStrict(type, instanceID)[strategy];
   if (!wrap) {
     throw new WrapError('StrategyUnavailable');
@@ -76,8 +90,11 @@ export function getWrapStrategy(type: string, strategy: 'wrap' | 'unwrap', insta
   return wrap;
 }
 
-export async function wrap(config: WrapConfig, instanceID?: string): Promise<WrapValue> {
-  const wrap = getWrapStrategy(config.type, 'wrap', instanceID);
+export async function wrap<TConfigMetadata = unknown, TValueMetadata = unknown>(
+  config: WrapConfig<string, TConfigMetadata>,
+  instanceID?: string,
+): Promise<WrapValue<string, TValueMetadata>> {
+  const wrap = getWrapStrategy<TConfigMetadata, TValueMetadata>(config.type, 'wrap', instanceID);
   const unwrappedPayload = await serializeFileContent(config.value, config.mediaType, {
     instanceID,
   });
@@ -98,9 +115,12 @@ export async function wrap(config: WrapConfig, instanceID?: string): Promise<Wra
   };
 }
 
-export async function unwrap(value: WrapValue, instanceID?: string): Promise<WrapConfig> {
+export async function unwrap<TConfigMetadata = unknown, TValueMetadata = unknown>(
+  value: WrapValue<string, TValueMetadata>,
+  instanceID?: string,
+): Promise<WrapConfig<string, TConfigMetadata>> {
   const type = value.$.slice(5);
-  const unwrap = getWrapStrategy(type, 'unwrap', instanceID);
+  const unwrap = getWrapStrategy<TConfigMetadata, TValueMetadata>(type, 'unwrap', instanceID);
   const hashBytes = Base58.decode(value.h);
   const hashAlg = hashBytes[0];
   const hash = new Hash(hashAlg, hashBytes.subarray(1));
