@@ -1,24 +1,18 @@
 import { Identifier, queryChannelsSync } from '@librebase/core';
-import { Base58, getModule } from '@librebase/core/internal';
+import { Base58 } from '@librebase/core/internal';
 import { FS, decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
 import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
 import type { MediaType } from 'content-type';
-import { jobWorker } from '../worker/worker.module';
+import { getWorker } from '../worker/worker.module';
 import { getAddressHash, setAddressHash } from './address';
 
 // TODO: separate address hash CRUD module
 
-export function getIdentityAddress(identityID: string, instanceID?: string) {
-  return new Promise<Uint8Array>((resolve) => {
-    getModule(jobWorker, instanceID).postToOne(
-      { action: 'identity.get', payload: identityID },
-      ({ payload }) => {
-        resolve(payload);
-      },
-    );
-  });
+export async function getIdentityAddress(identityID: string, instanceID?: string) {
+  return (await getWorker().postToOne({ action: 'identity.get', payload: identityID, instanceID }))
+    .payload;
 }
 
 export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {

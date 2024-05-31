@@ -1,5 +1,5 @@
-import { WorkerMessageType } from '../types';
-import type { Action, Result, WorkerMessage } from '../types';
+import { WorkerMessageType, type WorkerMessage } from '../types/message';
+import type { Action, Result } from '../types/request';
 
 export type JobResultWorkerMessage<T extends Action = Action> =
   WorkerMessage<WorkerMessageType.RESULT> & { jobID: number } & Result<T>;

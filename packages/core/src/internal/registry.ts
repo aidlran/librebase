@@ -37,12 +37,6 @@ export interface RegisterOptions<K extends RegistryKey> {
 }
 
 /**
- * @deprecated Use {@linkcode RegistryModule}
- * @category Registry
- */
-export type RegistryValue<K extends RegistryKey> = RegistryModule<K>;
-
-/**
  * Error codes related to the registry.
  *
  * @category Registry
@@ -58,18 +52,6 @@ export const RegistryErrorCode = {
   ModuleInvalid: 3,
   /** The module was not found. */
   ModuleNotFound: 4,
-  /**
-   * The module failed validation.
-   *
-   * @deprecated Use {@linkcode RegistryErrorCode.ModuleInvalid} instead.
-   */
-  ValueInvalid: 3,
-  /**
-   * The module was not found.
-   *
-   * @deprecated Use {@linkcode RegistryErrorCode.ModuleNotFound} instead.
-   */
-  ValueNotFound: 4,
 } as const;
 
 /**
@@ -116,18 +98,6 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
    * @returns A boolean indicating whether or not the validation passed.
    */
   validateModule?(value: T): boolean;
-  /**
-   * An optional validation function for Registry modules.
-   *
-   * For instance, the following function will ensure the module contains a `parse` function.
-   *
-   *     (value) => typeof value.parse === 'function';
-   *
-   * @deprecated Provide {@linkcode validateModule} instead.
-   * @param value The module to validate.
-   * @returns A boolean indicating whether or not the validation passed.
-   */
-  validateValue?(value: T): boolean;
 }
 
 /**
@@ -192,10 +162,7 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
    * @param options An optional {@linkcode RegistrationOptions} object.
    */
   register(module: T, options?: RegisterOptions<K>) {
-    if (
-      (this.options?.validateModule && !this.options.validateModule(module)) ??
-      (this.options?.validateValue && !this.options.validateValue(module))
-    ) {
+    if (this.options?.validateModule && !this.options.validateModule(module)) {
       throw new RegistryError(RegistryErrorCode.ModuleInvalid);
     }
     let key = options?.key ?? module.key;

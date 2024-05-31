@@ -1,7 +1,3 @@
-export * from './action';
-export * from './job';
-export * from './message';
-export * from './payload/index';
-export * from './payload.js';
-export * from './request';
-export * from './result';
+export type { WorkerMessage, WorkerMessageType } from './message';
+export * from './payloads';
+export type { PostToAllAction, PostToOneAction } from './request';

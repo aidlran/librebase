@@ -23,6 +23,7 @@ export type GetRootNodeRequest = [
   WorkerDataRequestType.GET_ROOT_NODE,
   KdfType,
   publicKey: Uint8Array,
+  instanceID?: string,
 ];
 
 export type SetRootNodeRequest = [
@@ -32,6 +33,7 @@ export type SetRootNodeRequest = [
   publicKey: Uint8Array,
   mediaType: string,
   payload: unknown,
+  instanceID?: string,
 ];
 
 export type WorkerDataRequest = GetRootNodeRequest | SetRootNodeRequest;

@@ -1,12 +1,7 @@
-import { getModule } from '@librebase/core/internal';
 import { ACTIVE_KEYRING_CHANGE, emit } from '../events';
 import { getAllRecords } from '../indexeddb/indexeddb';
-import type {
-  CreateKeyringRequest,
-  CreateKeyringResult,
-  ImportKeyringRequest,
-} from '../worker/types';
-import { jobWorker } from '../worker/worker.module';
+import type { CreateKeyringRequest, ImportKeyringRequest } from '../worker/types/payloads';
+import { getWorker } from '../worker/worker.module';
 import { openKeyringDB } from './init-db';
 import type { PersistedKeyring, Keyring } from './types';
 
@@ -24,17 +19,19 @@ let dbOpen = false;
  *   protocol instances.
  * @returns {Promise<Keyring<T>>} A promise that resolves with the activated keyring.
  */
-export function activateKeyring<T>(keyringID: number, passphrase: string, instanceID?: string) {
-  return new Promise<Keyring<T>>((resolve) => {
-    getModule(jobWorker, instanceID).postToAll(
-      { action: 'keyring.load', payload: { id: keyringID, passphrase } },
-      ([{ payload }]) => {
-        activeKeyrings[instanceID ?? ''] = payload;
-        emit(ACTIVE_KEYRING_CHANGE, payload, instanceID);
-        resolve(payload as Keyring<T>);
-      },
-    );
+export async function activateKeyring<T>(
+  keyringID: number,
+  passphrase: string,
+  instanceID?: string,
+) {
+  const [{ payload }] = await getWorker().postToAll({
+    action: 'keyring.load',
+    payload: { id: keyringID, passphrase },
+    instanceID,
   });
+  activeKeyrings[instanceID ?? ''] = payload;
+  emit(ACTIVE_KEYRING_CHANGE, payload, instanceID);
+  return payload as Keyring<T>;
 }
 
 /**
@@ -48,13 +45,9 @@ export function activateKeyring<T>(keyringID: number, passphrase: string, instan
  * @returns {Promise<CreateKeyringResult>} A promise that resolves with the result, including the ID
  *   of the keyring and it's mnemonic recovery seed phrase.
  */
-export function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
-  return new Promise<CreateKeyringResult>((resolve) => {
-    getModule(jobWorker, instanceID).postToOne(
-      { action: 'keyring.create', payload: options },
-      ({ payload }) => resolve(payload),
-    );
-  });
+export async function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
+  return (await getWorker().postToOne({ action: 'keyring.create', payload: options, instanceID }))
+    .payload;
 }
 
 /**
@@ -67,14 +60,10 @@ export function createKeyring(options: CreateKeyringRequest, instanceID?: string
  * @param {string} [instanceID] A particular protocol instance ID can be used if using multiple
  *   instances.
  */
-export function deactivateKeyring(instanceID?: string) {
-  return new Promise<void>((resolve) => {
-    getModule(jobWorker, instanceID).postToAll({ action: 'keyring.clear' }, () => {
-      delete activeKeyrings[instanceID ?? ''];
-      emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
-      resolve();
-    });
-  });
+export async function deactivateKeyring(instanceID?: string) {
+  await getWorker().postToAll({ action: 'keyring.clear', instanceID });
+  delete activeKeyrings[instanceID ?? ''];
+  emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
 }
 
 /**
@@ -112,11 +101,7 @@ export async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
  *   protocol instances.
  * @returns {Promise<number>} A promise that resolves with the ID given to the imported keyring.
  */
-export function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
-  return new Promise<number>((resolve) => {
-    return getModule(jobWorker, instanceID).postToOne(
-      { action: 'keyring.import', payload: options },
-      ({ payload }) => resolve(payload.id),
-    );
-  });
+export async function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
+  return (await getWorker().postToOne({ action: 'keyring.import', payload: options, instanceID }))
+    .payload.id;
 }

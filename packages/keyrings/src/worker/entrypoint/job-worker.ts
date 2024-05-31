@@ -4,8 +4,8 @@ import { getIdentity } from '../../3-service/identity';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from '../../3-service/keyring';
 import { openKeyringDB } from '../../keyring/init-db';
 import type { JobResultWorkerMessage } from '../dispatch/create-dispatch';
-import type { Job, WorkerMessage } from '../types';
-import { WorkerMessageType } from '../types';
+import { WorkerMessageType, type WorkerMessage } from '../types/message';
+import type { Job } from '../types/request';
 
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
@@ -25,31 +25,31 @@ self.addEventListener('message', async (event: MessageEvent<[number, number, Job
       // TODO: enable instanceID
       switch (job.action) {
         case 'identity.get': {
-          resultPayload = (await getIdentity(job.payload)).publicKey;
+          resultPayload = (await getIdentity(job.payload, job.instanceID)).publicKey;
           break;
         }
         case 'keyring.clear': {
-          clearKeyring();
+          clearKeyring(job.instanceID);
           break;
         }
         case 'keyring.create': {
-          resultPayload = await createKeyring(job.payload);
+          resultPayload = await createKeyring(job.payload, job.instanceID);
           break;
         }
         case 'keyring.import': {
-          resultPayload = await importKeyring(job.payload);
+          resultPayload = await importKeyring(job.payload, job.instanceID);
           break;
         }
         case 'keyring.load': {
-          resultPayload = await loadKeyring(job.payload);
+          resultPayload = await loadKeyring(job.payload, job.instanceID);
           break;
         }
         case 'unwrap': {
-          resultPayload = await unwrap(job.payload);
+          resultPayload = await unwrap(job.payload, job.instanceID);
           break;
         }
         case 'wrap': {
-          resultPayload = await wrap(job.payload);
+          resultPayload = await wrap(job.payload, job.instanceID);
           break;
         }
         default: {

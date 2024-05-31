@@ -10,7 +10,7 @@ import {
   type GetRootNodeRequest,
   type SetRootNodeRequest,
   type WorkerDataRequest,
-} from '../worker/types';
+} from '../worker/types/message';
 import { activeSeeds } from './keyring';
 
 const dispatch = createDispatch<WorkerDataRequest, unknown>(self, 1);
@@ -51,11 +51,13 @@ export function getIdentity(id: string, instanceID?: string) {
   return new Promise<BIP32Interface>((resolve, reject) => {
     const bip32 = getBIP32(instanceID);
     const indexKey = bip32.deriveHardened(0);
+    // TODO: register a channel driver in worker that does this
     const indexRequest: GetRootNodeRequest = [
       WorkerMessageType.DATA,
       WorkerDataRequestType.GET_ROOT_NODE,
       KdfType.secp256k1_hd,
       new Uint8Array(indexKey.publicKey),
+      instanceID,
     ];
     dispatch(indexRequest, (response) => {
       if (!safeParse(indexSchema, response).success) {
@@ -80,6 +82,7 @@ export function getIdentity(id: string, instanceID?: string) {
           new Uint8Array(indexKey.publicKey),
           'application/json',
           indexData,
+          instanceID,
         ];
         dispatch(indexUpdate, res);
       } else res();

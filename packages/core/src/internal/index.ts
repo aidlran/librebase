@@ -11,5 +11,4 @@
 
 export * from './encoding';
 export * from './logging';
-export * from './modules';
 export * from './registry';

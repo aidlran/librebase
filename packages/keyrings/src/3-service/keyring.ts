@@ -9,7 +9,7 @@ import type {
   ImportKeyringResult,
   LoadKeyringRequest,
   LoadKeyringResult,
-} from '../worker/types';
+} from '../worker/types/payloads';
 
 export interface PersistedKeyring<T = unknown> {
   id: number;
