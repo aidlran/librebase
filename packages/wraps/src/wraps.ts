@@ -90,10 +90,14 @@ export function getWrapStrategy(
   return wrap;
 }
 
-export async function wrap<TConfigMetadata = unknown, TValueMetadata = unknown>(
-  config: WrapConfig<string, TConfigMetadata>,
+export async function wrap<
+  TName extends string = string,
+  TConfigMetadata = unknown,
+  TValueMetadata = unknown,
+>(
+  config: WrapConfig<TName, TConfigMetadata>,
   instanceID?: string,
-): Promise<WrapValue<string, TValueMetadata>> {
+): Promise<WrapValue<TName, TValueMetadata>> {
   const wrap = getWrapStrategy<TConfigMetadata, TValueMetadata>(config.type, 'wrap', instanceID);
   const unwrappedPayload = await serializeFileContent(config.value, config.mediaType, {
     instanceID,
@@ -115,11 +119,15 @@ export async function wrap<TConfigMetadata = unknown, TValueMetadata = unknown>(
   };
 }
 
-export async function unwrap<TConfigMetadata = unknown, TValueMetadata = unknown>(
-  value: WrapValue<string, TValueMetadata>,
+export async function unwrap<
+  TName extends string = string,
+  TConfigMetadata = unknown,
+  TValueMetadata = unknown,
+>(
+  value: WrapValue<TName, TValueMetadata>,
   instanceID?: string,
-): Promise<WrapConfig<string, TConfigMetadata>> {
-  const type = value.$.slice(5);
+): Promise<WrapConfig<TName, TConfigMetadata>> {
+  const type = value.$.slice(5) as TName;
   const unwrap = getWrapStrategy<TConfigMetadata, TValueMetadata>(type, 'unwrap', instanceID);
   const hashBytes = Base58.decode(value.h);
   const hashAlg = hashBytes[0];
@@ -132,7 +140,7 @@ export async function unwrap<TConfigMetadata = unknown, TValueMetadata = unknown
     }),
   );
   const [, mediaType, objectPayload] = parseFileContent(object);
-  const unwrappedValue = await decodeWithCodec(objectPayload, mediaType);
+  const unwrappedValue = await decodeWithCodec(objectPayload, mediaType, instanceID);
   return {
     hashAlg,
     mediaType,

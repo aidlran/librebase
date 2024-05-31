@@ -1,4 +1,4 @@
-import type { WrapValue } from '@librebase/wraps';
+import type { WrapConfig, WrapValue } from '@librebase/wraps';
 import type { Action } from './action';
 import type * as Payload from './payload/index';
 
@@ -12,5 +12,5 @@ export type Request<T extends Action> = {
   | { action: 'keyring.import'; payload: Payload.ImportKeyringRequest }
   | { action: 'keyring.load'; payload: Payload.LoadKeyringRequest }
   | { action: 'unwrap'; payload: WrapValue }
-  | { action: 'wrap'; payload: Payload.WrapRequest }
+  | { action: 'wrap'; payload: WrapConfig }
 );

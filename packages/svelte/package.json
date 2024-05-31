@@ -27,9 +27,6 @@
     "lc": "echo @librebase/svelte: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
-  "dependencies": {
-    "@adamantjs/signals": "~0.2.0"
-  },
   "peerDependencies": {
     "@librebase/keyrings": "^0.1.0",
     "svelte": ">=3.44.2 <6.0.0"

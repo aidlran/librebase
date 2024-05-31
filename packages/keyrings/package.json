@@ -29,7 +29,6 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "dependencies": {
-    "@adamantjs/signals": "~0.2.0",
     "@bitcoinerlab/secp256k1": "1.1.1",
     "@noble/secp256k1": "1.7.1",
     "bip32": "4.0.0",

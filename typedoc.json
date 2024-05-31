@@ -4,7 +4,9 @@
     "./packages/codec/json",
     "./packages/core",
     "./packages/driver/indexeddb",
-    "./packages/fs"
+    "./packages/fs",
+    "./packages/keyrings",
+    "./packages/wraps"
   ],
   "entryPointStrategy": "packages",
   "name": "Librebase JS Documentation",

@@ -1,4 +1,5 @@
 import { getModule } from '@librebase/core/internal';
+import { ACTIVE_KEYRING_CHANGE, emit } from '../events';
 import { getAllRecords } from '../indexeddb/indexeddb';
 import type {
   CreateKeyringRequest,
@@ -6,9 +7,10 @@ import type {
   ImportKeyringRequest,
 } from '../worker/types';
 import { jobWorker } from '../worker/worker.module';
-import { activeKeyring } from './active';
 import { openKeyringDB } from './init-db';
 import type { PersistedKeyring, Keyring } from './types';
+
+const activeKeyrings: Record<string, Keyring> = {};
 
 let dbOpen = false;
 
@@ -27,7 +29,8 @@ export function activateKeyring<T>(keyringID: number, passphrase: string, instan
     getModule(jobWorker, instanceID).postToAll(
       { action: 'keyring.load', payload: { id: keyringID, passphrase } },
       ([{ payload }]) => {
-        getModule(activeKeyring, instanceID)[1](payload);
+        activeKeyrings[instanceID ?? ''] = payload;
+        emit(ACTIVE_KEYRING_CHANGE, payload, instanceID);
         resolve(payload as Keyring<T>);
       },
     );
@@ -65,9 +68,12 @@ export function createKeyring(options: CreateKeyringRequest, instanceID?: string
  *   instances.
  */
 export function deactivateKeyring(instanceID?: string) {
-  getModule(activeKeyring, instanceID)[1](undefined);
   return new Promise<void>((resolve) => {
-    getModule(jobWorker, instanceID).postToAll({ action: 'keyring.clear' }, () => resolve());
+    getModule(jobWorker, instanceID).postToAll({ action: 'keyring.clear' }, () => {
+      delete activeKeyrings[instanceID ?? ''];
+      emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
+      resolve();
+    });
   });
 }
 
@@ -78,7 +84,7 @@ export function deactivateKeyring(instanceID?: string) {
  * @returns {Keyring<T> | undefined} The active keyring, or `undefined` if no keyring is active.
  */
 export function getActiveKeyring<T>(instanceID?: string) {
-  return getModule(activeKeyring, instanceID)[0]() as Keyring<T> | undefined;
+  return activeKeyrings[instanceID ?? ''] as Keyring<T> | undefined;
 }
 
 /**
