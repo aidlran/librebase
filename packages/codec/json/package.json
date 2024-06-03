@@ -1,6 +1,6 @@
 {
   "name": "@librebase/codec-json",
-  "version": "0.1.0",
+  "version": "0.2.0-rc",
   "description": "A JSON codec for @librebase/fs with an extensible middleware system.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",

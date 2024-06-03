@@ -1,6 +1,6 @@
 {
   "name": "@librebase/driver-indexeddb",
-  "version": "0.1.0",
+  "version": "0.2.0-rc",
   "description": "An IndexedDB storage driver for @librebase/core.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
