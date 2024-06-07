@@ -57,6 +57,9 @@ export async function putOne(
 ) {
   id = new Identifier(id);
   value = new Uint8Array(value);
-  IdentifierRegistry.getStrict(id.type, instanceID).parse(id, value as Uint8Array, instanceID) &&
-    (await queryChannelsAsync((channel) => channel.put?.(id, value as Uint8Array), instanceID));
+  const identifierSchema = IdentifierRegistry.getStrict(id.type, instanceID);
+  if (!(await Promise.resolve(identifierSchema.parse(id, value as Uint8Array, instanceID)))) {
+    throw new Error('Invalid value');
+  }
+  await queryChannelsAsync((channel) => channel.put?.(id, value as Uint8Array), instanceID);
 }
