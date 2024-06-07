@@ -32,6 +32,6 @@
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "peerDependencies": {
-    "@librebase/core": "~0.1.0"
+    "@librebase/core": "~0.2.0-rc"
   }
 }

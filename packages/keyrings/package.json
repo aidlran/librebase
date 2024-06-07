@@ -36,8 +36,8 @@
     "valibot": "~0.30.0"
   },
   "peerDependencies": {
-    "@librebase/core": "^0.1.0",
-    "@librebase/fs": "^0.1.0",
-    "@librebase/wraps": "^0.1.0"
+    "@librebase/core": "~0.2.0-rc",
+    "@librebase/fs": "~0.2.0-rc",
+    "@librebase/wraps": "~0.2.0-rc"
   }
 }

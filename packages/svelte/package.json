@@ -28,7 +28,7 @@
     "start": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   },
   "peerDependencies": {
-    "@librebase/keyrings": "^0.1.0",
+    "@librebase/keyrings": "~0.2.0-rc",
     "svelte": ">=3.44.2 <6.0.0"
   }
 }

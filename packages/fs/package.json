@@ -38,6 +38,6 @@
     "@types/content-type": "^1.1.8"
   },
   "peerDependencies": {
-    "@librebase/core": "~0.1.0"
+    "@librebase/core": "~0.2.0-rc"
   }
 }

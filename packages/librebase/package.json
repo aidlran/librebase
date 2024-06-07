@@ -1,6 +1,6 @@
 {
   "name": "librebase",
-  "version": "0.1.0",
+  "version": "0.2.0-rc",
   "description": "A decentralized multi-user data engine and SDK for intragalactic scale apps.",
   "homepage": "https://librebase.io",
   "bugs": "https://github.com/aidlran/librebase/issues",
@@ -20,9 +20,9 @@
     "lc": "echo librebase: $(find -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines"
   },
   "dependencies": {
-    "@librebase/codec-json": "0.1.0",
-    "@librebase/core": "0.1.0",
-    "@librebase/driver-indexeddb": "0.1.0",
-    "@librebase/fs": "0.1.0"
+    "@librebase/codec-json": "0.2.0-rc",
+    "@librebase/core": "0.2.0-rc",
+    "@librebase/driver-indexeddb": "0.2.0-rc",
+    "@librebase/fs": "0.2.0-rc"
   }
 }
