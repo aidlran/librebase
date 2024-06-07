@@ -43,5 +43,5 @@ export async function hash(alg: HashAlgorithm, payload: BufferSource): Promise<H
 }
 
 export function sha256(payload: BufferSource) {
-  return self.crypto.subtle.digest('SHA-256', payload);
+  return crypto.subtle.digest('SHA-256', payload);
 }
