@@ -1,8 +1,8 @@
-import { getIdentityValue, putIdentity } from '../identity';
+import { getIdentityValue, putIdentity } from '../main';
+import { createDeferredDispatch, type Dispatch } from '../shared/dispatch';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
-import { createDeferredDispatch } from './dispatch/create-dispatch';
-import type { Dispatch, JobResultWorkerMessage } from './dispatch/create-dispatch';
 import { roundRobin } from './load-balancer/round-robin';
+import type { JobResultWorkerMessage } from './types/job-result-worker-message';
 import { WorkerDataRequestType, WorkerMessageType, type WorkerDataRequest } from './types/message';
 import type { Action, PostToAllAction, PostToOneAction, Request } from './types/request';
 
@@ -42,29 +42,16 @@ export function worker(constructor: () => Worker): WorkerModule {
   const workers = Array.from({ length }, constructor);
   const dispatches = workers.map<JobDispatch>((worker) => {
     worker.addEventListener('message', handleMessageFromWorker);
-    return createDeferredDispatch(worker, 0);
+    return createDeferredDispatch(worker);
   });
   const getNextDispatch = roundRobin(dispatches);
-
   return {
-    postToAll<T extends PostToAllAction>(message: Request<T>) {
-      return new Promise<JobResultWorkerMessage<T>[]>((resolve) => {
-        const responses: JobResultWorkerMessage<T>[] = [];
-        const handleResponse = (response: JobResultWorkerMessage<T>) => {
-          if (responses.push(response) == dispatches.length) {
-            resolve(responses);
-          }
-        };
-        for (const dispatch of dispatches) {
-          dispatch(message, handleResponse as never);
-        }
-      });
-    },
-    postToOne<T extends PostToOneAction>(message: Request<T>) {
-      return new Promise<JobResultWorkerMessage<T>>((resolve) => {
-        getNextDispatch()(message, resolve as never);
-      });
-    },
+    // prettier-ignore
+    postToAll: <T extends PostToAllAction>(message: Request<T>) => Promise.all(
+      dispatches.map((dispatch) => dispatch(message) as Promise<JobResultWorkerMessage<T>>),
+    ),
+    postToOne: <T extends PostToOneAction>(message: Request<T>) =>
+      getNextDispatch()(message) as Promise<JobResultWorkerMessage<T>>,
   };
 }
 

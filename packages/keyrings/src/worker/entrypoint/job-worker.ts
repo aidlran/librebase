@@ -3,7 +3,7 @@ import { Buffer } from 'buffer';
 import { getIdentity } from '../../3-service/identity';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from '../../3-service/keyring';
 import { openKeyringDB } from '../../keyring/init-db';
-import type { JobResultWorkerMessage } from '../dispatch/create-dispatch';
+import type { JobResultWorkerMessage } from '../types/job-result-worker-message';
 import { WorkerMessageType, type WorkerMessage } from '../types/message';
 import type { Job } from '../types/request';
 
