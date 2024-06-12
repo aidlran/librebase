@@ -3,17 +3,8 @@ import { Base58 } from '@librebase/core/internal';
 import { BIP32Factory } from 'bip32';
 import { integer, number, optional, record, safeParse, string, type Input } from 'valibot';
 import { KdfType } from '../kdf/types';
-import { createDispatch } from '../shared/dispatch';
-import {
-  WorkerDataRequestType,
-  WorkerMessageType,
-  type GetRootNodeRequest,
-  type SetRootNodeRequest,
-  type WorkerDataRequest,
-} from '../worker/types/message';
+import { getIdentityValue, putIdentity } from '../main';
 import { activeSeeds } from './keyring';
-
-const dispatch = createDispatch<WorkerDataRequest, unknown>(self);
 
 const indexSchema = optional(record(string(), number([integer()])));
 type IndexData = Input<typeof indexSchema>;
@@ -50,15 +41,8 @@ export async function findPrivateKey(address: Uint8Array, instanceID?: string): 
 export async function getIdentity(id: string, instanceID?: string) {
   const bip32 = getBIP32(instanceID);
   const indexKey = bip32.deriveHardened(0);
-  // TODO: register a channel driver in worker that does this
-  const indexRequest: GetRootNodeRequest = [
-    WorkerMessageType.DATA,
-    WorkerDataRequestType.GET_ROOT_NODE,
-    KdfType.secp256k1_hd,
-    new Uint8Array(indexKey.publicKey),
-    instanceID,
-  ];
-  const response = await dispatch(indexRequest);
+  const address = new Uint8Array([KdfType.secp256k1_hd, ...indexKey.publicKey]);
+  const response = await getIdentityValue(address, instanceID);
   if (!safeParse(indexSchema, response).success) {
     throw new Error('Got invalid index data');
   }
@@ -73,16 +57,7 @@ export async function getIdentity(id: string, instanceID?: string) {
   const identity = bip32.deriveHardened(1).deriveHardened(keyIndex);
   identityPubKeyMap[Base58.encode(identity.publicKey)] = id;
   if (needPush) {
-    const indexUpdate: SetRootNodeRequest = [
-      WorkerMessageType.DATA,
-      WorkerDataRequestType.SET_ROOT_NODE,
-      KdfType.secp256k1_hd,
-      new Uint8Array(indexKey.publicKey),
-      'application/json',
-      indexData,
-      instanceID,
-    ];
-    await dispatch(indexUpdate);
+    await putIdentity(address, indexData, 'application/json', { instanceID });
   }
   return identity;
 }

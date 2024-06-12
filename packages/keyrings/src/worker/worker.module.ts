@@ -1,18 +1,16 @@
 import { getIdentityValue, putIdentity } from '../main';
-import { createDeferredDispatch, type Dispatch } from '../shared/dispatch';
+import { createDeferredDispatch } from '../shared/dispatch';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { roundRobin } from './load-balancer/round-robin';
 import type { JobResultWorkerMessage } from './types/job-result-worker-message';
 import { WorkerDataRequestType, WorkerMessageType, type WorkerDataRequest } from './types/message';
 import type { Action, PostToAllAction, PostToOneAction, Request } from './types/request';
 
-type JobDispatch<T extends Action = Action> = Dispatch<Request<T>, JobResultWorkerMessage<T>>;
+type Config = {
+  [T in Action]: [Request<T>, JobResultWorkerMessage<T>];
+};
 
-export interface WorkerModule {
-  postToAll<T extends PostToAllAction>(message: Request<T>): Promise<JobResultWorkerMessage<T>[]>;
-  postToOne<T extends PostToOneAction>(message: Request<T>): Promise<JobResultWorkerMessage<T>>;
-}
-
+/** @deprecated */
 function handleMessageFromWorker(
   this: Worker,
   { data }: MessageEvent<[number, number, WorkerDataRequest]>,
@@ -37,30 +35,28 @@ function handleMessageFromWorker(
   }
 }
 
-export function worker(constructor: () => Worker): WorkerModule {
+export function createWorker(constructor: () => Worker) {
   const length = calculateClusterSize();
   const workers = Array.from({ length }, constructor);
-  const dispatches = workers.map<JobDispatch>((worker) => {
+  const dispatches = workers.map((worker) => {
     worker.addEventListener('message', handleMessageFromWorker);
-    return createDeferredDispatch(worker);
+    return createDeferredDispatch<Config>(worker);
   });
   const getNextDispatch = roundRobin(dispatches);
   return {
-    // prettier-ignore
-    postToAll: <T extends PostToAllAction>(message: Request<T>) => Promise.all(
-      dispatches.map((dispatch) => dispatch(message) as Promise<JobResultWorkerMessage<T>>),
-    ),
-    postToOne: <T extends PostToOneAction>(message: Request<T>) =>
-      getNextDispatch()(message) as Promise<JobResultWorkerMessage<T>>,
+    postToAll: <T extends PostToAllAction>(operation: T, request: Request<T>) =>
+      Promise.all(dispatches.map((dispatch) => dispatch(operation, request))),
+    postToOne: <T extends PostToOneAction>(operation: T, request: Request<T>) =>
+      getNextDispatch()(operation, request),
   };
 }
 
-let workerInterface: WorkerModule;
+let workerInstance: ReturnType<typeof createWorker>;
 
 export function getWorker() {
-  return workerInterface;
+  return workerInstance;
 }
 
-export function registerWorker(worker: WorkerModule) {
-  workerInterface = worker;
+export function registerWorker(worker: ReturnType<typeof createWorker>) {
+  workerInstance = worker;
 }
