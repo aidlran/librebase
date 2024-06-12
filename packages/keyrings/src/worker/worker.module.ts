@@ -1,14 +1,10 @@
 import { getIdentityValue, putIdentity } from '../main';
 import { createDeferredDispatch } from '../shared/dispatch';
+import type { HostOriginMessageConfig } from '../shared/message-configs';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { roundRobin } from './load-balancer/round-robin';
-import type { JobResultWorkerMessage } from './types/job-result-worker-message';
 import { WorkerDataRequestType, WorkerMessageType, type WorkerDataRequest } from './types/message';
-import type { Action, PostToAllAction, PostToOneAction, Request } from './types/request';
-
-type Config = {
-  [T in Action]: [Request<T>, JobResultWorkerMessage<T>];
-};
+import type { PostToAllAction, PostToOneAction } from './types/request';
 
 /** @deprecated */
 function handleMessageFromWorker(
@@ -40,14 +36,20 @@ export function createWorker(constructor: () => Worker) {
   const workers = Array.from({ length }, constructor);
   const dispatches = workers.map((worker) => {
     worker.addEventListener('message', handleMessageFromWorker);
-    return createDeferredDispatch<Config>(worker);
+    return createDeferredDispatch<HostOriginMessageConfig>(worker);
   });
   const getNextDispatch = roundRobin(dispatches);
   return {
-    postToAll: <T extends PostToAllAction>(operation: T, request: Request<T>) =>
-      Promise.all(dispatches.map((dispatch) => dispatch(operation, request))),
-    postToOne: <T extends PostToOneAction>(operation: T, request: Request<T>) =>
-      getNextDispatch()(operation, request),
+    postToAll: <T extends PostToAllAction>(
+      operation: T,
+      request: HostOriginMessageConfig[T][0],
+      instanceID?: string,
+    ) => Promise.all(dispatches.map((dispatch) => dispatch(operation, request, instanceID))),
+    postToOne: <T extends PostToOneAction>(
+      operation: T,
+      request: HostOriginMessageConfig[T][0],
+      instanceID?: string,
+    ) => getNextDispatch()(operation, request, instanceID),
   };
 }
 

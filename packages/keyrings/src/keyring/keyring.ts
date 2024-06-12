@@ -24,14 +24,14 @@ export async function activateKeyring<T>(
   passphrase: string,
   instanceID?: string,
 ) {
-  const [{ payload }] = await getWorker().postToAll('keyring.load', {
-    action: 'keyring.load',
-    payload: { id: keyringID, passphrase },
+  const [keyring] = await getWorker().postToAll(
+    'keyring.load',
+    { id: keyringID, passphrase },
     instanceID,
-  });
-  activeKeyrings[instanceID ?? ''] = payload;
-  emit(ACTIVE_KEYRING_CHANGE, payload, instanceID);
-  return payload as Keyring<T>;
+  );
+  activeKeyrings[instanceID ?? ''] = keyring;
+  emit(ACTIVE_KEYRING_CHANGE, keyring, instanceID);
+  return keyring as Keyring<T>;
 }
 
 /**
@@ -45,14 +45,8 @@ export async function activateKeyring<T>(
  * @returns {Promise<CreateKeyringResult>} A promise that resolves with the result, including the ID
  *   of the keyring and it's mnemonic recovery seed phrase.
  */
-export async function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
-  return (
-    await getWorker().postToOne('keyring.create', {
-      action: 'keyring.create',
-      payload: options,
-      instanceID,
-    })
-  ).payload;
+export function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
+  return getWorker().postToOne('keyring.create', options, instanceID);
 }
 
 /**
@@ -66,7 +60,7 @@ export async function createKeyring(options: CreateKeyringRequest, instanceID?: 
  *   instances.
  */
 export async function deactivateKeyring(instanceID?: string) {
-  await getWorker().postToAll('keyring.clear', { action: 'keyring.clear', instanceID });
+  await getWorker().postToAll('keyring.clear', undefined, instanceID);
   delete activeKeyrings[instanceID ?? ''];
   emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
 }
@@ -107,11 +101,5 @@ export async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
  * @returns {Promise<number>} A promise that resolves with the ID given to the imported keyring.
  */
 export async function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
-  return (
-    await getWorker().postToOne('keyring.import', {
-      action: 'keyring.import',
-      payload: options,
-      instanceID,
-    })
-  ).payload.id;
+  return (await getWorker().postToOne('keyring.import', options, instanceID)).id;
 }

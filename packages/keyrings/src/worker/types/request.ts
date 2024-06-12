@@ -12,8 +12,11 @@ export type PostToOneAction =
   | 'unwrap'
   | 'wrap';
 
+/** @deprecated */
 export type Request<T extends Action> = {
+  /** @deprecated */
   action: T;
+  /** @deprecated */
   instanceID?: string;
 } & (
   | { action: 'identity.get'; payload: string }
@@ -25,7 +28,9 @@ export type Request<T extends Action> = {
   | { action: 'wrap'; payload: WrapConfig }
 );
 
+/** @deprecated */
 export type Result<T extends Action> = {
+  /** @deprecated */
   action: T;
   // TODO: isolate these only to rejected promises
   error?: string;
@@ -40,6 +45,7 @@ export type Result<T extends Action> = {
   | { action: 'wrap'; payload: WrapValue }
 );
 
+/** @deprecated */
 export type Job<T extends Action = Action> = Request<T> & {
   jobID: number;
 };

@@ -10,14 +10,8 @@ import { getAddressHash, setAddressHash } from './address';
 
 // TODO: separate address hash CRUD module
 
-export async function getIdentityAddress(identityID: string, instanceID?: string) {
-  return (
-    await getWorker().postToOne('identity.get', {
-      action: 'identity.get',
-      payload: identityID,
-      instanceID,
-    })
-  ).payload;
+export function getIdentityAddress(identityID: string, instanceID?: string) {
+  return getWorker().postToOne('identity.get', identityID, instanceID);
 }
 
 export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {

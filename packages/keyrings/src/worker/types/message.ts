@@ -1,5 +1,6 @@
 import type { KdfType } from '../../kdf/types';
 
+/** @deprecated */
 export enum WorkerMessageType {
   /** A message from the worker indicating that it is initialised and ready to receive messages. */
   READY,
@@ -9,15 +10,18 @@ export enum WorkerMessageType {
   DATA,
 }
 
+/** @deprecated */
 export interface WorkerMessage<T extends WorkerMessageType = WorkerMessageType> {
   type: T;
 }
 
+/** @deprecated */
 export enum WorkerDataRequestType {
   GET_ROOT_NODE,
   SET_ROOT_NODE,
 }
 
+/** @deprecated */
 export type GetRootNodeRequest = [
   WorkerMessageType.DATA,
   WorkerDataRequestType.GET_ROOT_NODE,
@@ -26,6 +30,7 @@ export type GetRootNodeRequest = [
   instanceID?: string,
 ];
 
+/** @deprecated */
 export type SetRootNodeRequest = [
   WorkerMessageType.DATA,
   WorkerDataRequestType.SET_ROOT_NODE,
@@ -36,4 +41,5 @@ export type SetRootNodeRequest = [
   instanceID?: string,
 ];
 
+/** @deprecated */
 export type WorkerDataRequest = GetRootNodeRequest | SetRootNodeRequest;

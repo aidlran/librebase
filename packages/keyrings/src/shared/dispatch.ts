@@ -1,22 +1,24 @@
 export interface Message<Op extends string = string, Payload = unknown> {
+  instanceID?: string;
   jobID: number;
   op: Op;
   payload: Payload;
 }
 
-export type DispatchConfig<T extends string = string> = Record<
+export type MessageConfig<T extends string = string> = Record<
   T,
-  [request: unknown, result: unknown]
+  [request: unknown, response: unknown]
 >;
 
-type OpsOf<T extends DispatchConfig> = Extract<keyof T, string>;
-type RequestsOf<T extends DispatchConfig> = T[OpsOf<T>][0];
-type ResultsOf<T extends DispatchConfig> = T[OpsOf<T>][1];
+export type OperationsOf<T extends MessageConfig> = Extract<keyof T, string>;
+export type RequestsOf<T extends MessageConfig> = T[OperationsOf<T>][0];
+export type ResponsesOf<T extends MessageConfig> = T[OperationsOf<T>][1];
 
-export type Dispatch<Config extends DispatchConfig> = <Op extends OpsOf<Config>>(
-  operation: Op,
-  request: Config[Op][0],
-) => Promise<Config[Op][1]>;
+export type Dispatch<Config extends MessageConfig> = <T extends OperationsOf<Config>>(
+  operation: T,
+  request: Config[T][0],
+  instanceID?: string,
+) => Promise<Config[T][1]>;
 
 type MessageEventListenerMethod<T> = (
   type: 'message',
@@ -25,21 +27,17 @@ type MessageEventListenerMethod<T> = (
 
 /*
  * Dispatch
- *
- * TODO(feat): Add strict call and response structure
- * TODO(feat): Add error generation
- * TODO(feat): Add message structure checks
  */
 
-export interface DispatchTarget<Config extends DispatchConfig> {
-  addEventListener: MessageEventListenerMethod<Message<OpsOf<Config>, ResultsOf<Config>>>;
-  postMessage(message: Message<OpsOf<Config>, RequestsOf<Config>>): unknown;
+export interface DispatchTarget<Config extends MessageConfig> {
+  addEventListener: MessageEventListenerMethod<Message<OperationsOf<Config>, ResponsesOf<Config>>>;
+  postMessage(message: Message<OperationsOf<Config>, RequestsOf<Config>>): unknown;
 }
 
-export function createDispatch<Config extends DispatchConfig>(
+export function createDispatch<Config extends MessageConfig>(
   target: DispatchTarget<Config>,
 ): Dispatch<Config> {
-  const callbacks: Record<number, (result: ResultsOf<Config>) => void> = {};
+  const callbacks: Record<number, (response: ResponsesOf<Config>) => void> = {};
   let nextJobID = 0;
   target.addEventListener('message', (event) => {
     if (
@@ -55,10 +53,10 @@ export function createDispatch<Config extends DispatchConfig>(
     }
   });
   // prettier-ignore
-  return (op, payload) => new Promise((resolve) => {
+  return (op, payload, instanceID) => new Promise((resolve) => {
     const jobID = nextJobID++;
     callbacks[jobID] = resolve;
-    target.postMessage({ jobID, op, payload });
+    target.postMessage({ instanceID, jobID, op, payload });
   });
 }
 
@@ -66,18 +64,19 @@ export function createDispatch<Config extends DispatchConfig>(
  * Deferred Dispatch
  */
 
-export interface DeferredDispatchTarget<Config extends DispatchConfig>
+export interface DeferredDispatchTarget<Config extends MessageConfig>
   extends DispatchTarget<Config> {
   removeEventListener: MessageEventListenerMethod<'ready'>;
 }
 
-type OnReadyQueue<Config extends DispatchConfig> = [
-  op: OpsOf<Config>,
+type OnReadyQueue<Config extends MessageConfig> = [
+  op: OperationsOf<Config>,
   request: RequestsOf<Config>,
-  resolve: (result: ResultsOf<Config>) => void,
+  resolve: (response: ResponsesOf<Config>) => void,
+  instanceID?: string,
 ][];
 
-export function createDeferredDispatch<Config extends DispatchConfig>(
+export function createDeferredDispatch<Config extends MessageConfig>(
   target: DeferredDispatchTarget<Config>,
 ): Dispatch<Config> {
   const dispatch = createDispatch<Config>(target);
@@ -85,15 +84,15 @@ export function createDeferredDispatch<Config extends DispatchConfig>(
   function onReady(event: Pick<MessageEvent, 'data'>) {
     if (event.data === 'ready') {
       target.removeEventListener('message', onReady);
-      for (const [op, request, resolve] of onReadyQueue!) {
-        void dispatch(op, request).then(resolve);
+      for (const [op, request, resolve, instanceID] of onReadyQueue!) {
+        void dispatch(op, request, instanceID).then(resolve);
       }
       onReadyQueue = undefined;
     }
   }
   target.addEventListener('message', onReady);
-  return (op, request) =>
+  return (op, request, instanceID) =>
     onReadyQueue
-      ? new Promise((resolve) => onReadyQueue!.push([op, request, resolve]))
-      : dispatch(op, request);
+      ? new Promise((resolve) => onReadyQueue!.push([op, request, resolve, instanceID]))
+      : dispatch(op, request, instanceID);
 }
