@@ -1,5 +1,5 @@
 import { ACTIVE_KEYRING_CHANGE, emit } from './events';
-import { getAllRecords } from '../indexeddb/indexeddb';
+import { getAllRecords } from '../shared/indexeddb';
 import { cluster } from './cluster/cluster';
 import { openKeyringDB } from '../shared/init-db';
 import type {

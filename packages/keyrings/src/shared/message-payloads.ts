@@ -3,11 +3,15 @@ export interface CreateKeyringRequest<T = unknown> {
   passphrase: string;
   /** Optional arbitrary metadata to store unencrypted alongside the session. */
   metadata?: T;
+  /** The wordlist to use for the mnemonic. */
+  wordlist: string[];
 }
 
 export interface ImportKeyringRequest<T = unknown> extends CreateKeyringRequest<T> {
   /** The mnemonic sentence. */
   mnemonic: string;
+  /** The wordlist to use for the mnemonic. */
+  wordlist: string[];
 }
 
 export interface LoadKeyringRequest {
@@ -15,6 +19,8 @@ export interface LoadKeyringRequest {
   id: number;
   /** The passphrase needed to decrypt the session. */
   passphrase: string;
+  /** The wordlist to use for the mnemonic. */
+  wordlist: string[];
 }
 
 export interface CreateKeyringResult {

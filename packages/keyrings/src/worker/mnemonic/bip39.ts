@@ -1,7 +1,4 @@
 import { sha256 } from '@librebase/fs';
-import WORDLIST from './bip39-wordlist-english.json';
-
-export { WORDLIST as BIP39_WORDLIST_ENGLISH };
 
 async function deriveChecksum(entropy: Uint8Array) {
   return toBinaryString(new Uint8Array(await sha256(entropy))).slice(0, entropy.length / 4);
@@ -18,7 +15,7 @@ function toBinaryString(bytes: Uint8Array) {
  *   lengths result in greater security but greater sentence length.
  * @returns A 12 to 24 word mnemonic.
  */
-export async function entropyToMnemonic(entropy: Uint8Array, wordlist = WORDLIST) {
+export async function entropyToMnemonic(entropy: Uint8Array, wordlist: string[]) {
   if (entropy.length < 16 || entropy.length > 32 || entropy.length % 4 != 0) {
     throw TypeError('Invalid entropy length');
   }
@@ -27,7 +24,7 @@ export async function entropyToMnemonic(entropy: Uint8Array, wordlist = WORDLIST
     .map((chunk) => wordlist[parseInt(chunk, 2)]);
 }
 
-export async function mnemonicToEntropy(mnemonic: string[], wordlist = WORDLIST) {
+export async function mnemonicToEntropy(mnemonic: string[], wordlist: string[]) {
   if (mnemonic.length < 12 || mnemonic.length > 24 || mnemonic.length % 3 != 0) {
     throw TypeError('Invalid mnemonic length');
   }

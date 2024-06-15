@@ -14,11 +14,15 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./wordlist": {
+      "default": "./bip39-wordlist-english.json"
     }
   },
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "./bip39-wordlist-english.json",
     "./dist"
   ],
   "scripts": {

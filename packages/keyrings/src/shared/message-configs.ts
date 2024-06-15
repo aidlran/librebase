@@ -17,6 +17,6 @@ export interface HostOriginMessageConfig extends MessageConfig {
 /** Messages dispatched from child processes. */
 export interface WorkerOriginMessageConfig extends MessageConfig {
   delete: [ArrayBuffer, void];
-  get: [ArrayBuffer, unknown];
+  get: [ArrayBuffer, ArrayBuffer];
   put: [{ id: ArrayBuffer; content: ArrayBuffer }, void];
 }

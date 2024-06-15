@@ -2,8 +2,9 @@ import { CodecRegistry } from '@librebase/fs';
 import { WrapRegistry } from '@librebase/wraps';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, expectTypeOf, it, test } from 'vitest';
-import { english } from '../../mnemonic/test/vectors.json';
+import wordlist from '../../../bip39-wordlist-english.json';
 import { openKeyringDB } from '../../shared/init-db';
+import { english } from '../mnemonic/test/vectors.json';
 import { EncryptWrapSchema } from '../wrap/encrypt';
 import { activeSeeds, clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring';
 
@@ -37,7 +38,7 @@ describe('Keyring API', () => {
 
   describe('Create keyring', () => {
     it('returns a valid result', () => {
-      const job = createKeyring({ passphrase: 'test' }, instanceID);
+      const job = createKeyring({ passphrase: 'test', wordlist }, instanceID);
       expectTypeOf(job).resolves.toHaveProperty('mnemonic').toBeString();
       expectTypeOf(job).resolves.toHaveProperty('id').toBeNumber();
     });
@@ -58,9 +59,9 @@ describe('Keyring API', () => {
       const passphrase = new TextDecoder().decode(crypto.getRandomValues(new Uint8Array(8)));
       let lastSeed = activeSeeds[instanceID];
       for (const [, mnemonic] of english) {
-        const { id } = await importKeyring({ mnemonic, passphrase }, instanceID);
+        const { id } = await importKeyring({ mnemonic, passphrase, wordlist }, instanceID);
         expectTypeOf(id).toBeNumber();
-        await loadKeyring({ id, passphrase }, instanceID);
+        await loadKeyring({ id, passphrase, wordlist }, instanceID);
         expect(activeSeeds[instanceID]).not.toEqual(lastSeed);
         lastSeed = activeSeeds[instanceID];
       }

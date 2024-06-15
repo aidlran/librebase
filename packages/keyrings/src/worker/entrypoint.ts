@@ -1,8 +1,12 @@
+import { getChannels } from '@librebase/core';
 import { unwrap, wrap } from '@librebase/wraps';
 import { Buffer } from 'buffer';
-import { openKeyringDB } from '../shared/init-db';
-import type { HostOriginMessageConfig } from '../shared/message-configs';
-import { createResponder } from '../shared/rpc/responder';
+import {
+  KEYRINGS_INSTANCE_ID,
+  type HostOriginMessageConfig,
+  type WorkerOriginMessageConfig,
+} from '../shared';
+import { createDispatch, createResponder } from '../shared/rpc';
 import { getIdentity } from './service/identity';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './service/keyring';
 
@@ -19,4 +23,12 @@ createResponder<HostOriginMessageConfig>(self, {
   wrap: wrap as never,
 });
 
-void openKeyringDB().then(() => self.postMessage('ready'));
+const dispatch = createDispatch<WorkerOriginMessageConfig>(self);
+
+getChannels(KEYRINGS_INSTANCE_ID).push({
+  delete: (id) => dispatch('delete', id.bytes, KEYRINGS_INSTANCE_ID),
+  get: (id) => dispatch('get', id.bytes, KEYRINGS_INSTANCE_ID),
+  put: (id, content) => dispatch('put', { id: id.bytes, content }, KEYRINGS_INSTANCE_ID),
+});
+
+self.postMessage('ready');
