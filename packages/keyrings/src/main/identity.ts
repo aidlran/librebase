@@ -5,13 +5,13 @@ import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
 import type { MediaType } from 'content-type';
-import { getWorker } from '../worker/worker.module';
 import { getAddressHash, setAddressHash } from './address';
+import { cluster } from './cluster/cluster';
 
 // TODO: separate address hash CRUD module
 
 export function getIdentityAddress(identityID: string, instanceID?: string) {
-  return getWorker().postToOne('identity.get', identityID, instanceID);
+  return cluster.postToOne('identity.get', identityID, instanceID);
 }
 
 export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {

@@ -1,7 +1,11 @@
 import { ACTIVE_KEYRING_CHANGE, emit } from '../events';
 import { getAllRecords } from '../indexeddb/indexeddb';
-import type { CreateKeyringRequest, ImportKeyringRequest } from '../worker/types/payloads';
-import { getWorker } from '../worker/worker.module';
+import { cluster } from '../main/cluster/cluster';
+import type {
+  CreateKeyringRequest,
+  ImportKeyringRequest,
+  ImportKeyringResult,
+} from '../worker/types/payloads';
 import { openKeyringDB } from './init-db';
 import type { PersistedKeyring, Keyring } from './types';
 
@@ -24,14 +28,14 @@ export async function activateKeyring<T>(
   passphrase: string,
   instanceID?: string,
 ) {
-  const [keyring] = await getWorker().postToAll(
+  const [keyring] = (await cluster.postToAll(
     'keyring.load',
     { id: keyringID, passphrase },
     instanceID,
-  );
+  )) as [Keyring<T>];
   activeKeyrings[instanceID ?? ''] = keyring;
   emit(ACTIVE_KEYRING_CHANGE, keyring, instanceID);
-  return keyring as Keyring<T>;
+  return keyring;
 }
 
 /**
@@ -46,7 +50,7 @@ export async function activateKeyring<T>(
  *   of the keyring and it's mnemonic recovery seed phrase.
  */
 export function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
-  return getWorker().postToOne('keyring.create', options, instanceID);
+  return cluster.postToOne('keyring.create', options, instanceID);
 }
 
 /**
@@ -60,7 +64,7 @@ export function createKeyring(options: CreateKeyringRequest, instanceID?: string
  *   instances.
  */
 export async function deactivateKeyring(instanceID?: string) {
-  await getWorker().postToAll('keyring.clear', undefined, instanceID);
+  await cluster.postToAll('keyring.clear', undefined, instanceID);
   delete activeKeyrings[instanceID ?? ''];
   emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
 }
@@ -101,5 +105,6 @@ export async function getAllKeyrings<T>(): Promise<Keyring<T>[]> {
  * @returns {Promise<number>} A promise that resolves with the ID given to the imported keyring.
  */
 export async function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
-  return (await getWorker().postToOne('keyring.import', options, instanceID)).id;
+  const result = await cluster.postToOne('keyring.import', options, instanceID);
+  return (result as ImportKeyringResult).id;
 }

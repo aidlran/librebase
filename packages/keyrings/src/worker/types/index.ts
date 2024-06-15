@@ -1,3 +1,2 @@
-export type { WorkerMessage, WorkerMessageType } from './message';
+export * from './action';
 export * from './payloads';
-export type { PostToAllAction, PostToOneAction } from './request';
