@@ -1,6 +1,6 @@
 import { getIdentityValue, putIdentity } from '../main';
-import { createDeferredDispatch } from '../shared/dispatch';
-import type { HostOriginMessageConfig } from '../shared/message-configs';
+import { createDeferredDispatch } from '../shared/rpc/dispatch';
+import type { HostOriginMessageConfig } from '../shared/rpc/message-configs';
 import { calculateClusterSize } from './cluster/calculate-cluster-size';
 import { roundRobin } from './load-balancer/round-robin';
 import { WorkerDataRequestType, WorkerMessageType, type WorkerDataRequest } from './types/message';

@@ -1,6 +1,6 @@
 import type { WrapConfig, WrapValue } from '@librebase/wraps';
-import * as Payload from '../worker/types/payloads';
-import type { MessageConfig } from './dispatch';
+import * as Payload from '../../worker/types/payloads';
+import type { MessageConfig } from './types';
 
 /** Messages dispatched from the host process. */
 export interface HostOriginMessageConfig extends MessageConfig {

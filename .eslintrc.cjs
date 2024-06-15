@@ -67,6 +67,7 @@ module.exports = {
   ignorePatterns: ['packages/*/coverage', 'packages/**/dist'],
   rules: {
     '@typescript-eslint/array-type': 'off',
+    '@typescript-eslint/ban-ts-comment': 'off',
     '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
     '@typescript-eslint/prefer-optional-chain': 'off',
     '@typescript-eslint/switch-exhaustiveness-check': 'error',
