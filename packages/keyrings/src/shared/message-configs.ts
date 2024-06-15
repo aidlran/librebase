@@ -1,5 +1,5 @@
 import type { WrapConfig, WrapValue } from '@librebase/wraps';
-import * as Payload from '../worker/types/payloads';
+import * as Payload from './message-payloads';
 import type { MessageConfig } from './rpc';
 
 /** Messages dispatched from the host process. */

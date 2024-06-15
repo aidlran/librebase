@@ -1,13 +1,23 @@
-import { ACTIVE_KEYRING_CHANGE, emit } from '../events';
+import { ACTIVE_KEYRING_CHANGE, emit } from './events';
 import { getAllRecords } from '../indexeddb/indexeddb';
-import { cluster } from '../main/cluster/cluster';
+import { cluster } from './cluster/cluster';
+import { openKeyringDB } from '../shared/init-db';
 import type {
   CreateKeyringRequest,
   ImportKeyringRequest,
   ImportKeyringResult,
-} from '../worker/types/payloads';
-import { openKeyringDB } from './init-db';
-import type { PersistedKeyring, Keyring } from './types';
+} from '../shared/message-payloads';
+
+export interface Keyring<T = unknown> {
+  id: number;
+  metadata?: T;
+}
+
+export interface PersistedKeyring<T = unknown> extends Keyring<T> {
+  nonce: ArrayBuffer;
+  salt: ArrayBuffer;
+  payload: ArrayBuffer;
+}
 
 const activeKeyrings: Record<string, Keyring> = {};
 

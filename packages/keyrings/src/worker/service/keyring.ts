@@ -1,7 +1,7 @@
 import { unwrap, wrap } from '@librebase/wraps';
 import { getRecord, putRecord } from '../../indexeddb/indexeddb';
 import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../../mnemonic/bip39';
-import type * as P from '../types/payloads';
+import type * as P from '../../shared/message-payloads';
 import type { EncryptWrapValue } from '../wrap/encrypt';
 
 export interface PersistedKeyring<T = unknown> {

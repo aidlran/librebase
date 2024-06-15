@@ -2,7 +2,7 @@ import ecc from '@bitcoinerlab/secp256k1';
 import { Base58 } from '@librebase/core/internal';
 import { BIP32Factory } from 'bip32';
 import { integer, number, optional, record, safeParse, string, type Input } from 'valibot';
-import { KdfType } from '../../kdf/types';
+import { KdfType } from '../../shared/kdf';
 import { getIdentityValue, putIdentity } from '../../main';
 import { activeSeeds } from './keyring';
 

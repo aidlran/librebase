@@ -1,5 +1,6 @@
 const connections: Record<string, IDBDatabase> = {};
 
+/** @deprecated Use IndexedDB ChannelDriver. */
 export function open(
   name: string,
   objectStores: [string, IDBObjectStoreParameters?][],
@@ -26,6 +27,7 @@ function getConnection(name: string) {
   return connection;
 }
 
+/** @deprecated Use IndexedDB ChannelDriver. */
 export function deleteRecord(db: string, store: string, key: IDBValidKey) {
   return new Promise<void>((resolve, reject) => {
     const connection = getConnection(db);
@@ -35,6 +37,7 @@ export function deleteRecord(db: string, store: string, key: IDBValidKey) {
   });
 }
 
+/** @deprecated Use IndexedDB ChannelDriver. */
 export function getRecord<T>(db: string, store: string, key: IDBValidKey | IDBKeyRange) {
   return new Promise<T>((resolve, reject) => {
     const connection = getConnection(db);
@@ -44,6 +47,7 @@ export function getRecord<T>(db: string, store: string, key: IDBValidKey | IDBKe
   });
 }
 
+/** @deprecated Use IndexedDB ChannelDriver. */
 export async function getAllRecords<T>(
   db: string,
   store: string,
@@ -61,6 +65,7 @@ export async function getAllRecords<T>(
   });
 }
 
+/** @deprecated Use IndexedDB ChannelDriver. */
 export async function putRecord<T extends IDBValidKey = IDBValidKey>(
   db: string,
   name: string,

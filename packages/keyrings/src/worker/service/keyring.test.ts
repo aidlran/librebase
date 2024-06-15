@@ -2,8 +2,8 @@ import { CodecRegistry } from '@librebase/fs';
 import { WrapRegistry } from '@librebase/wraps';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, expectTypeOf, it, test } from 'vitest';
-import { openKeyringDB } from '../../keyring/init-db';
 import { english } from '../../mnemonic/test/vectors.json';
+import { openKeyringDB } from '../../shared/init-db';
 import { EncryptWrapSchema } from '../wrap/encrypt';
 import { activeSeeds, clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring';
 

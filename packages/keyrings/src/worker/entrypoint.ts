@@ -1,6 +1,6 @@
 import { unwrap, wrap } from '@librebase/wraps';
 import { Buffer } from 'buffer';
-import { openKeyringDB } from '../keyring/init-db';
+import { openKeyringDB } from '../shared/init-db';
 import type { HostOriginMessageConfig } from '../shared/message-configs';
 import { createResponder } from '../shared/rpc/responder';
 import { getIdentity } from './service/identity';
