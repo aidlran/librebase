@@ -6,11 +6,7 @@ export default defineConfig({
     include: ['packages/**/*.{test,spec}.{js,ts}'],
     coverage: {
       include: ['packages/**/*.{js,ts}'],
-      exclude: [
-        ...configDefaults.coverage.exclude,
-        '**/index.{js,ts}',
-        'packages/core/src/internal.ts',
-      ],
+      exclude: [...configDefaults.coverage.exclude, '**/index.{js,ts}'],
     },
   },
 });
