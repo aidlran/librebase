@@ -1,6 +1,7 @@
 import { decode, encode, encodingLength } from 'varint';
-import { Base58, Registry, type RegistryModule } from '../internal';
-import type { MaybePromise } from './channels';
+import { Base58 } from '../internal/encoding.js';
+import { Registry, type RegistryModule } from '../internal/registry.js';
+import type { MaybePromise } from './channels.js';
 
 /**
  * This interface describes an identifier type and how the application should handle those

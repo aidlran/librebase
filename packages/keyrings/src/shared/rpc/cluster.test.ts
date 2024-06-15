@@ -1,5 +1,5 @@
 import { describe, expect, it, vitest } from 'vitest';
-import { calculateClusterSize } from './cluster';
+import { calculateClusterSize } from './cluster.js';
 
 describe('calculateClusterSize', () => {
   it('provides default', () => {

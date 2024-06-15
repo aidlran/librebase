@@ -1,6 +1,6 @@
 import type { WrapConfig, WrapValue } from '@librebase/wraps';
-import * as Payload from './message-payloads';
-import type { MessageConfig } from './rpc';
+import * as Payload from './message-payloads.js';
+import type { MessageConfig } from './rpc/types.js';
 
 /** Messages dispatched from the host process. */
 export interface HostOriginMessageConfig extends MessageConfig {

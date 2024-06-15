@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { Registry, RegistryError, type RegistryModule } from './registry';
+import { Registry, RegistryError, type RegistryModule } from './registry.js';
 
 describe('Registry', () => {
   describe('Get', () => {

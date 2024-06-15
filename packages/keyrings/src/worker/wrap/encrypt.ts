@@ -1,6 +1,6 @@
 import { Base58 } from '@librebase/core/internal';
 import type { WrapModule, WrapValue } from '@librebase/wraps';
-import { findPrivateKey } from '../service/identity';
+import { findPrivateKey } from '../service/identity.js';
 
 export interface EncryptWrapMetadata {
   /** The encryption algorithm. */

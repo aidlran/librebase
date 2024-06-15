@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
-import { json } from './codec';
-import type { JsonCodecMiddleware } from './types';
+import { json } from './codec.js';
+import type { JsonCodecMiddleware } from './types.js';
 
 const textDecoder = new TextDecoder();
 const textEncoder = new TextEncoder();

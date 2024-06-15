@@ -1,4 +1,4 @@
-import { open } from './indexeddb';
+import { open } from './indexeddb.js';
 
 /** @deprecated */
 export function openKeyringDB() {

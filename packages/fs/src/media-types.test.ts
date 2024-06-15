@@ -1,6 +1,6 @@
 import mediaTypes from 'mime-db';
 import { describe, expect, test } from 'vitest';
-import { validateMediaType } from './media-types';
+import { validateMediaType } from './media-types.js';
 
 describe('Validate raw media type', () => {
   const textEncoder = new TextEncoder();

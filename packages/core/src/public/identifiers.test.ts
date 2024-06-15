@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { Base58, RegistryError } from '../internal';
-import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers';
+import { Base58, RegistryError } from '../internal/index.js';
+import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers.js';
 
 describe('Identifier Registry', () => {
   const instanceID = 'Identifier Registry';

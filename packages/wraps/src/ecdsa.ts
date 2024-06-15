@@ -1,6 +1,6 @@
 import { Base58 } from '@librebase/core/internal';
 import { verify } from '@noble/secp256k1';
-import type { WrapModule } from './wraps';
+import type { WrapModule } from './wraps.js';
 
 export type ECDSAUnwrappedMetadata = Uint8Array;
 

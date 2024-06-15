@@ -1,4 +1,4 @@
 /** @module Main */
 
-export * from './codec';
-export * from './types';
+export * from './codec.js';
+export * from './types.js';

@@ -1,6 +1,6 @@
 import { Base58, Base64 } from '@librebase/core/internal';
 import { Hash } from '@librebase/fs';
-import type { JsonCodecMiddleware } from '../types';
+import type { JsonCodecMiddleware } from '../types.js';
 
 /** A middleware to swap binary streams for base encoded strings. */
 export interface BinaryMiddleware extends JsonCodecMiddleware {

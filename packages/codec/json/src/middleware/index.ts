@@ -4,4 +4,4 @@
  * @module Middleware
  */
 
-export * from './binary';
+export * from './binary.js';

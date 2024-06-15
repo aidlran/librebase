@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
-import { encodes } from '../../testing/encodes';
-import * as m from './encoding';
+import { encodes } from '../../testing/encodes.js';
+import * as m from './encoding.js';
 
 describe('Base58', () => {
   for (const [string, bytes, b58] of encodes) {

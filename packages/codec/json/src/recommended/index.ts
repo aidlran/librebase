@@ -5,9 +5,9 @@
  */
 
 import { CodecRegistry } from '@librebase/fs';
-import { json as codec } from '../codec';
-import { binary } from '../middleware';
-import type { JsonCodecMiddleware } from '../types';
+import { json as codec } from '../codec.js';
+import { binary } from '../middleware/binary.js';
+import type { JsonCodecMiddleware } from '../types.js';
 
 /**
  * Automatically registers the JSON codec and the binary middleware.

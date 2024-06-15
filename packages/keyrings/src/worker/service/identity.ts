@@ -2,9 +2,9 @@ import ecc from '@bitcoinerlab/secp256k1';
 import { Base58 } from '@librebase/core/internal';
 import { BIP32Factory } from 'bip32';
 import { integer, number, optional, record, safeParse, string, type Input } from 'valibot';
-import { getIdentityValue, putIdentity } from '../../main';
-import { KdfType } from '../../shared';
-import { activeSeeds } from './keyring';
+import { getIdentityValue, putIdentity } from '../../main/identity.js';
+import { KdfType } from '../../shared/constants.js';
+import { activeSeeds } from './keyring.js';
 
 const indexSchema = optional(record(string(), number([integer()])));
 type IndexData = Input<typeof indexSchema>;

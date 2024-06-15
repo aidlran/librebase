@@ -1,4 +1,4 @@
-import type { Keyring } from './keyring';
+import type { Keyring } from './keyring.js';
 
 export const ACTIVE_KEYRING_CHANGE = Symbol();
 

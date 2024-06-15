@@ -5,10 +5,11 @@ import {
   KEYRINGS_INSTANCE_ID,
   type HostOriginMessageConfig,
   type WorkerOriginMessageConfig,
-} from '../shared';
-import { createDispatch, createResponder } from '../shared/rpc';
-import { getIdentity } from './service/identity';
-import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './service/keyring';
+} from '../shared/index.js';
+import { createDispatch } from '../shared/rpc/dispatch.js';
+import { createResponder } from '../shared/rpc/responder.js';
+import { getIdentity } from './service/identity.js';
+import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './service/keyring.js';
 
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;

@@ -1,4 +1,4 @@
-import type { Codec } from '../src/codecs';
+import type { Codec } from '../src/codecs.js';
 
 export const mockJSONCodec = {
   key: 'application/json',

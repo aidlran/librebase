@@ -1,7 +1,7 @@
 import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { Hash } from '@librebase/fs';
 import { afterAll, describe, expect, test } from 'vitest';
-import { getAddressHash, setAddressHash } from './address';
+import { getAddressHash, setAddressHash } from './address.js';
 
 describe('Address CRUD', () => {
   const instanceID = 'address-crud';

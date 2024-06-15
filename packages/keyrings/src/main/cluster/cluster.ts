@@ -2,7 +2,7 @@ import { deleteOne, getOne, putOne } from '@librebase/core';
 import type {
   HostOriginMessageConfig,
   WorkerOriginMessageConfig,
-} from '../../shared/message-configs';
+} from '../../shared/message-configs.js';
 import {
   createCluster,
   createDeferredDispatch,
@@ -10,7 +10,7 @@ import {
   type DeferredDispatchTarget,
   type ResponderCallbacks,
   type ResponderTarget,
-} from '../../shared/rpc';
+} from '../../shared/rpc/index.js';
 
 const responderConfig: ResponderCallbacks<WorkerOriginMessageConfig> = {
   delete: deleteOne as never,

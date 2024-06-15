@@ -13,7 +13,7 @@ import {
   union,
   unknown,
 } from 'valibot';
-import { unwrap, wrap, type WrapConfig, type WrapValue } from './wraps';
+import { unwrap, wrap, type WrapConfig, type WrapValue } from './wraps.js';
 
 const configSchema = object(
   {

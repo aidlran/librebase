@@ -1,8 +1,8 @@
 import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
 import { beforeAll, describe, expect, it, test } from 'vitest';
-import { mockJSONCodec } from '../testing/codecs';
-import { CodecRegistry } from './codecs';
+import { mockJSONCodec } from '../testing/codecs.js';
+import { CodecRegistry } from './codecs.js';
 import {
   deleteFile,
   fileVersionIsSupported,
@@ -10,9 +10,9 @@ import {
   parseFileContent,
   putFile,
   serializeFileContent,
-} from './files';
-import { Hash, HashAlgorithm } from './hashes';
-import { FS } from './schema';
+} from './files.js';
+import { Hash, HashAlgorithm } from './hashes.js';
+import { FS } from './schema.js';
 
 describe('File operations', () => {
   const instanceID = 'File Operations';

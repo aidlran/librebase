@@ -1,7 +1,7 @@
 import { Hash } from '@librebase/fs';
 import { describe, expect, it, test } from 'vitest';
-import { encodes } from '../../../../core/testing/encodes';
-import { binary } from './binary';
+import { encodes } from '../../../../core/testing/encodes.js';
+import { binary } from './binary.js';
 
 describe('JSON codec binary middleware', () => {
   for (const [ascii, bin, b58, b64] of encodes) {

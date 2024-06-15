@@ -1,12 +1,12 @@
-import { ACTIVE_KEYRING_CHANGE, emit } from './events';
-import { getAllRecords } from '../shared/indexeddb';
-import { cluster } from './cluster/cluster';
-import { openKeyringDB } from '../shared/init-db';
+import { ACTIVE_KEYRING_CHANGE, emit } from './events.js';
+import { getAllRecords } from '../shared/indexeddb.js';
+import { cluster } from './cluster/cluster.js';
+import { openKeyringDB } from '../shared/init-db.js';
 import type {
   CreateKeyringRequest,
   ImportKeyringRequest,
   ImportKeyringResult,
-} from '../shared/message-payloads';
+} from '../shared/message-payloads.js';
 
 export interface Keyring<T = unknown> {
   id: number;

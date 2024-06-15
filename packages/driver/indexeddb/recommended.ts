@@ -1,5 +1,5 @@
 import { getChannels } from '@librebase/core';
-import { indexeddb, type IndexedDbChannelOptions } from './indexeddb';
+import { indexeddb, type IndexedDbChannelOptions } from './indexeddb.js';
 
 export interface InitOptions extends IndexedDbChannelOptions {
   instanceID?: string;

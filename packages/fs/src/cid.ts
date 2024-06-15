@@ -1,5 +1,5 @@
 import { identifierToBytes, payloadToBytes } from '@librebase/core/internal';
-import { Hash, hash } from './hashes';
+import { Hash, hash } from './hashes.js';
 
 /**
  * A CID value - An array of byte values, ArrayBuffer, {@linkcode Hash} instance, or base58 string.

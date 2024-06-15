@@ -4,16 +4,16 @@ import {
   fakeErrorDriver,
   fakeValidDriver,
   fakeVoidDriver,
-} from '../../testing/drivers';
-import { resolveBeforeTimeout } from '../../testing/utils';
+} from '../../testing/drivers.js';
+import { resolveBeforeTimeout } from '../../testing/utils.js';
 import {
   getChannels,
   queryChannelsSync,
   type ChannelDriver,
   type Channels,
   type ChannelQuery,
-} from './channels';
-import { Identifier } from './identifiers';
+} from './channels.js';
+import { Identifier } from './identifiers.js';
 
 test('getChannels', () => {
   const value = getChannels();

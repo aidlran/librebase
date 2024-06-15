@@ -1,5 +1,5 @@
 import type { Codec, CodecProps } from '@librebase/fs';
-import type { JsonCodecMiddleware } from './types';
+import type { JsonCodecMiddleware } from './types.js';
 
 /** An extensible JSON codec for the `application/json` media type. */
 export interface JSONCodec extends Codec {

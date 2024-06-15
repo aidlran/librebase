@@ -1,5 +1,5 @@
-import type { Dispatch } from './dispatch';
-import type { MessageConfig, OperationsOf } from './types';
+import type { Dispatch } from './dispatch.js';
+import type { MessageConfig, OperationsOf } from './types.js';
 
 export interface ClusterOptions {
   clusterSize?: number;

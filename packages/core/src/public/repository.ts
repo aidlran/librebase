@@ -1,5 +1,5 @@
-import { queryChannelsAsync, queryChannelsSync } from './channels';
-import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers';
+import { queryChannelsAsync, queryChannelsSync } from './channels.js';
+import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers.js';
 
 /**
  * Sends a delete request to all registered channels asynchronously.

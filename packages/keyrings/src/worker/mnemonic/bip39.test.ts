@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import WORDLIST from '../../../bip39-wordlist-english.json';
-import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from './bip39';
+import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from './bip39.js';
 import { english } from './test/vectors.json';
 
 function hex2Bytes(hex: string) {

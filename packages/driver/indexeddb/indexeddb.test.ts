@@ -1,7 +1,7 @@
 import { Identifier } from '@librebase/core';
 import 'fake-indexeddb/auto';
 import { expect, test } from 'vitest';
-import { indexeddb } from './indexeddb';
+import { indexeddb } from './indexeddb.js';
 
 test('IndexedDB channel driver', async () => {
   const channel = await indexeddb();

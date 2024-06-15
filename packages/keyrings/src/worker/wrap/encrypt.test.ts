@@ -1,7 +1,7 @@
 import { Hash, HashAlgorithm } from '@librebase/fs';
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
-import { EncryptWrapSchema, defaultMetadata } from './encrypt';
+import { EncryptWrapSchema, defaultMetadata } from './encrypt.js';
 
 describe('Encrypt wrap schema - wrap', () => {
   it('Throws if no key derivation input provided', () => {

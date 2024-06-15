@@ -1,7 +1,7 @@
 import { type IdentifierSchema } from '@librebase/core';
-import { validateCID } from './cid';
-import { decodeWithCodec } from './codecs';
-import { parseFileContent } from './files';
+import { validateCID } from './cid.js';
+import { decodeWithCodec } from './codecs.js';
+import { parseFileContent } from './files.js';
 
 /** Provides a content addressed file system. */
 export const FS = {

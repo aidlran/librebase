@@ -9,6 +9,6 @@
  * @module Internal
  */
 
-export * from './encoding';
-export * from './logging';
-export * from './registry';
+export * from './encoding.js';
+export * from './logging.js';
+export * from './registry.js';

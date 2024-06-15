@@ -1,4 +1,4 @@
-import type * as T from './types';
+import type * as T from './types.js';
 
 export type Dispatch<Config extends T.MessageConfig> = <T extends T.OperationsOf<Config>>(
   operation: T,

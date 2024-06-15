@@ -4,9 +4,9 @@
  * @module Public
  */
 
-export * from './channels';
-export * from './identifiers';
-export * from './repository';
+export * from './channels.js';
+export * from './identifiers.js';
+export * from './repository.js';
 
 /** @category Logging */
-export { setLogLevel, type LogLevel } from '../internal/logging';
+export { setLogLevel, type LogLevel } from '../internal/logging.js';

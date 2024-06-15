@@ -5,8 +5,8 @@ import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
 import type { MediaType } from 'content-type';
-import { getAddressHash, setAddressHash } from './address';
-import { cluster } from './cluster/cluster';
+import { getAddressHash, setAddressHash } from './address.js';
+import { cluster } from './cluster/cluster.js';
 
 // TODO: separate address hash CRUD module
 

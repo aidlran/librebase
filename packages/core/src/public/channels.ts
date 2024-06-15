@@ -1,4 +1,4 @@
-import type { Identifier } from './identifiers';
+import type { Identifier } from './identifiers.js';
 
 /**
  * A value that may or may not be in Promise form.

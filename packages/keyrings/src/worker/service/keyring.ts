@@ -1,8 +1,8 @@
 import { unwrap, wrap } from '@librebase/wraps';
-import { getRecord, putRecord } from '../../shared/indexeddb';
-import type * as P from '../../shared/message-payloads';
-import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../mnemonic/bip39';
-import type { EncryptWrapValue } from '../wrap/encrypt';
+import { getRecord, putRecord } from '../../shared/indexeddb.js';
+import type * as P from '../../shared/message-payloads.js';
+import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../mnemonic/bip39.js';
+import type { EncryptWrapValue } from '../wrap/encrypt.js';
 
 export interface PersistedKeyring<T = unknown> {
   id: number;

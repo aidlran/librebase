@@ -1,10 +1,10 @@
 import { Identifier, deleteOne, getOne, putOne } from '@librebase/core';
 import { format, type MediaType } from 'content-type';
-import { cidToBytes, type CIDLike } from './cid';
-import { encodeWithCodec } from './codecs';
-import { Hash, HashAlgorithm, hash } from './hashes';
-import { validateMediaType } from './media-types';
-import { FS } from './schema';
+import { cidToBytes, type CIDLike } from './cid.js';
+import { encodeWithCodec } from './codecs.js';
+import { Hash, HashAlgorithm, hash } from './hashes.js';
+import { validateMediaType } from './media-types.js';
+import { FS } from './schema.js';
 
 export async function deleteFile(cid: CIDLike, instanceID?: string) {
   return deleteOne(new Identifier(FS.key, cidToBytes(cid)), instanceID);

@@ -1,7 +1,7 @@
 import { init as initJSON } from '@librebase/codec-json/recommended';
-import { ECDSAWrapModule } from './ecdsa';
-import { WrapMiddleware } from './middleware';
-import { WrapRegistry } from './wraps';
+import { ECDSAWrapModule } from './ecdsa.js';
+import { WrapMiddleware } from './middleware.js';
+import { WrapRegistry } from './wraps.js';
 
 export function init(instanceID?: string) {
   initJSON({ instanceID, middlewares: [WrapMiddleware] });

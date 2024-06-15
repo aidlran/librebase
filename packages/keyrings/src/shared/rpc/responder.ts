@@ -1,5 +1,5 @@
 import type { MaybePromise } from '@librebase/core';
-import type * as T from './types';
+import type * as T from './types.js';
 
 export type ResponderCallbacks<Config extends T.MessageConfig> = {
   [T in T.OperationsOf<Config>]: (

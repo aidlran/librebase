@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { createDeferredDispatch, createDispatch, type DeferredDispatchTarget } from './dispatch';
-import type { MessageConfig } from './types';
+import { createDeferredDispatch, createDispatch, type DeferredDispatchTarget } from './dispatch.js';
+import type { MessageConfig } from './types.js';
 
 describe('RPC Dispatch', () => {
   function randomString(len = 8) {

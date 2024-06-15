@@ -3,10 +3,10 @@ import { WrapRegistry } from '@librebase/wraps';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, expectTypeOf, it, test } from 'vitest';
 import wordlist from '../../../bip39-wordlist-english.json';
-import { openKeyringDB } from '../../shared/init-db';
+import { openKeyringDB } from '../../shared/init-db.js';
 import { english } from '../mnemonic/test/vectors.json';
-import { EncryptWrapSchema } from '../wrap/encrypt';
-import { activeSeeds, clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring';
+import { EncryptWrapSchema } from '../wrap/encrypt.js';
+import { activeSeeds, clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring.js';
 
 describe('Keyring API', () => {
   const instanceID = 'Keyring API';
