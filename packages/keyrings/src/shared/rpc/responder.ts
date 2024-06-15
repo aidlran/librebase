@@ -2,7 +2,10 @@ import type { MaybePromise } from '@librebase/core';
 import type * as T from './types';
 
 export type ResponderCallbacks<Config extends T.MessageConfig> = {
-  [T in T.OperationsOf<Config>]: (request: Config[T][0]) => MaybePromise<Config[T][1]>;
+  [T in T.OperationsOf<Config>]: (
+    request: Config[T][0],
+    instanceID?: string,
+  ) => MaybePromise<Config[T][1]>;
 };
 
 export interface ResponderTarget<Config extends T.MessageConfig> {
@@ -30,7 +33,7 @@ export function createResponder<Config extends T.MessageConfig>(
       ok: false,
     });
     try {
-      Promise.resolve(callbacks[data.op](data.payload))
+      Promise.resolve(callbacks[data.op](data.payload, data.instanceID))
         // @ts-expect-error
         .then(respond)
         .catch((error) => reject(error instanceof Error ? error.message : undefined));

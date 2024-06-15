@@ -2,9 +2,9 @@ import { CodecRegistry } from '@librebase/fs';
 import { WrapRegistry } from '@librebase/wraps';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, expectTypeOf, it, test } from 'vitest';
-import { EncryptWrapSchema } from '../0-wraps/encrypt';
-import { openKeyringDB } from '../keyring/init-db';
-import { english } from '../mnemonic/test/vectors.json';
+import { openKeyringDB } from '../../keyring/init-db';
+import { english } from '../../mnemonic/test/vectors.json';
+import { EncryptWrapSchema } from '../wrap/encrypt';
 import { activeSeeds, clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring';
 
 describe('Keyring API', () => {

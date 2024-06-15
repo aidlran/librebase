@@ -1,15 +1,8 @@
 import { unwrap, wrap } from '@librebase/wraps';
-import type { EncryptWrapValue } from '../0-wraps/encrypt';
-import { getRecord, putRecord } from '../indexeddb/indexeddb';
-import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../mnemonic/bip39';
-import type {
-  CreateKeyringRequest,
-  CreateKeyringResult,
-  ImportKeyringRequest,
-  ImportKeyringResult,
-  LoadKeyringRequest,
-  LoadKeyringResult,
-} from '../worker/types/payloads';
+import { getRecord, putRecord } from '../../indexeddb/indexeddb';
+import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from '../../mnemonic/bip39';
+import type * as P from '../types/payloads';
+import type { EncryptWrapValue } from '../wrap/encrypt';
 
 export interface PersistedKeyring<T = unknown> {
   id: number;
@@ -25,9 +18,9 @@ export function clearKeyring(instanceID = '') {
 }
 
 export async function createKeyring(
-  request: CreateKeyringRequest,
+  request: P.CreateKeyringRequest,
   instanceID?: string,
-): Promise<CreateKeyringResult> {
+): Promise<P.CreateKeyringResult> {
   if (!request.passphrase) {
     throw new TypeError('No passphrase provided');
   }
@@ -44,9 +37,9 @@ export async function createKeyring(
 }
 
 export async function importKeyring(
-  request: ImportKeyringRequest,
+  request: P.ImportKeyringRequest,
   instanceID?: string,
-): Promise<ImportKeyringResult> {
+): Promise<P.ImportKeyringResult> {
   if (!request.passphrase) {
     throw new TypeError('No passphrase provided');
   }
@@ -62,9 +55,9 @@ export async function importKeyring(
 }
 
 export async function loadKeyring<T>(
-  request: LoadKeyringRequest,
+  request: P.LoadKeyringRequest,
   instanceID?: string,
-): Promise<LoadKeyringResult<T>> {
+): Promise<P.LoadKeyringResult<T>> {
   const keyring = await getRecord<PersistedKeyring<T>>('lbkeyrings', 'keyring', request.id);
   const entropy = (await unwrap(keyring.payload, instanceID)).value as Uint8Array;
   const mnemonic = await entropyToMnemonic(entropy);
