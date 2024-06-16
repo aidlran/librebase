@@ -1,6 +1,6 @@
 import { Base58 } from '@librebase/core/internal';
-import type { WrapModule, WrapValue } from '@librebase/wraps';
-import { findPrivateKey } from '../service/identity.js';
+import type { WrapConfig, WrapModule, WrapValue } from '@librebase/wraps';
+import { findPrivateKey } from '../identity.js';
 
 export interface EncryptWrapMetadata {
   /** The encryption algorithm. */
@@ -21,6 +21,7 @@ export interface EncryptWrapMetadata {
   salt: Uint8Array;
 }
 
+export type EncryptWrapConfig = WrapConfig<'encrypt', Partial<EncryptWrapMetadata>>;
 export type EncryptWrapValue = WrapValue<'encrypt', EncryptWrapMetadata>;
 
 export const defaultMetadata = {
@@ -32,12 +33,10 @@ export const defaultMetadata = {
 
 export const EncryptWrapSchema = {
   key: 'encrypt',
-  async unwrap(config) {
-    const payload = decrypt(config.payload, config.metadata);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passphrase, ...cleanMetadata } = config.metadata;
-    return [new Uint8Array(await payload), cleanMetadata];
-  },
+  unwrap: async (config) => [
+    await decrypt(config.payload, config.metadata),
+    sanitizeMetadata(config.metadata),
+  ],
   wrap: (config) => encrypt(config.payload, config.metadata),
 } satisfies WrapModule<Partial<EncryptWrapMetadata>, EncryptWrapMetadata>;
 
@@ -52,6 +51,14 @@ export function buildMetadata(metadata: Partial<EncryptWrapMetadata>) {
     pubKey: metadata.pubKey,
     salt: metadata.salt ?? crypto.getRandomValues(new Uint8Array(16)),
   };
+}
+
+export function sanitizeMetadata<T extends Partial<EncryptWrapMetadata>>(
+  metadata: T,
+): Omit<T, 'passphrase'> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { passphrase, ...sanitized } = metadata;
+  return sanitized;
 }
 
 export async function deriveKey(metadata: EncryptWrapMetadata) {
@@ -106,6 +113,6 @@ export async function encrypt(
         value,
       ),
     ),
-    builtMetadata,
+    sanitizeMetadata(builtMetadata),
   ];
 }

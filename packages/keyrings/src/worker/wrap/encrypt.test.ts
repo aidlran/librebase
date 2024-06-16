@@ -16,9 +16,8 @@ describe('Encrypt wrap schema - wrap', () => {
 
   it('Works if passphrase provided', async () => {
     const inputPayload = crypto.getRandomValues(new Uint8Array(8));
-    const inputMetadata = {
-      passphrase: new TextDecoder().decode(crypto.getRandomValues(new Uint8Array(8))),
-    };
+    const passphrase = new TextDecoder().decode(crypto.getRandomValues(new Uint8Array(8)));
+    const inputMetadata = { passphrase };
 
     const [encryptResultPayload, encryptResultMetadata] = await EncryptWrapSchema.wrap({
       hash: new Hash(HashAlgorithm.SHA256, new Uint8Array()),
@@ -31,6 +30,8 @@ describe('Encrypt wrap schema - wrap', () => {
     expect(encryptResultMetadata.hashAlg).toBe(defaultMetadata.hashAlg);
     expect(encryptResultMetadata.iterations).toBe(defaultMetadata.iterations);
     expect(encryptResultMetadata.kdf).toBe(defaultMetadata.kdf);
+
+    encryptResultMetadata.passphrase = passphrase;
 
     const [decryptResultPayload, decryptResultMetadata] = await EncryptWrapSchema.unwrap({
       metadata: encryptResultMetadata,

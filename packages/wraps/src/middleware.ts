@@ -15,7 +15,7 @@ import {
 } from 'valibot';
 import { unwrap, wrap, type WrapConfig, type WrapValue } from './wraps.js';
 
-const configSchema = object(
+export const wrapConfigSchema = object(
   {
     hashAlg: optional(number([integer()])),
     mediaType: union([string(), object({ type: string() })]),
@@ -26,7 +26,7 @@ const configSchema = object(
   never(),
 );
 
-const wrapSchema = object(
+export const wrappedValueSchema = object(
   {
     $: string([startsWith('wrap:')]),
     h: string(),
@@ -38,11 +38,11 @@ const wrapSchema = object(
 );
 
 export function isWrap(value: unknown): boolean {
-  return safeParse(wrapSchema, value, { abortEarly: true }).success;
+  return safeParse(wrappedValueSchema, value, { abortEarly: true }).success;
 }
 
 export function isWrapConfig(value: unknown): boolean {
-  return safeParse(configSchema, value, { abortEarly: true }).success;
+  return safeParse(wrapConfigSchema, value, { abortEarly: true }).success;
 }
 
 export const WrapMiddleware: JsonCodecMiddleware = {

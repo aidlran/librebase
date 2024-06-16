@@ -53,6 +53,12 @@ async function replace(
   if (refTrack.has(value)) {
     throw new Error('Circular reference');
   }
+  for (const plugin of plugins) {
+    const func = plugin[fn];
+    if (func) {
+      value = await Promise.resolve(func(key, value, { instanceID }));
+    }
+  }
   if (value instanceof Array) {
     refTrack.add(value);
     value = await Promise.all(
@@ -69,12 +75,6 @@ async function replace(
         (value as Record<string, unknown>)[key],
         key,
       );
-    }
-  }
-  for (const plugin of plugins) {
-    const func = plugin[fn];
-    if (func) {
-      value = await Promise.resolve(func(key, value, { instanceID }));
     }
   }
   refTrack.delete(value);

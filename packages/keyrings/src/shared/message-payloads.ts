@@ -1,7 +1,9 @@
+import type { CIDLike, Hash } from '@librebase/fs';
+
 export interface CreateKeyringRequest<T = unknown> {
-  /** The passphrase used to protect the session payload. */
+  /** The passphrase used to protect the keyring payload. */
   passphrase: string;
-  /** Optional arbitrary metadata to store unencrypted alongside the session. */
+  /** Optional arbitrary metadata to store unencrypted alongside the keyring. */
   metadata?: T;
   /** The wordlist to use for the mnemonic. */
   wordlist: string[];
@@ -15,29 +17,23 @@ export interface ImportKeyringRequest<T = unknown> extends CreateKeyringRequest<
 }
 
 export interface LoadKeyringRequest {
-  /** The ID of the target session. */
-  id: number;
-  /** The passphrase needed to decrypt the session. */
+  /** The CID of the target keyring. */
+  id: CIDLike;
+  /** The passphrase needed to decrypt the keyring. */
   passphrase: string;
   /** The wordlist to use for the mnemonic. */
   wordlist: string[];
 }
 
 export interface CreateKeyringResult {
-  /** The BIP39 mnemonic (recovery phrase) of the created session. */
+  /** The BIP39 mnemonic (recovery phrase) of the created keyring. */
   mnemonic: string;
-  /** The ID of the created session. */
-  id: number;
+  /** The CID of the created keyring. */
+  id: Hash;
 }
 
-export interface ImportKeyringResult {
-  /** The ID of the imported session. */
-  id: number;
-}
+/** The CID of the imported keyring. */
+export type ImportKeyringResult = Hash;
 
-export interface LoadKeyringResult<T = unknown> {
-  /** The ID of the session. */
-  id: number;
-  /** The optional arbitrary metadata stored associated with the session. */
-  metadata?: T;
-}
+/** The optional arbitrary metadata stored associated with the keyring. */
+export type LoadKeyringResult<T = unknown> = T;
