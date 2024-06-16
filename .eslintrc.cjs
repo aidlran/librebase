@@ -7,15 +7,12 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended-type-checked',
     'plugin:@typescript-eslint/stylistic-type-checked',
-    'plugin:svelte/recommended',
-    'plugin:svelte/prettier',
     'plugin:prettier/recommended',
   ],
   plugins: ['deprecation'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 'latest',
-    extraFileExtensions: ['.svelte'],
     sourceType: 'module',
     project: 'tsconfig.json',
     tsconfigRootDir: __dirname,
@@ -25,15 +22,6 @@ module.exports = {
     node: true,
   },
   overrides: [
-    {
-      files: ['*.svelte'],
-      parser: 'svelte-eslint-parser',
-      parserOptions: {
-        parser: '@typescript-eslint/parser',
-        project: 'tsconfig.json',
-        tsconfigRootDir: join(__dirname, 'packages/svelte'),
-      },
-    },
     ...['codec/json', 'core', 'driver/indexeddb', 'fs', 'keyrings', 'svelte', 'wraps'].map(
       (path) => ({
         files: [`packages/${path}/**/*.ts`],
