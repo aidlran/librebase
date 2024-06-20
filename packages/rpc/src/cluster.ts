@@ -1,5 +1,5 @@
 import type { Dispatch } from './dispatch.js';
-import type { MessageConfig, OperationsOf } from './types.js';
+import type { RPCHost } from './host.js';
 
 export interface ClusterOptions {
   clusterSize?: number;
@@ -20,23 +20,13 @@ export const RoundRobin: LoadBalancer = (items) => {
   return () => items[++currentIndex == items.length ? (currentIndex = 0) : currentIndex];
 };
 
-export function createCluster<Config extends MessageConfig>(
-  constructor: () => Dispatch<Config>,
-  options?: ClusterOptions,
-) {
+export function createCluster(constructor: () => Dispatch, options?: ClusterOptions): RPCHost {
   const length = options?.clusterSize ?? calculateClusterSize();
   const dispatches = Array.from({ length }, constructor);
   const getNext = (options?.loadBalancer ?? RoundRobin)(dispatches);
   return {
-    postToAll: <T extends OperationsOf<Config>>(
-      operation: T,
-      request: Config[T][0],
-      instanceID?: string,
-    ) => Promise.all(dispatches.map((dispatch) => dispatch(operation, request, instanceID))),
-    postToOne: <T extends OperationsOf<Config>>(
-      operation: T,
-      request: Config[T][0],
-      instanceID?: string,
-    ) => getNext()(operation, request, instanceID),
+    postToAll: <Res, Req = unknown>(operation: string, request: Req, instanceID?: string) =>
+      Promise.all(dispatches.map((dispatch) => dispatch<Res, Req>(operation, request, instanceID))),
+    postToOne: (operation, request, instanceID) => getNext()(operation, request, instanceID),
   };
 }

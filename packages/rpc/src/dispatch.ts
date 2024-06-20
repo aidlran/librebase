@@ -1,22 +1,20 @@
 import type * as T from './types.js';
 
-export type Dispatch<Config extends T.MessageConfig> = <T extends T.OperationsOf<Config>>(
-  operation: T,
-  request: Config[T][0],
+export type Dispatch = <Res, Req = unknown>(
+  operation: string,
+  request: Req,
   instanceID?: string,
-) => Promise<Config[T][1]>;
+) => Promise<Res>;
 
 export interface DispatchTarget {
   addEventListener: T.MessageEventListenerMethod<T.ResponseMessage>;
   postMessage(message: T.RequestMessage): unknown;
 }
 
-export function createDispatch<Config extends T.MessageConfig>(
-  target: DispatchTarget,
-): Dispatch<Config> {
+export function createDispatch(target: DispatchTarget): Dispatch {
   const callbacks: Record<
     number,
-    [resolve: (response: T.ResponsesOf<Config>) => void, reject: (reason?: string) => void]
+    [resolve: (response: unknown) => void, reject: (reason?: string) => void]
   > = {};
   let nextJobID = 0;
   target.addEventListener('message', (event) => {
@@ -35,7 +33,7 @@ export function createDispatch<Config extends T.MessageConfig>(
   // prettier-ignore
   return (op, payload, instanceID) => new Promise((resolve, reject) => {
     const jobID = nextJobID++;
-    callbacks[jobID] = [resolve, reject];
+    callbacks[jobID] = [resolve as never, reject];
     target.postMessage({ instanceID, jobID, op, payload });
   });
 }
@@ -44,19 +42,17 @@ export interface DeferredDispatchTarget extends DispatchTarget {
   removeEventListener: T.MessageEventListenerMethod<'ready'>;
 }
 
-type OnReadyQueue<Config extends T.MessageConfig> = [
-  op: T.OperationsOf<Config>,
-  request: T.RequestsOf<Config>,
-  resolve: (response: T.ResponsesOf<Config>) => void,
+type OnReadyQueue = [
+  op: string,
+  request: unknown,
+  resolve: (response: unknown) => void,
   reject: (reason: string) => void,
   instanceID?: string,
 ][];
 
-export function createDeferredDispatch<Config extends T.MessageConfig>(
-  target: DeferredDispatchTarget,
-): Dispatch<Config> {
-  const dispatch = createDispatch<Config>(target);
-  let onReadyQueue: OnReadyQueue<Config> | undefined = [];
+export function createDeferredDispatch(target: DeferredDispatchTarget): Dispatch {
+  const dispatch = createDispatch(target);
+  let onReadyQueue: OnReadyQueue | undefined = [];
   function onReady(event: Pick<MessageEvent, 'data'>) {
     if (event.data === 'ready') {
       target.removeEventListener('message', onReady);
@@ -70,7 +66,7 @@ export function createDeferredDispatch<Config extends T.MessageConfig>(
   return (op, request, instanceID) =>
     onReadyQueue
       ? new Promise((resolve, reject) =>
-          onReadyQueue!.push([op, request, resolve, reject, instanceID]),
+          onReadyQueue!.push([op, request, resolve as never, reject, instanceID]),
         )
       : dispatch(op, request, instanceID);
 }

@@ -25,5 +25,5 @@ export function workerStrategy(constructor: WorkerConstructor) {
   const target = constructor();
   // TODO: register as a channel
   createResponder<WorkerOriginMessageConfig>(target, responderConfig);
-  return createCluster(() => createDeferredDispatch<MessageConfig>(target));
+  return createCluster(() => createDeferredDispatch(target));
 }

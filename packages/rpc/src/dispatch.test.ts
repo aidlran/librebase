@@ -1,6 +1,5 @@
 import { describe, expect, test } from 'vitest';
 import { createDeferredDispatch, createDispatch, type DeferredDispatchTarget } from './dispatch.js';
-import type { MessageConfig } from './types.js';
 
 describe('RPC Dispatch', () => {
   function randomString(len = 8) {
@@ -23,8 +22,8 @@ describe('RPC Dispatch', () => {
   };
 
   const dispatches = {
-    'Basic Dispatch': createDispatch<MessageConfig>(target),
-    'Deferred Dispatch': createDeferredDispatch<MessageConfig>(target),
+    'Basic Dispatch': createDispatch(target),
+    'Deferred Dispatch': createDeferredDispatch(target),
   };
 
   describe('postMessage', () => {

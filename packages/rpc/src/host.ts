@@ -1,6 +1,7 @@
+// prettier-ignore
 export interface RPCHost {
-  postToAll(operation: string, request: unknown, instanceID?: string): Promise<unknown[]>;
-  postToOne(operation: string, request: unknown, instanceID?: string): Promise<unknown>;
+  postToAll<Res, Req = unknown>(operation: string, request: Req, instanceID?: string): Promise<Res[]>;
+  postToOne<Res, Req = unknown>(operation: string, request: Req, instanceID?: string): Promise<Res>;
 }
 
 export let host: RPCHost;

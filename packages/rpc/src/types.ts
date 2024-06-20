@@ -11,8 +11,6 @@ export type MessageConfig<T extends string = string> = Record<
 >;
 
 export type OperationsOf<T extends MessageConfig> = Extract<keyof T, string>;
-export type RequestsOf<T extends MessageConfig> = T[OperationsOf<T>][0];
-export type ResponsesOf<T extends MessageConfig> = T[OperationsOf<T>][1];
 
 // Messages
 

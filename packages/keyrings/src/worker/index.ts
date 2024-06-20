@@ -1,6 +1,5 @@
 import { getChannels } from '@librebase/core';
 import { createDispatch, createResponder } from '@librebase/rpc';
-import type { WorkerOriginMessageConfig } from '@librebase/rpc/worker';
 import { unwrap, wrap } from '@librebase/wraps';
 import { Buffer } from 'buffer';
 import { KEYRINGS_INSTANCE_ID, type HostOriginMessageConfig } from '../shared/index.js';
@@ -22,7 +21,7 @@ createResponder<HostOriginMessageConfig>(self, {
   wrap: wrap as never,
 });
 
-const dispatch = createDispatch<WorkerOriginMessageConfig>(self);
+const dispatch = createDispatch(self);
 
 getChannels(KEYRINGS_INSTANCE_ID).push({
   delete: (id) => dispatch('delete', id.bytes, KEYRINGS_INSTANCE_ID),
