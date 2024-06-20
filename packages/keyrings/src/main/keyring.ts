@@ -1,6 +1,6 @@
-import { ACTIVE_KEYRING_CHANGE, emit } from './events.js';
-import { cluster } from './cluster/cluster.js';
+import { host } from '@librebase/rpc';
 import type { CreateKeyringRequest, ImportKeyringRequest } from '../shared/message-payloads.js';
+import { ACTIVE_KEYRING_CHANGE, emit } from './events.js';
 
 export interface Keyring<T = unknown> {
   id: number;
@@ -24,7 +24,7 @@ export async function activateKeyring<T>(
   passphrase: string,
   instanceID?: string,
 ) {
-  const [keyring] = (await cluster.postToAll(
+  const [keyring] = (await host.postToAll(
     'keyring.load',
     { id: keyringID, passphrase },
     instanceID,
@@ -46,7 +46,7 @@ export async function activateKeyring<T>(
  *   of the keyring and it's mnemonic recovery seed phrase.
  */
 export function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
-  return cluster.postToOne('keyring.create', options, instanceID);
+  return host.postToOne('keyring.create', options, instanceID);
 }
 
 /**
@@ -60,7 +60,7 @@ export function createKeyring(options: CreateKeyringRequest, instanceID?: string
  *   instances.
  */
 export async function deactivateKeyring(instanceID?: string) {
-  await cluster.postToAll('keyring.clear', undefined, instanceID);
+  await host.postToAll('keyring.clear', undefined, instanceID);
   delete activeKeyrings[instanceID ?? ''];
   emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
 }
@@ -88,5 +88,5 @@ export { getAvailableKeyringCIDs } from '../worker/keyring.js';
  * @returns {Promise<Hash>} A promise that resolves with the CID given to the imported keyring.
  */
 export function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
-  return cluster.postToOne('keyring.import', options, instanceID);
+  return host.postToOne('keyring.import', options, instanceID);
 }

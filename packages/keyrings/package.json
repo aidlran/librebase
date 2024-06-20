@@ -17,6 +17,9 @@
     },
     "./wordlist": {
       "default": "./bip39-wordlist-english.json"
+    },
+    "./worker": {
+      "default": "./dist/worker/index.js"
     }
   },
   "main": "./dist/index.js",
@@ -42,6 +45,7 @@
   "peerDependencies": {
     "@librebase/core": "~0.2.0-rc",
     "@librebase/fs": "~0.2.0-rc",
+    "@librebase/rpc": "~0.2.0-rc",
     "@librebase/wraps": "~0.2.0-rc"
   }
 }

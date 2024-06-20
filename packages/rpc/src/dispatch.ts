@@ -6,15 +6,13 @@ export type Dispatch<Config extends T.MessageConfig> = <T extends T.OperationsOf
   instanceID?: string,
 ) => Promise<Config[T][1]>;
 
-export interface DispatchTarget<Config extends T.MessageConfig> {
-  addEventListener: T.MessageEventListenerMethod<
-    T.ResponseMessage<T.OperationsOf<Config>, T.ResponsesOf<Config>>
-  >;
-  postMessage(message: T.RequestMessage<T.OperationsOf<Config>, T.RequestsOf<Config>>): unknown;
+export interface DispatchTarget {
+  addEventListener: T.MessageEventListenerMethod<T.ResponseMessage>;
+  postMessage(message: T.RequestMessage): unknown;
 }
 
 export function createDispatch<Config extends T.MessageConfig>(
-  target: DispatchTarget<Config>,
+  target: DispatchTarget,
 ): Dispatch<Config> {
   const callbacks: Record<
     number,
@@ -42,8 +40,7 @@ export function createDispatch<Config extends T.MessageConfig>(
   });
 }
 
-export interface DeferredDispatchTarget<Config extends T.MessageConfig>
-  extends DispatchTarget<Config> {
+export interface DeferredDispatchTarget extends DispatchTarget {
   removeEventListener: T.MessageEventListenerMethod<'ready'>;
 }
 
@@ -56,7 +53,7 @@ type OnReadyQueue<Config extends T.MessageConfig> = [
 ][];
 
 export function createDeferredDispatch<Config extends T.MessageConfig>(
-  target: DeferredDispatchTarget<Config>,
+  target: DeferredDispatchTarget,
 ): Dispatch<Config> {
   const dispatch = createDispatch<Config>(target);
   let onReadyQueue: OnReadyQueue<Config> | undefined = [];

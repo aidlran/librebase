@@ -8,15 +8,13 @@ export type ResponderCallbacks<Config extends T.MessageConfig> = {
   ) => MaybePromise<Config[T][1]>;
 };
 
-export interface ResponderTarget<Config extends T.MessageConfig> {
-  addEventListener: T.MessageEventListenerMethod<
-    T.RequestMessage<T.OperationsOf<Config>, T.RequestsOf<Config>>
-  >;
-  postMessage(message: T.ResponseMessage<T.OperationsOf<Config>, T.ResponsesOf<Config>>): unknown;
+export interface ResponderTarget {
+  addEventListener: T.MessageEventListenerMethod<T.RequestMessage>;
+  postMessage(message: T.ResponseMessage): unknown;
 }
 
 export function createResponder<Config extends T.MessageConfig>(
-  target: ResponderTarget<Config>,
+  target: ResponderTarget,
   callbacks: ResponderCallbacks<Config>,
 ) {
   target.addEventListener('message', ({ data }) => {

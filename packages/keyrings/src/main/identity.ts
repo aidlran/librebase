@@ -1,17 +1,17 @@
 import { Identifier, queryChannelsSync } from '@librebase/core';
 import { Base58 } from '@librebase/core/internal';
 import { FS, decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
+import { host } from '@librebase/rpc';
 import { wrap, type WrapValue } from '@librebase/wraps';
 import { isWrap } from '@librebase/wraps/middleware';
 import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
 import type { MediaType } from 'content-type';
 import { getAddressHash, setAddressHash } from './address.js';
-import { cluster } from './cluster/cluster.js';
 
 // TODO: separate address hash CRUD module
 
 export function getIdentityAddress(identityID: string, instanceID?: string) {
-  return cluster.postToOne('identity.get', identityID, instanceID);
+  return host.postToOne('identity.get', identityID, instanceID);
 }
 
 export async function getIdentityValue(address: string | Uint8Array, instanceID?: string) {

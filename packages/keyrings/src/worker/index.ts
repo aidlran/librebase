@@ -1,12 +1,9 @@
 import { getChannels } from '@librebase/core';
+import { createDispatch, createResponder } from '@librebase/rpc';
+import type { WorkerOriginMessageConfig } from '@librebase/rpc/worker';
 import { unwrap, wrap } from '@librebase/wraps';
 import { Buffer } from 'buffer';
-import {
-  KEYRINGS_INSTANCE_ID,
-  type HostOriginMessageConfig,
-  type WorkerOriginMessageConfig,
-} from '../shared/index.js';
-import { createDispatch, createResponder } from '../shared/rpc/index.js';
+import { KEYRINGS_INSTANCE_ID, type HostOriginMessageConfig } from '../shared/index.js';
 import { getIdentity } from './identity.js';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring.js';
 

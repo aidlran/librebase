@@ -1,0 +1,35 @@
+{
+  "name": "@librebase/rpc",
+  "version": "0.2.0-rc",
+  "private": true,
+  "description": "Librebase RPC API. Enables worker threads and more.",
+  "homepage": "https://librebase.io",
+  "bugs": "https://github.com/aidlran/librebase/issues",
+  "repository": "github:aidlran/librebase",
+  "license": "Apache-2.0",
+  "author": "Aidan Loughran",
+  "sideEffects": false,
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./worker": {
+      "types": "./dist/strategies/worker.d.ts",
+      "default": "./dist/strategies/worker.js"
+    }
+  },
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "./dist"
+  ],
+  "scripts": {
+    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "cost": "bun build --minify src/index.js | gzip | wc -c",
+    "lc": "echo @librebase/rpc: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "start": "npm run watch",
+    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
+  }
+}

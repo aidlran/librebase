@@ -11,7 +11,7 @@ describe('RPC Dispatch', () => {
   const op = randomString();
   const payload = randomString();
 
-  const target: DeferredDispatchTarget<MessageConfig> = {
+  const target: DeferredDispatchTarget = {
     addEventListener() {},
     removeEventListener() {},
     postMessage(message) {

@@ -1,6 +1,6 @@
+import type { MessageConfig } from '@librebase/rpc';
 import type { WrapConfig, WrapValue } from '@librebase/wraps';
 import * as Payload from './message-payloads.js';
-import type { MessageConfig } from './rpc/types.js';
 
 /** Messages dispatched from the host process. */
 export interface HostOriginMessageConfig extends MessageConfig {
@@ -12,11 +12,4 @@ export interface HostOriginMessageConfig extends MessageConfig {
   unwrap: [WrapValue, WrapConfig];
   wrap: [WrapConfig, WrapValue];
   e: [void, void];
-}
-
-/** Messages dispatched from child processes. */
-export interface WorkerOriginMessageConfig extends MessageConfig {
-  delete: [ArrayBuffer, void];
-  get: [ArrayBuffer, ArrayBuffer];
-  put: [{ id: ArrayBuffer; content: ArrayBuffer }, void];
 }
