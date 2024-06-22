@@ -1,5 +1,6 @@
 {
   "extends": ["../../typedoc.base.json"],
-  "entryPoints": ["src/index.ts"],
-  "name": "RPC"
+  "entryPoints": ["src/index.js"],
+  "name": "RPC",
+  "projectDocuments": ["docs/*.md"]
 }

@@ -2,15 +2,14 @@
   "$schema": "https://typedoc.org/schema.json",
   "hideGenerator": true,
   "includeVersion": true,
-
-  "navigationLinks": {
-    "Librebase.io": "https://librebase.io"
-  },
-  "sort": ["instance-first", "alphabetical"],
-  "sourceLinkExternal": true,
   "navigation": {
     "includeCategories": true,
     "includeFolders": false,
     "includeGroups": false
-  }
+  },
+  "navigationLinks": {
+    "Librebase.io": "https://librebase.io"
+  },
+  "sort": ["instance-first", "alphabetical"],
+  "sourceLinkExternal": true
 }

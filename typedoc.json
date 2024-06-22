@@ -6,6 +6,7 @@
     "./packages/driver/indexeddb",
     "./packages/fs",
     "./packages/keyrings",
+    "./packages/rpc",
     "./packages/wraps"
   ],
   "entryPointStrategy": "packages",

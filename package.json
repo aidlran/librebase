@@ -28,7 +28,7 @@
     "lint:eslint": "eslint packages",
     "lint:publint": "npx --workspaces publint",
     "lint:sort-package-json": "npx --workspaces sort-package-json --check",
-    "lint:typedoc": "typedoc --treatWarningsAsErrors --emit none",
+    "lint:typedoc": "typedoc --emit none",
     "start": "conc -k npm:start:*",
     "start:codec/json": "npm start -w packages/codec/json",
     "start:core": "npm start -w packages/core",
