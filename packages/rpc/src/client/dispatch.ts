@@ -1,4 +1,4 @@
-import type * as T from './types.js';
+import type * as T from '../types.js';
 
 export type Dispatch = <Res, Req = unknown>(
   operation: string,

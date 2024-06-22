@@ -1,4 +1,4 @@
-import { host } from '@librebase/rpc';
+import { client } from '@librebase/rpc/client';
 import type { CreateKeyringRequest, ImportKeyringRequest } from '../shared/message-payloads.js';
 import { ACTIVE_KEYRING_CHANGE, emit } from './events.js';
 
@@ -24,7 +24,7 @@ export async function activateKeyring<T>(
   passphrase: string,
   instanceID?: string,
 ) {
-  const [keyring] = (await host.postToAll(
+  const [keyring] = (await client.postToAll(
     'keyring.load',
     { id: keyringID, passphrase },
     instanceID,
@@ -46,7 +46,7 @@ export async function activateKeyring<T>(
  *   of the keyring and it's mnemonic recovery seed phrase.
  */
 export function createKeyring(options: CreateKeyringRequest, instanceID?: string) {
-  return host.postToOne('keyring.create', options, instanceID);
+  return client.postToOne('keyring.create', options, instanceID);
 }
 
 /**
@@ -60,7 +60,7 @@ export function createKeyring(options: CreateKeyringRequest, instanceID?: string
  *   instances.
  */
 export async function deactivateKeyring(instanceID?: string) {
-  await host.postToAll('keyring.clear', undefined, instanceID);
+  await client.postToAll('keyring.clear', undefined, instanceID);
   delete activeKeyrings[instanceID ?? ''];
   emit(ACTIVE_KEYRING_CHANGE, null, instanceID);
 }
@@ -88,5 +88,5 @@ export { getAvailableKeyringCIDs } from '../worker/keyring.js';
  * @returns {Promise<Hash>} A promise that resolves with the CID given to the imported keyring.
  */
 export function importKeyring(options: ImportKeyringRequest, instanceID?: string) {
-  return host.postToOne('keyring.import', options, instanceID);
+  return client.postToOne('keyring.import', options, instanceID);
 }

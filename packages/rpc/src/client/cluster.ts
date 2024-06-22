@@ -1,5 +1,5 @@
+import type { RPCClient } from './client.js';
 import type { Dispatch } from './dispatch.js';
-import type { RPCHost } from './host.js';
 
 export interface ClusterOptions {
   clusterSize?: number;
@@ -20,7 +20,7 @@ export const RoundRobin: LoadBalancer = (items) => {
   return () => items[++currentIndex == items.length ? (currentIndex = 0) : currentIndex];
 };
 
-export function createCluster(constructor: () => Dispatch, options?: ClusterOptions): RPCHost {
+export function createCluster(constructor: () => Dispatch, options?: ClusterOptions): RPCClient {
   const length = options?.clusterSize ?? calculateClusterSize();
   const dispatches = Array.from({ length }, constructor);
   const getNext = (options?.loadBalancer ?? RoundRobin)(dispatches);

@@ -1,8 +1,8 @@
 import { getChannels } from '@librebase/core';
-import { createDispatch, createResponder } from '@librebase/rpc';
+import { Handlers, createDispatch } from '@librebase/rpc';
 import { unwrap, wrap } from '@librebase/wraps';
 import { Buffer } from 'buffer';
-import { KEYRINGS_INSTANCE_ID, type HostOriginMessageConfig } from '../shared/index.js';
+import { KEYRINGS_INSTANCE_ID } from '../shared/index.js';
 import { getIdentity } from './identity.js';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring.js';
 
@@ -11,15 +11,13 @@ import './init-instance.js';
 // Polyfill Buffer for bip32 package
 globalThis.Buffer = Buffer;
 
-createResponder<HostOriginMessageConfig>(self, {
-  'identity.get': getIdentity as never,
-  'keyring.clear': (_, instanceID) => clearKeyring(instanceID),
-  'keyring.create': createKeyring as never,
-  'keyring.import': importKeyring as never,
-  'keyring.load': loadKeyring as never,
-  unwrap: unwrap as never,
-  wrap: wrap as never,
-});
+Handlers.set('identity.get', getIdentity);
+Handlers.set('keyring.clear', (_, instanceID) => clearKeyring(instanceID));
+Handlers.set('keyring.create', createKeyring);
+Handlers.set('keyring.import', importKeyring);
+Handlers.set('keyring.load', loadKeyring);
+Handlers.set('unwrap', unwrap);
+Handlers.set('wrap', wrap);
 
 const dispatch = createDispatch(self);
 

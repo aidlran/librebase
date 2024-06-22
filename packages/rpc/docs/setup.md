@@ -17,20 +17,15 @@ You first need to create a new file to be the entrypoint for your worker script.
 
 ### Request Handling
 
-In your worker script, you can use `createResponder` to listen for certain request types and define handlers to process and respond to them.
+In your worker script, you can use `Handlers.set` to register a handler for a given request type. The return value of the handler is used as the response value. If, instead, an error is thrown, an error response will be given which will include that error's `message` property if present.
 
 Packages that rely on RPC may offer scripts that can be imported to easily register their handlers, so check their documentation.
 
 ```js
-import { createResponder } from '@librebase/rpc';
+import { Handlers } from '@librebase/rpc/server';
 
-createResponder(self, {
-  foo(req, instanceID) {
-    // Handles `foo` request and returns `bar`
-    return 'bar';
-  },
-  // ...
-  // ... additional handlers
+Handlers.set('speak', (req, instanceID) => {
+  return 'Hello!';
 });
 ```
 
@@ -46,17 +41,15 @@ postMessage('ready');
 
 ### Complete example
 
-This example of a worker script uses `createResponder` to define a handler, and then emits the 'ready' message.
+This example of a worker script uses `Handlers.set` to register a handler, and then emits the 'ready' message.
 
 ```js
 // worker-entrypoint.js
 
-import { createResponder } from '@librebase/rpc';
+import { Handlers } from '@librebase/rpc/server';
 
-createResponder(self, {
-  foo(req, instanceID) {
-    return 'bar';
-  },
+Handlers.set('speak', (req, instanceID) => {
+  return 'Hello!';
 });
 
 postMessage('ready');
@@ -71,7 +64,8 @@ Now we need to tell the main thread to spawn the worker(s) and use them for remo
 This example is for web workers and should work with Vite. Other bundlers may have different quirks when working with web workers, so please consult their documentation.
 
 ```js
-import { setHost, workerStrategy } from '@librebase/rpc';
+import { setHost } from '@librebase/rpc/client';
+import { workerStrategy } from '@librebase/rpc/client/worker';
 
 function constructWorker() {
   return new Worker(new URL('./worker-entrypoint?worker', import.meta.url), {
