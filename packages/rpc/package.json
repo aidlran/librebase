@@ -14,10 +14,6 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
-    },
-    "./worker": {
-      "types": "./dist/strategies/worker.d.ts",
-      "default": "./dist/strategies/worker.js"
     }
   },
   "main": "./dist/index.js",
