@@ -29,6 +29,16 @@ Handlers.set('speak', (req, instanceID) => {
 });
 ```
 
+### Listening
+
+Your worker needs to add an event listener to receive and process requests. You can do this with the `listen` function.
+
+```js
+import { listen } from '@librebase/rpc/server/worker';
+
+listen();
+```
+
 ### 'Ready' Message
 
 Once your worker has finished initializing, it needs to emit a 'ready' message to inform the main thread it is ready to process requests. Until this message has been received, the main thread will keep requests queued, and their promises will remain unresolved.
@@ -41,16 +51,19 @@ postMessage('ready');
 
 ### Complete example
 
-This example of a worker script uses `Handlers.set` to register a handler, and then emits the 'ready' message.
+This example of a worker script uses `Handlers.set` to register a handler, registers the listener, and then emits the 'ready' message.
 
 ```js
 // worker-entrypoint.js
 
 import { Handlers } from '@librebase/rpc/server';
+import { listen } from '@librebase/rpc/server/worker';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
 });
+
+listen();
 
 postMessage('ready');
 ```
