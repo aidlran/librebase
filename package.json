@@ -52,7 +52,7 @@
     "@librebase/wraps": "file:packages/wraps",
     "@noble/secp256k1": "^1.7.1",
     "@types/mime-db": "^1.43.5",
-    "@types/node": "^20.14.6",
+    "@types/node": "^20.14.7",
     "@typescript-eslint/eslint-plugin": "^7.13.1",
     "@typescript-eslint/parser": "^7.13.1",
     "@vitest/coverage-v8": "^1.6.0",
@@ -70,8 +70,8 @@
     "publint": "^0.2.8",
     "sort-package-json": "^2.10.0",
     "svelte": "^4.2.18",
-    "typedoc": "~0.25.13",
-    "typescript": "~5.4.5",
+    "typedoc": "~0.26.0",
+    "typescript": "~5.5.2",
     "vite": "^5.3.1",
     "vitest": "^1.6.0"
   }

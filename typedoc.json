@@ -9,6 +9,6 @@
     "./packages/wraps"
   ],
   "entryPointStrategy": "packages",
-  "name": "Librebase JS Documentation",
+  "name": "Librebase JS Docs",
   "out": "docs/api"
 }
