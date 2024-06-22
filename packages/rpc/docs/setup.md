@@ -1,8 +1,8 @@
 ---
-title: Setup Guide
+title: Worker Setup Guide
 ---
 
-# Setup Guide
+# Worker Setup Guide
 
 This guide covers the setup of workers for RPC in your application. A worker is a script that runs as a different thread. You can think of each worker as its own program, with its own state. A worker can communicate with the program that spawned it by sending and receiving messages.
 

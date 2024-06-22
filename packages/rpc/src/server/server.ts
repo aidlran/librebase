@@ -1,3 +1,5 @@
+/** @module Server */
+
 import type { MaybePromise } from '@librebase/core';
 import type { RequestMessage, ResponseMessage } from '../types.js';
 

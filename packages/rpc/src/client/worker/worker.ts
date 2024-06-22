@@ -1,3 +1,5 @@
+/** @module Client / Worker */
+
 import { deleteOne, getOne, putOne } from '@librebase/core';
 import { Handlers } from '../../server/server.js';
 import { listen, type ResponderTarget } from '../../server/worker/worker.js';

@@ -1,3 +1,5 @@
+/** @module Shared Types */
+
 export type MessageEventListenerMethod<T> = (
   type: 'message',
   listener: (event: { data: T }) => void,

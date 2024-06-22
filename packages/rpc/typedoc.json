@@ -1,6 +1,12 @@
 {
   "extends": ["../../typedoc.base.json"],
-  "entryPoints": ["src/index.js"],
+  "entryPoints": [
+    "src/types.ts",
+    "src/client/index.js",
+    "src/client/worker/worker.ts",
+    "src/server/server.ts",
+    "src/server/worker/worker.ts"
+  ],
   "name": "RPC",
-  "projectDocuments": ["docs/*.md"]
+  "projectDocuments": ["docs/guides.md"]
 }
