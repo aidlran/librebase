@@ -10,4 +10,4 @@ This package provides an RPC system for Librebase in JavaScript. Using this syst
 
 ## Usage
 
-For setting up an RPC strategy in your application so that you can use features that depend on RPC, see [this guide](https://librebase.io/docs/documents/RPC.Guides.Worker_Setup_Guide.html).
+To setup the RPC client in your application so that you can use features that depend on RPC, see [this guide](https://librebase.io/docs/documents/RPC.Guides.Client_Setup_Guide.html).

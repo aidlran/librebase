@@ -1,3 +1,6 @@
+import type { ClusterDispatch } from './cluster.js';
+import type { Dispatch } from './dispatch.js';
+
 /**
  * Defines the interface for RPC client implementations.
  *
@@ -22,28 +25,10 @@ export interface RPCClient {
    *   },
    * };
    * ```
-   *
-   * @template Res The expected response type.
-   * @template Req The request value type.
-   * @param operation The operation (A.K.A. request type)
-   * @param request The request value.
-   * @param instanceID The Librebase instance ID.
    */
-  postToAll<Res, Req = unknown>(
-    operation: string,
-    request: Req,
-    instanceID?: string,
-  ): Promise<Res[]>;
-  /**
-   * Posts a request that can be processed by a single server.
-   *
-   * @template Res The expected response type.
-   * @template Req The request value type.
-   * @param operation The operation (A.K.A. request type)
-   * @param request The request value.
-   * @param instanceID The Librebase instance ID.
-   */
-  postToOne<Res, Req = unknown>(operation: string, request: Req, instanceID?: string): Promise<Res>;
+  postToAll: ClusterDispatch;
+  /** Posts a request that can be processed by a single server. */
+  postToOne: Dispatch;
 }
 
 /**

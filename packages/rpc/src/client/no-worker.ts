@@ -9,9 +9,9 @@ import type { RPCClient } from './client.js';
  * ## Usage
  *
  * ```js
- * import { NoWorker, setHost } from '@librebase/rpc/client';
+ * import { NoWorker, setClient } from '@librebase/rpc/client';
  *
- * setHost(NoWorker);
+ * setClient(NoWorker);
  * ```
  *
  * With this strategy, the thread acts as both the client and server. You must register request

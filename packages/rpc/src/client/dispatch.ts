@@ -1,14 +1,32 @@
 import type * as T from '../types.js';
 
+/**
+ * A function to dispatch a request to a server.
+ *
+ * @category Dispatch
+ * @template Res The expected response type.
+ * @template Req The request body type.
+ * @param operation The request operation type.
+ * @param request The request body.
+ * @param instanceID The Librebase instance ID.
+ */
 export type Dispatch = <Res, Req = unknown>(
   operation: string,
   request: Req,
   instanceID?: string,
 ) => Promise<Res>;
 
+/**
+ * The interface for an object that can be used as a target for {@linkcode createDispatch}.
+ *
+ * @category Dispatch
+ */
 export interface DispatchTarget {
+  /** @ignore */
   addEventListener?: T.MessageEventListenerMethod;
+  /** @ignore */
   on?: T.MessageEventListenerMethod;
+  /** @ignore */
   postMessage(message: T.RequestMessage): unknown;
 }
 
@@ -25,6 +43,11 @@ function onMessage<T>(
   }
 }
 
+/**
+ * Constructs a {@linkcode Dispatch} function for the given {@linkcode DispatchTarget}.
+ *
+ * @category Dispatch
+ */
 export function createDispatch(target: DispatchTarget): Dispatch {
   const callbacks: Record<
     number,
@@ -54,8 +77,15 @@ export function createDispatch(target: DispatchTarget): Dispatch {
   });
 }
 
+/**
+ * The interface for an object that can be used as a target for {@linkcode createDeferredDispatch}.
+ *
+ * @category Dispatch
+ */
 export interface DeferredDispatchTarget extends DispatchTarget {
+  /** @ignore */
   removeEventListener?: T.MessageEventListenerMethod;
+  /** @ignore */
   removeListener?: T.MessageEventListenerMethod;
 }
 
@@ -67,6 +97,13 @@ type OnReadyQueue = [
   instanceID?: string,
 ][];
 
+/**
+ * Constructs a {@linkcode Dispatch} function for the given {@linkcode DispatchTarget}. This type of
+ * dispatch will wait for a 'ready' message from the target before dispatching any requests. Until
+ * the 'ready' message is received, requests will remain in a queue.
+ *
+ * @category Dispatch
+ */
 export function createDeferredDispatch(target: DeferredDispatchTarget): Dispatch {
   const dispatch = createDispatch(target);
   let onReadyQueue: OnReadyQueue | undefined = [];
