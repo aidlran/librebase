@@ -3,16 +3,29 @@ import { describe, expect, test } from 'vitest';
 import { Worker as NodeWorker } from 'worker_threads';
 import { workerStrategy } from './worker.js';
 
-describe('RPC Worker Strategy', () => {
-  const scriptPath = '../../test/dummy-script.js';
+describe.skip('Worker RPC client', () => {
+  for (const [suiteName, constructor] of [
+    [
+      'Web worker support',
+      () => new Worker(new URL('../../test/test-web-worker-script.js', import.meta.url)),
+    ],
+    [
+      'Supports Node.js worker_threads',
+      () => new NodeWorker('../../test/test-node-worker-script.js'),
+    ],
+  ] as const) {
+    describe(suiteName, () => {
+      const client = workerStrategy(constructor);
 
-  test('Web Worker', () => {
-    const constructor = () => new Worker(new URL(scriptPath, import.meta.url));
-    expect(() => workerStrategy(constructor)).not.toThrow();
-  });
+      test('Success response', () => {
+        expect(client.postToAll('testsuccess', '12', '34')).resolves.toEqual(['success']);
+        expect(client.postToOne('testsuccess', '12', '34')).resolves.toBe('success');
+      });
 
-  test.todo('Node.js worker_threads', () => {
-    const constructor = () => new NodeWorker(scriptPath);
-    expect(() => workerStrategy(constructor as never)).not.toThrow();
-  });
+      test('Error response', () => {
+        expect(client.postToAll('testerror', '12', '34')).rejects.toThrow('Expected error');
+        expect(client.postToOne('testerror', '12', '34')).rejects.toThrow('Expected error');
+      });
+    });
+  }
 });

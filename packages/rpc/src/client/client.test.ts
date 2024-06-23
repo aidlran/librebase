@@ -1,9 +1,9 @@
 import { expect, test } from 'vitest';
-import { client, setHost } from './client.js';
+import { client, setClient } from './client.js';
 
 test('Set RPC Host', () => {
   const newHost = {};
   expect(client).not.toBe(newHost);
-  setHost(newHost as never);
+  setClient(newHost as never);
   expect(client).toBe(newHost);
 });

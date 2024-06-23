@@ -6,6 +6,6 @@ export interface RPCClient {
 
 export let client: RPCClient;
 
-export function setHost(rpcClient: RPCClient) {
+export function setClient(rpcClient: RPCClient) {
   client = rpcClient;
 }

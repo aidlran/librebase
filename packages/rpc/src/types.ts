@@ -1,6 +1,6 @@
 /** @module Shared Types */
 
-export type MessageEventListenerMethod<T> = (
+export type MessageEventListenerMethod<T = never> = (
   type: 'message',
   listener: (event: { data: T }) => void,
 ) => unknown;

@@ -7,8 +7,22 @@ export type Dispatch = <Res, Req = unknown>(
 ) => Promise<Res>;
 
 export interface DispatchTarget {
-  addEventListener: T.MessageEventListenerMethod<T.ResponseMessage>;
+  addEventListener?: T.MessageEventListenerMethod;
+  on?: T.MessageEventListenerMethod;
   postMessage(message: T.RequestMessage): unknown;
+}
+
+function onMessage<T>(
+  target: DispatchTarget,
+  listener: Parameters<T.MessageEventListenerMethod<T>>[1],
+) {
+  if (target.addEventListener) {
+    target.addEventListener('message', listener);
+  } else if (target.on) {
+    target.on('message', listener);
+  } else {
+    throw new TypeError('Unsupported target');
+  }
 }
 
 export function createDispatch(target: DispatchTarget): Dispatch {
@@ -17,7 +31,8 @@ export function createDispatch(target: DispatchTarget): Dispatch {
     [resolve: (response: unknown) => void, reject: (reason?: string) => void]
   > = {};
   let nextJobID = 0;
-  target.addEventListener('message', (event) => {
+
+  onMessage<T.ResponseMessage>(target, (event) => {
     if (
       typeof event.data === 'object' &&
       typeof event.data.jobID === 'number' &&
@@ -30,6 +45,7 @@ export function createDispatch(target: DispatchTarget): Dispatch {
       }
     }
   });
+
   // prettier-ignore
   return (op, payload, instanceID) => new Promise((resolve, reject) => {
     const jobID = nextJobID++;
@@ -39,7 +55,8 @@ export function createDispatch(target: DispatchTarget): Dispatch {
 }
 
 export interface DeferredDispatchTarget extends DispatchTarget {
-  removeEventListener: T.MessageEventListenerMethod<'ready'>;
+  removeEventListener?: T.MessageEventListenerMethod;
+  removeListener?: T.MessageEventListenerMethod;
 }
 
 type OnReadyQueue = [
@@ -55,14 +72,20 @@ export function createDeferredDispatch(target: DeferredDispatchTarget): Dispatch
   let onReadyQueue: OnReadyQueue | undefined = [];
   function onReady(event: Pick<MessageEvent, 'data'>) {
     if (event.data === 'ready') {
-      target.removeEventListener('message', onReady);
+      if (target.removeEventListener) {
+        target.removeEventListener('message', onReady);
+      } else if (target.removeListener) {
+        target.removeListener('message', onReady);
+      } else {
+        throw new TypeError('Unsupported target');
+      }
       for (const [op, request, resolve, reject, instanceID] of onReadyQueue!) {
         void dispatch(op, request, instanceID).then(resolve).catch(reject);
       }
       onReadyQueue = undefined;
     }
   }
-  target.addEventListener('message', onReady);
+  onMessage<'ready'>(target, onReady);
   return (op, request, instanceID) =>
     onReadyQueue
       ? new Promise((resolve, reject) =>
