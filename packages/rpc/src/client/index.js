@@ -5,7 +5,7 @@
  * ## Usage
  *
  * To setup the RPC client in your application so that you can use features that depend on RPC, see
- * [this guide](https://librebase.io/docs/documents/RPC.Guides.Client_Setup_Guide.html).
+ * [this guide](https://librebase.io/docs/documents/RPC.Client_Setup_Guide.html).
  *
  * @module Client
  */
