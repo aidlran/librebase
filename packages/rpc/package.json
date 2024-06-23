@@ -19,17 +19,9 @@
       "types": "./dist/client/index.d.ts",
       "default": "./dist/client/index.js"
     },
-    "./client/worker": {
-      "types": "./dist/client/worker/worker.d.ts",
-      "default": "./dist/client/worker/worker.js"
-    },
     "./server": {
-      "types": "./dist/server/server.d.ts",
-      "default": "./dist/server/server.js"
-    },
-    "./server/worker": {
-      "types": "./dist/server/worker/worker.d.ts",
-      "default": "./dist/server/worker/worker.js"
+      "types": "./dist/server/index.d.ts",
+      "default": "./dist/server/index.js"
     }
   },
   "main": "./dist/index.js",

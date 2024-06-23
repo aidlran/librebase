@@ -4,7 +4,7 @@ import { Worker as NodeWorker } from 'worker_threads';
 import { workerStrategy } from './worker.js';
 
 describe('RPC Worker Strategy', () => {
-  const scriptPath = './test/dummy-script.js';
+  const scriptPath = '../../test/dummy-script.js';
 
   test('Web Worker', () => {
     const constructor = () => new Worker(new URL(scriptPath, import.meta.url));

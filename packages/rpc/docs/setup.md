@@ -56,8 +56,7 @@ This example of a worker script uses `Handlers.set` to register a handler, regis
 ```js
 // worker-entrypoint.js
 
-import { Handlers } from '@librebase/rpc/server';
-import { listen } from '@librebase/rpc/server/worker';
+import { Handlers, listen } from '@librebase/rpc/server';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
@@ -77,8 +76,7 @@ Now we need to tell the main thread to spawn the worker(s) and use them for remo
 This example is for web workers and should work with Vite. Other bundlers may have different quirks when working with web workers, so please consult their documentation.
 
 ```js
-import { setHost } from '@librebase/rpc/client';
-import { workerStrategy } from '@librebase/rpc/client/worker';
+import { setHost, workerStrategy } from '@librebase/rpc/client';
 
 function constructWorker() {
   return new Worker(new URL('./worker-entrypoint?worker', import.meta.url), {

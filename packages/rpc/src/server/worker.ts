@@ -1,7 +1,5 @@
-/** @module Server / Worker */
-
-import type * as T from '../../types.js';
-import { processRequest } from '../server.js';
+import type * as T from '../types.js';
+import { processRequest } from './server.js';
 
 export interface ResponderTarget {
   addEventListener: T.MessageEventListenerMethod<T.RequestMessage>;
