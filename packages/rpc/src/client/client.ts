@@ -1,5 +1,6 @@
 import type { ClusterDispatch } from './cluster.js';
 import type { Dispatch } from './dispatch.js';
+import { NoWorker } from './no-worker.js';
 
 /**
  * Defines the interface for RPC client implementations.
@@ -37,7 +38,7 @@ export interface RPCClient {
  *
  * @category Client
  */
-export let client: RPCClient;
+export let client = NoWorker;
 
 /**
  * Defines the {@linkcode RPCClient} to use for invoking procedures.
