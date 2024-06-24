@@ -18,8 +18,8 @@
     "./wordlist": {
       "default": "./bip39-wordlist-english.json"
     },
-    "./worker": {
-      "default": "./dist/worker/index.js"
+    "./server": {
+      "default": "./dist/server/index.js"
     }
   },
   "main": "./dist/index.js",

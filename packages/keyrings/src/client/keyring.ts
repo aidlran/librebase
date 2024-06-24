@@ -75,7 +75,7 @@ export function getActiveKeyring<T>(instanceID?: string) {
   return activeKeyrings[instanceID ?? ''] as Keyring<T> | undefined;
 }
 
-export { getAvailableKeyringCIDs } from '../worker/keyring.js';
+export { getAvailableKeyringCIDs } from '../server/keyring.js';
 
 /**
  * Import a keyring using a mnemonic recovery seed phrase. The keyring is automatically encrypted
