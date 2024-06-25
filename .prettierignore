@@ -1,7 +1,1 @@
-coverage
-dist
-docs/api
-lib
-node_modules
-LICENSE
 package-lock.json

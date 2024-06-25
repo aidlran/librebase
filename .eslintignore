@@ -2,4 +2,3 @@
 /docs/*.png
 /docs/api
 **/dist
-**/node_modules

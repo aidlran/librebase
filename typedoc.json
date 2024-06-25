@@ -1,15 +1,7 @@
 {
   "extends": ["./typedoc.base.json"],
-  "entryPoints": [
-    "./packages/codec/json",
-    "./packages/core",
-    "./packages/driver/indexeddb",
-    "./packages/fs",
-    "./packages/keyrings",
-    "./packages/rpc",
-    "./packages/wraps"
-  ],
+  "entryPoints": ["./packages/*"],
   "entryPointStrategy": "packages",
-  "name": "Librebase JS Docs",
+  "name": "AstrobaseJS",
   "out": "docs/api"
 }

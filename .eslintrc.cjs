@@ -45,14 +45,7 @@ module.exports = {
         'prefer-const': 'off',
       },
     },
-    {
-      files: ['packages/create/**/*'],
-      rules: {
-        'no-console': 'off',
-      },
-    },
   ],
-  ignorePatterns: ['packages/*/coverage', 'packages/**/dist'],
   rules: {
     '@typescript-eslint/array-type': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
