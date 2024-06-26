@@ -1,11 +1,16 @@
 {
-  "name": "@librebase/rpc",
-  "version": "0.2.0-rc",
-  "private": true,
-  "description": "Librebase RPC API. Enables worker threads and more.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "name": "@astrobase/rpc",
+  "version": "0.1.0",
+  "description": "Astrobase RPC system.",
+  "homepage": "https://astrobase.ai",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/rpc"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -24,15 +29,17 @@
       "default": "./dist/server/index.js"
     }
   },
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "./dist"
   ],
   "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
+    "prebuild": "rimraf dist",
+    "build": "tsc --project tsconfig.build.json",
     "cost": "bun build --minify src/index.js | gzip | wc -c",
-    "lc": "echo @librebase/rpc: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
+    "lc": "echo @astrobase/rpc: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
     "start": "npm run watch",
     "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
   }
