@@ -4,14 +4,14 @@ import { cidToBytes, type CIDLike } from './cid.js';
 import { encodeWithCodec } from './codecs.js';
 import { Hash, HashAlgorithm, hash } from './hashes.js';
 import { validateMediaType } from './media-types.js';
-import { FS } from './schema.js';
+import { Immutable } from './schema.js';
 
 export async function deleteFile(cid: CIDLike, instanceID?: string) {
-  return deleteOne(new Identifier(FS.key, cidToBytes(cid)), instanceID);
+  return deleteOne(new Identifier(Immutable.key, cidToBytes(cid)), instanceID);
 }
 
 export async function getFile<T = unknown>(cid: CIDLike, instanceID?: string) {
-  return getOne<T>(new Identifier(FS.key, cidToBytes(cid)), instanceID);
+  return getOne<T>(new Identifier(Immutable.key, cidToBytes(cid)), instanceID);
 }
 
 export interface PutOptions {
@@ -27,7 +27,7 @@ export async function putFile(
   const payload = await serializeFileContent(value, mediaType, { instanceID: options?.instanceID });
   const hashAlg = options?.hashAlg ?? HashAlgorithm.SHA256;
   const objectHash = await hash(hashAlg, payload);
-  const id = new Identifier(FS.key, objectHash.toBytes());
+  const id = new Identifier(Immutable.key, objectHash.toBytes());
   await putOne(id, payload, options?.instanceID);
   return objectHash;
 }
@@ -56,7 +56,7 @@ export function parseFileContent(content: Uint8Array, trust = false): ParsedFile
   return [version, new TextDecoder().decode(mediaTypeBytes), content.subarray(nulIndex + 1)];
 }
 
-export interface SerializeFsContentOptions {
+export interface SerializeContentOptions {
   /**
    * Set to true to use a encoded payload. When this option is enabled, the value must be a
    * `Uint8Array`.
@@ -76,17 +76,17 @@ export interface SerializeFsContentOptions {
 export async function serializeFileContent(
   value: unknown,
   mediaType: string | MediaType,
-  options?: SerializeFsContentOptions & { encoded?: false },
+  options?: SerializeContentOptions & { encoded?: false },
 ): Promise<Uint8Array>;
 export async function serializeFileContent(
   payload: Uint8Array,
   mediaType: string | MediaType,
-  options: SerializeFsContentOptions & { encoded: true },
+  options: SerializeContentOptions & { encoded: true },
 ): Promise<Uint8Array>;
 export async function serializeFileContent(
   value: unknown,
   mediaType: string | MediaType,
-  options?: SerializeFsContentOptions,
+  options?: SerializeContentOptions,
 ): Promise<Uint8Array> {
   let encodedPayload: Uint8Array;
 

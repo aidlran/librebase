@@ -1,5 +1,5 @@
 import {
-  FS,
+  Immutable,
   decodeWithCodec,
   parseFileContent,
   putFile,
@@ -23,7 +23,7 @@ export async function getIdentityValue(address: string | Uint8Array, instanceID?
   if (hash) {
     return queryChannelsSync(async (channel) => {
       if (channel.get) {
-        const objectResult = await channel.get(new Identifier(FS.key, hash.toBytes()));
+        const objectResult = await channel.get(new Identifier(Immutable.key, hash.toBytes()));
         if (objectResult) {
           const [, mediaType, payload] = parseFileContent(new Uint8Array(objectResult));
           const value = await decodeWithCodec<WrapValue>(payload, mediaType, instanceID);

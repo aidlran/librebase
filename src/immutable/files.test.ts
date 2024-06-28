@@ -12,7 +12,7 @@ import {
   serializeFileContent,
 } from './files.js';
 import { Hash, HashAlgorithm } from './hashes.js';
-import { FS } from './schema.js';
+import { Immutable } from './schema.js';
 
 describe('File operations', () => {
   const instanceID = 'File Operations';
@@ -22,7 +22,7 @@ describe('File operations', () => {
 
   channels.push(mockDriverA, mockDriverB);
   CodecRegistry.register(mockJSONCodec, { instanceID });
-  IdentifierRegistry.register(FS, { instanceID });
+  IdentifierRegistry.register(Immutable, { instanceID });
 
   function createHash() {
     return crypto.getRandomValues(new Uint8Array(33));
@@ -53,7 +53,7 @@ describe('File operations', () => {
     const instanceID = 'Get File';
 
     const existing = crypto.getRandomValues(new Uint8Array(16));
-    const existingCID = new Uint8Array([FS.key, ...existing]);
+    const existingCID = new Uint8Array([Immutable.key, ...existing]);
 
     getChannels(instanceID).push({
       get(id) {
@@ -69,7 +69,7 @@ describe('File operations', () => {
       },
     });
 
-    IdentifierRegistry.register({ key: FS.key, parse: (_, v) => v }, { instanceID });
+    IdentifierRegistry.register({ key: Immutable.key, parse: (_, v) => v }, { instanceID });
 
     for (const cid of [existing, new Hash(existing[0], existing.subarray(1))]) {
       await expect(getFile(cid, instanceID)).resolves.toEqual(existingCID);

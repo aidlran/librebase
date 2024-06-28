@@ -3,8 +3,8 @@ import { validateCID } from './cid.js';
 import { decodeWithCodec } from './codecs.js';
 import { parseFileContent } from './files.js';
 
-/** Provides a content addressed file system. */
-export const FS = {
+/** {@linkcode IdentifierSchema} for immutable content-addressed files. */
+export const Immutable = {
   key: 1,
   async parse(cid, content, instanceID?: string) {
     if (!(await validateCID(cid.value, content))) {
