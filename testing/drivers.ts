@@ -1,4 +1,4 @@
-import type { ChannelDriver } from '../src/public/channels.js';
+import type { ChannelDriver } from '../src/core/channels.js';
 
 function throwError() {
   throw new Error();

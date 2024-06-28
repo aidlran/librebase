@@ -4,7 +4,7 @@
  */
 
 import { Buffer } from 'buffer';
-import { getChannels } from '../../public/channels.js';
+import { getChannels } from '../../core/channels.js';
 import { createDispatch } from '../../rpc/client/dispatch.js';
 import { Handlers } from '../../rpc/server/server.js';
 import { unwrap, wrap } from '../../wraps/wraps.js';

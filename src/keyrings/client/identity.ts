@@ -6,7 +6,7 @@ import {
   type PutOptions,
 } from '../../immutable/index.js';
 import { Base58 } from '../../internal/encoding.js';
-import { Identifier, queryChannelsSync } from '../../public/index.js';
+import { Identifier, queryChannelsSync } from '../../core/index.js';
 import { client } from '../../rpc/client/client.js';
 import { isWrap, wrap, type ECDSAWrappedMetadata, type WrapValue } from '../../wraps/index.js';
 import type { MediaType } from 'content-type';

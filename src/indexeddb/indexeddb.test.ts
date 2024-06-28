@@ -1,4 +1,4 @@
-import { Identifier } from '../public/index.js';
+import { Identifier } from '../core/index.js';
 import 'fake-indexeddb/auto';
 import { expect, test } from 'vitest';
 import { indexeddb } from './indexeddb.js';

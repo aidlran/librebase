@@ -1,12 +1,7 @@
 import { format, type MediaType } from 'content-type';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import { mockJSONCodec } from '../../testing/codecs.js';
-import {
-  Identifier,
-  IdentifierRegistry,
-  getChannels,
-  type ChannelDriver,
-} from '../public/index.js';
+import { Identifier, IdentifierRegistry, getChannels, type ChannelDriver } from '../core/index.js';
 import { CodecRegistry } from './codecs.js';
 import {
   deleteFile,

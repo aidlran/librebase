@@ -22,8 +22,8 @@
   "type": "module",
   "exports": {
     ".": {
-      "types": "./dist/public/index.d.ts",
-      "default": "./dist/public/index.js"
+      "types": "./dist/core/index.d.ts",
+      "default": "./dist/core/index.js"
     },
     "./immutable": {
       "types": "./dist/immutable/index.d.ts",
@@ -73,8 +73,9 @@
       "default": "./dist/wraps/index.js"
     }
   },
-  "main": "./dist/public/index.js",
-  "types": "./dist/public/index.d.ts",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "./dist/index.d.ts",
   "files": [
     "./bip39-wordlist-english.json",
     "./dist"
@@ -86,7 +87,7 @@
     "build:diagrams": "plantuml docs/*.puml",
     "build:docs": "typedoc",
     "ci": "conc npm:build npm:lint npm:test",
-    "cost": "bun build --minify index.js | gzip | wc -c",
+    "cost": "bun build --minify src/index.js | gzip | wc -c",
     "coverage": "vitest run --coverage",
     "format": "conc npm:format:*",
     "format:prettier": "prettier --write .",
@@ -111,7 +112,6 @@
     "varint": "6.0.0"
   },
   "devDependencies": {
-    "@astrobase/core": ".",
     "@types/content-type": "^1.1.8",
     "@types/mime-db": "^1.0.0",
     "@types/varint": "^6.0.3",

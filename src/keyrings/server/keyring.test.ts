@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import wordlist from '../../../bip39-wordlist-english.json';
-import { getChannels } from '../../public/channels.js';
+import { getChannels } from '../../core/channels.js';
 import { Hash } from '../../immutable/hashes.js';
 import { indexeddb } from '../../indexeddb/indexeddb.js';
 import { KEYRINGS_INSTANCE_ID, KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';

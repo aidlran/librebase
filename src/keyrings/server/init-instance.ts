@@ -1,7 +1,7 @@
 import { CodecRegistry, FS, type Codec } from '../../immutable/index.js';
 import { json } from '../../json/codec.js';
 import { binary } from '../../middleware/binary.js';
-import { IdentifierRegistry } from '../../public/identifiers.js';
+import { IdentifierRegistry } from '../../core/identifiers.js';
 import { WrapMiddleware, WrapRegistry } from '../../wraps/index.js';
 import { KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';
 import { KeyringIndexIdentifier } from './keyring.js';

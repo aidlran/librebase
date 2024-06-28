@@ -1,6 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
+    "./src/core/index.ts",
     "./src/immutable/index.ts",
     "./src/indexeddb/indexeddb.ts",
     "./src/internal/index.ts",
@@ -8,15 +9,14 @@
     "./src/keyrings/index.ts",
     "./src/keyrings/server/index.ts",
     "./src/middleware/index.ts",
-    "./src/public/index.ts",
-    "./src/rpc/client/index.js",
-    "./src/rpc/server/index.js",
+    "./src/rpc/client/index.ts",
+    "./src/rpc/server/index.ts",
     "./src/rpc/types.ts",
     "./src/wraps/index.ts"
   ],
   "hideGenerator": true,
   "includeVersion": true,
-  "name": "AstrobaseJS",
+  "name": "Astrobase for JS",
   "navigation": {
     "includeCategories": true,
     "includeFolders": false,

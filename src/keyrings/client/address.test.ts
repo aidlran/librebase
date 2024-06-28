@@ -5,7 +5,7 @@ import {
   Identifier,
   IdentifierRegistry,
   type ChannelDriver,
-} from '../../public/index.js';
+} from '../../core/index.js';
 import { getAddressHash, setAddressHash } from './address.js';
 
 describe('Address CRUD', () => {

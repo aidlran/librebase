@@ -1,4 +1,4 @@
-import type { IdentifierSchema } from '../public/identifiers.js';
+import type { IdentifierSchema } from '../core/identifiers.js';
 import { validateCID } from './cid.js';
 import { decodeWithCodec } from './codecs.js';
 import { parseFileContent } from './files.js';
