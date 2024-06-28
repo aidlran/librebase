@@ -23,9 +23,13 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./recommended": {
-      "types": "./dist/recommended.d.ts",
-      "default": "./dist/recommended.js"
+    "./json": {
+      "types": "./dist/json/index.d.ts",
+      "default": "./dist/json/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "default": "./dist/middleware/index.js"
     }
   },
   "main": "dist/index.js",

@@ -1,4 +1,4 @@
-import type { JsonCodecMiddleware } from '@astrobase/codec-json';
+import type { JsonCodecMiddleware } from '@astrobase/immutable/middleware';
 import {
   instance,
   integer,

@@ -31,10 +31,6 @@
     "./module": {
       "types": "./dist/ecdsa.d.ts",
       "default": "./dist/ecdsa.js"
-    },
-    "./recommended": {
-      "types": "./dist/recommended.d.ts",
-      "default": "./dist/recommended.js"
     }
   },
   "main": "dist/wraps.js",

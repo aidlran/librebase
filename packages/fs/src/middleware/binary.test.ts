@@ -1,6 +1,6 @@
-import { Hash } from '@astrobase/immutable';
 import { describe, expect, it, test } from 'vitest';
-import { encodes } from '../../../../core/testing/encodes.js';
+import { encodes } from '../../../core/testing/encodes.js';
+import { Hash } from '../hashes.js';
 import { binary } from './binary.js';
 
 describe('JSON codec binary middleware', () => {

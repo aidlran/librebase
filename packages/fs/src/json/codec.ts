@@ -1,5 +1,5 @@
-import type { Codec, CodecProps } from '@astrobase/immutable';
-import type { JsonCodecMiddleware } from './types.js';
+import type { Codec, CodecProps } from '../codecs.js';
+import type { JsonCodecMiddleware } from '../middleware/types.js';
 
 /** An extensible JSON codec for the `application/json` media type. */
 export interface JSONCodec extends Codec {
