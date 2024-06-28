@@ -77,6 +77,11 @@ export class RegistryError extends Error {
  */
 export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule<K>> {
   /**
+   * A map of global defaults for the registry. Applies across all instances where a module is not
+   * provided for the key.
+   */
+  defaults?: Record<K, T>;
+  /**
    * An optional validation function for Registry keys.
    *
    * For instance, the following function will ensure the key is an integer.
@@ -136,7 +141,7 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
    * @returns The module or `undefined` if no module is registered with the key.
    */
   get(key: K, instanceID?: string): T | undefined {
-    return this.registry[instanceID ?? '']?.[key];
+    return this.registry[instanceID ?? '']?.[key] ?? this.options?.defaults?.[key];
   }
 
   /**

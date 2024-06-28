@@ -1,3 +1,4 @@
+import type { MediaType } from 'content-type';
 import {
   Hash,
   HashAlgorithm,
@@ -7,7 +8,8 @@ import {
   serializeFileContent,
 } from '../immutable/index.js';
 import { Base58, Registry, type RegistryModule } from '../internal/index.js';
-import type { MediaType } from 'content-type';
+// import { EncryptWrapSchema } from '../keyrings/server/wrap/encrypt.js';
+import { ECDSAWrapModule } from './ecdsa.js';
 
 export type WrapFn<T = unknown, R = unknown> = (config: {
   hash: Hash;
@@ -46,6 +48,10 @@ export interface WrapValue<TName extends string = string, TMetadata = unknown> {
 }
 
 export const WrapRegistry = new Registry<string, WrapModule>({
+  defaults: {
+    ecdsa: ECDSAWrapModule,
+    // encrypt: EncryptWrapSchema, // TODO(fix): breaks due to ecc dependancy
+  },
   validateKey: (key) => typeof key === 'string',
 });
 

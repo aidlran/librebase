@@ -1,6 +1,6 @@
 import { decode, encode, encodingLength } from 'varint';
-import { Base58 } from '../internal/encoding.js';
-import { Registry, type RegistryModule } from '../internal/registry.js';
+import { FS } from '../immutable/schema.js';
+import { Base58, Registry, type RegistryModule } from '../internal/index.js';
 import type { MaybePromise } from './channels.js';
 
 /**
@@ -85,6 +85,7 @@ export class Identifier {
  * @category Identifiers
  */
 export const IdentifierRegistry = new Registry<number, IdentifierSchema>({
+  defaults: { 1: FS },
   validateKey: (key) => Number.isInteger(key),
   validateModule: (value) => typeof value.parse === 'function',
 });
