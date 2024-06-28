@@ -1,9 +1,9 @@
 // export * from '@astrobase/client';
 // export * from '@astrobase/client/worker';
 export * from '@astrobase/core';
-export * from '@astrobase/core/driver';
-export * from '@astrobase/core/internal';
 export * from '@astrobase/core/immutable';
+export * from '@astrobase/core/indexeddb';
+export * from '@astrobase/core/internal';
 export * from '@astrobase/core/json';
 export * from '@astrobase/core/middleware';
 export * from '@astrobase/keyrings';

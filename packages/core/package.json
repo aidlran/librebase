@@ -26,13 +26,13 @@
       "types": "./dist/public/index.d.ts",
       "default": "./dist/public/index.js"
     },
-    "./driver": {
-      "types": "./dist/driver/index.d.ts",
-      "default": "./dist/driver/index.js"
-    },
     "./immutable": {
       "types": "./dist/immutable/index.d.ts",
       "default": "./dist/immutable/index.js"
+    },
+    "./indexeddb": {
+      "types": "./dist/indexeddb/indexeddb.d.ts",
+      "default": "./dist/indexeddb/indexeddb.js"
     },
     "./internal": {
       "types": "./dist/internal/index.d.ts",

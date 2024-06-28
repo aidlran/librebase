@@ -23,7 +23,7 @@ export interface IndexedDbChannelOptions {
  *
  * ```js
  * import { getChannels } from '@astrobase/core';
- * import { indexeddb } from '@astrobase/core/driver';
+ * import { indexeddb } from '@astrobase/core/indexeddb';
  *
  * indexeddb().then((driver) => {
  *   getChannels().push(driver);
