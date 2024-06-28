@@ -1,6 +1,6 @@
 /**
  * @module Core
- * @category API
+ * @category API Reference
  */
 
 export * from './channels.js';

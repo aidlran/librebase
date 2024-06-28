@@ -1,6 +1,6 @@
 /**
  * @module RPC/Shared
- * @category API
+ * @category API Reference
  */
 
 export type MessageEventListenerMethod<T = never> = (

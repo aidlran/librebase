@@ -1,6 +1,6 @@
 /**
  * @module Keyrings/Server
- * @category API
+ * @category API Reference
  */
 
 import { Buffer } from 'buffer';

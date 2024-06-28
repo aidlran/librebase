@@ -2,7 +2,7 @@
  * Intended for internal use. These APIs are considered unstable.
  *
  * @module Internal
- * @category API
+ * @category API Reference
  */
 
 export * from './encoding.js';

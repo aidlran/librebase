@@ -1,6 +1,6 @@
 /**
  * @module Middleware
- * @category API
+ * @category API Reference
  */
 
 export * from './binary.js';

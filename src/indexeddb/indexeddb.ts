@@ -1,6 +1,6 @@
 /**
  * @module IndexedDB
- * @category API
+ * @category API Reference
  */
 
 import type { ChannelDriver, Identifier } from '../public/index.js';

@@ -1,6 +1,6 @@
 /**
  * @module JSON
- * @category API
+ * @category API Reference
  */
 
 import type { Codec, CodecProps } from '../immutable/codecs.js';

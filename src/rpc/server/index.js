@@ -1,6 +1,6 @@
 /**
  * @module RPC/Server
- * @category API
+ * @category API Reference
  */
 
 export * from './server.js';

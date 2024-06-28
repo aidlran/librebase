@@ -1,6 +1,6 @@
 /**
  * @module Wraps
- * @category API
+ * @category API Reference
  */
 
 export * from './ecdsa.js';

@@ -8,7 +8,7 @@
  * [this guide](https://astrobase.me/docs/documents/RPC.Client_Setup_Guide.html).
  *
  * @module RPC/Client
- * @category API
+ * @category API Reference
  */
 
 export * from './client.js';

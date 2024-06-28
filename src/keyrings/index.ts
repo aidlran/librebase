@@ -1,6 +1,6 @@
 /**
  * @module Keyrings/Client
- * @category API
+ * @category API Reference
  */
 
 export * from './client/index.js';

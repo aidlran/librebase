@@ -1,6 +1,6 @@
 /**
  * @module Immutable
- * @category API
+ * @category API Reference
  */
 
 export * from './cid.js';
