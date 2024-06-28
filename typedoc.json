@@ -23,7 +23,7 @@
     "includeGroups": false
   },
   "navigationLinks": {
-    "Website": "https://astrobase.me",
+    "Website": "/",
     "GitHub": "https://github.com/AstrobaseTech/Astrobase"
   },
   "out": "docs/api",
