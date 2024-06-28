@@ -15,7 +15,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
-    "directory": "packages/engine"
+    "directory": "packages/core"
   },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
@@ -25,6 +25,10 @@
     ".": {
       "types": "./dist/public/index.d.ts",
       "default": "./dist/public/index.js"
+    },
+    "./driver": {
+      "types": "./dist/driver/index.d.ts",
+      "default": "./dist/driver/index.js"
     },
     "./internal": {
       "types": "./dist/internal/index.d.ts",

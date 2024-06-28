@@ -1,5 +1,0 @@
-{
-  "extends": ["../../../typedoc.base.json"],
-  "entryPoints": ["indexeddb.ts"],
-  "name": "Driver / IndexedDB"
-}

@@ -22,14 +22,12 @@ module.exports = {
     node: true,
   },
   overrides: [
-    ...['client', 'codec/json', 'core', 'driver/indexeddb', 'fs', 'keyrings', 'wraps'].map(
-      (path) => ({
-        files: [`packages/${path}/**/*.ts`],
-        parserOptions: {
-          tsconfigRootDir: join(__dirname, `packages/${path}`),
-        },
-      }),
-    ),
+    ...['client', 'codec/json', 'core', 'fs', 'keyrings', 'wraps'].map((path) => ({
+      files: [`packages/${path}/**/*.ts`],
+      parserOptions: {
+        tsconfigRootDir: join(__dirname, `packages/${path}`),
+      },
+    })),
     {
       files: ['*.test.*', '**/test/**/*', '**/testing/**/*'],
       rules: {

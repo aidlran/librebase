@@ -1,4 +1,4 @@
-import { Identifier } from '@astrobase/core';
+import { Identifier } from '../public/index.js';
 import 'fake-indexeddb/auto';
 import { expect, test } from 'vitest';
 import { indexeddb } from './indexeddb.js';

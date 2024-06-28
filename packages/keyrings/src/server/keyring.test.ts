@@ -1,5 +1,5 @@
 import { getChannels } from '@astrobase/core';
-import { indexeddb } from '@astrobase/driver-indexeddb';
+import { indexeddb } from '@astrobase/core/driver';
 import { Hash } from '@astrobase/immutable';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, it, test } from 'vitest';

@@ -85,12 +85,6 @@ package "@astrobase/driver-memory" {
   "In-memory Driver" .u.> "Channel Driver"
 }
 
-package "@astrobase/driver-indexeddb" {
-  class "IndexedDB Driver" {
-    Local data persistence for web clients.
-  }
-  "IndexedDB Driver" .u.> "Channel Driver"
-}
 
 package "@astrobase/driver-sqlite" {
   class "SQLite Driver" {
@@ -105,7 +99,6 @@ package "@astrobase/driver-enclaves" {
     Remote data persistence, that we'll provide, in the cloud!
   }
   "Enclaves Driver" .u.> "Channel Driver"
-  "Enclaves Driver" -u[hidden]-> "@astrobase/driver-indexeddb"
 }
 
 package "@astrobase/codec-json" {

@@ -1,4 +1,4 @@
-import type { ChannelDriver, Identifier } from '@astrobase/core';
+import type { ChannelDriver, Identifier } from '../public/index.js';
 
 /** Configuration object for the IndexedDB channel driver. */
 export interface IndexedDbChannelOptions {
@@ -19,11 +19,25 @@ export interface IndexedDbChannelOptions {
 /**
  * Creates an IndexedDB {@linkcode ChannelDriver}.
  *
+ * ## Usage
+ *
+ * ```js
+ * import { getChannels } from '@astrobase/core';
+ * import { indexeddb } from '@astrobase/core/driver';
+ *
+ * indexeddb().then((driver) => {
+ *   getChannels().push(driver);
+ * });
+ * ```
+ *
+ * Note that this function returns a promise. Once awaited, the database connection is initiated and
+ * a {@linkcode ChannelDriver} is resolved, which can be registered.
+ *
  * @param {IndexedDbChannelOptions} [config] An optional configuration object.
  * @returns {Promise<ChannelDriver>} A promise that resolves with the `Channel` interface once the
  *   indexedDB connection has been established.
  */
-export async function indexeddb(config?: IndexedDbChannelOptions): Promise<IndexedDB> {
+export async function indexeddb(config?: IndexedDbChannelOptions): Promise<IndexeddbDriver> {
   const databaseName = config?.databaseName ?? 'astrobase';
   const tableName = config?.tableName ?? 'astrobase';
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -34,10 +48,10 @@ export async function indexeddb(config?: IndexedDbChannelOptions): Promise<Index
       request.result.createObjectStore(tableName, { keyPath: 'id' });
     };
   });
-  return new IndexedDB(db, databaseName, tableName);
+  return new IndexeddbDriver(db, databaseName, tableName);
 }
 
-class IndexedDB implements ChannelDriver {
+export class IndexeddbDriver implements ChannelDriver {
   constructor(
     /** @ignore */
     private readonly db: IDBDatabase,
@@ -80,5 +94,3 @@ class IndexedDB implements ChannelDriver {
     });
   }
 }
-
-export type { IndexedDB };
