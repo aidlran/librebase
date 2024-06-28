@@ -1,5 +1,6 @@
 {
   "extends": ["../../typedoc.base.json"],
-  "entryPoints": ["src/*/index.ts"],
-  "name": "Core"
+  "entryPoints": ["src/**/index.ts"],
+  "name": "Core",
+  "projectDocuments": ["docs/*.md"]
 }

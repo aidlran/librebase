@@ -45,6 +45,18 @@
     "./middleware": {
       "types": "./dist/middleware/index.d.ts",
       "default": "./dist/middleware/index.js"
+    },
+    "./rpc": {
+      "types": "./dist/rpc/types.d.ts",
+      "default": "./dist/rpc/types.js"
+    },
+    "./rpc/client": {
+      "types": "./dist/rpc/client/index.d.ts",
+      "default": "./dist/rpc/client/index.js"
+    },
+    "./rpc/server": {
+      "types": "./dist/rpc/server/index.d.ts",
+      "default": "./dist/rpc/server/index.js"
     }
   },
   "main": "./dist/public/index.js",

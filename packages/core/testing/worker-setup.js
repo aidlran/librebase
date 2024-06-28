@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { Handlers, listen } from '../dist/server/index.js';
+import { Handlers, listen } from '../src/rpc/server/index.js';
 
 export function setupTestWorkerScript(target) {
   Handlers.set('testsuccess', (request, instanceID) => {
