@@ -1,4 +1,3 @@
-import type { JsonCodecMiddleware } from '@astrobase/core/middleware';
 import {
   instance,
   integer,
@@ -13,6 +12,7 @@ import {
   union,
   unknown,
 } from 'valibot';
+import type { JsonCodecMiddleware } from '../middleware/types.js';
 import { unwrap, wrap, type WrapConfig, type WrapValue } from './wraps.js';
 
 export const wrapConfigSchema = object(

@@ -57,6 +57,10 @@
     "./rpc/server": {
       "types": "./dist/rpc/server/index.d.ts",
       "default": "./dist/rpc/server/index.js"
+    },
+    "./wraps": {
+      "types": "./dist/wraps/index.d.ts",
+      "default": "./dist/wraps/index.js"
     }
   },
   "main": "./dist/public/index.js",

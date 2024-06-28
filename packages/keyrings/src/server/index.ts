@@ -1,7 +1,7 @@
 import { getChannels } from '@astrobase/core';
 import { createDispatch } from '@astrobase/core/rpc/client';
 import { Handlers } from '@astrobase/core/rpc/server';
-import { unwrap, wrap } from '@astrobase/wraps';
+import { unwrap, wrap } from '@astrobase/core/wraps';
 import { Buffer } from 'buffer';
 import { KEYRINGS_INSTANCE_ID } from '../shared/index.js';
 import { getIdentity } from './identity.js';

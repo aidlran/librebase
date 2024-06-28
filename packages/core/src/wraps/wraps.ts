@@ -5,8 +5,8 @@ import {
   hash,
   parseFileContent,
   serializeFileContent,
-} from '@astrobase/core/immutable';
-import { Base58, Registry, type RegistryModule } from '@astrobase/core/internal';
+} from '../immutable/index.js';
+import { Base58, Registry, type RegistryModule } from '../internal/index.js';
 import type { MediaType } from 'content-type';
 
 export type WrapFn<T = unknown, R = unknown> = (config: {

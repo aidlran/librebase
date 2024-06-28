@@ -8,9 +8,7 @@ import {
 } from '@astrobase/core/immutable';
 import { Base58 } from '@astrobase/core/internal';
 import { client } from '@astrobase/core/rpc/client';
-import { wrap, type WrapValue } from '@astrobase/wraps';
-import { isWrap } from '@astrobase/wraps/middleware';
-import type { ECDSAWrappedMetadata } from '@astrobase/wraps/module';
+import { isWrap, wrap, type ECDSAWrappedMetadata, type WrapValue } from '@astrobase/core/wraps';
 import type { MediaType } from 'content-type';
 import { getAddressHash, setAddressHash } from './address.js';
 
