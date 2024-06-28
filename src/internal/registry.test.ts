@@ -104,4 +104,30 @@ describe('Registry', () => {
       expect(registry.get(key, 'a')).toBe(thing2);
     });
   });
+
+  test('Defaults', () => {
+    const defaultModule = {};
+    const registry = new Registry<number, RegistryModule<number>>({
+      defaults: {
+        123: defaultModule,
+      },
+    });
+
+    expect(registry.get(123)).toBe(defaultModule);
+    expect(registry.get(123), 'withAnInstanceID').toBe(defaultModule);
+    expect(registry.get(456)).toBeUndefined();
+
+    const instanceID = 'onlyScopedToThisInstance';
+    const registerModule = { key: 123 };
+    registry.register(registerModule, { instanceID });
+
+    expect(registry.get(123)).not.toBe(registerModule);
+    expect(registry.get(123)).toBe(defaultModule);
+    expect(registry.get(123, instanceID)).not.toBe(defaultModule);
+    expect(registry.get(123, instanceID)).toBe(registerModule);
+
+    expect(registry.get(123), 'different').not.toBe(registerModule);
+    expect(registry.get(123), 'different').toBe(defaultModule);
+    expect(registry.get(456)).toBeUndefined();
+  });
 });
