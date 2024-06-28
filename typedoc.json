@@ -1,7 +1,33 @@
 {
-  "extends": ["./typedoc.base.json"],
-  "entryPoints": ["./packages/*"],
-  "entryPointStrategy": "packages",
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "./src/immutable/index.ts",
+    "./src/indexeddb/indexeddb.ts",
+    "./src/internal/index.ts",
+    "./src/json/codec.ts",
+    "./src/keyrings/index.ts",
+    "./src/keyrings/server/index.ts",
+    "./src/middleware/index.ts",
+    "./src/public/index.ts",
+    "./src/rpc/client/index.js",
+    "./src/rpc/server/index.js",
+    "./src/rpc/types.ts",
+    "./src/wraps/index.ts"
+  ],
+  "hideGenerator": true,
+  "includeVersion": true,
   "name": "AstrobaseJS",
-  "out": "docs/api"
+  "navigation": {
+    "includeCategories": true,
+    "includeFolders": false,
+    "includeGroups": false
+  },
+  "navigationLinks": {
+    "Website": "https://astrobase.me",
+    "GitHub": "https://github.com/AstrobaseTech/Astrobase"
+  },
+  "out": "docs/api",
+  "projectDocuments": ["docs/concepts/*.md", "docs/guides/*.md"],
+  "sort": ["instance-first", "alphabetical"],
+  "sourceLinkExternal": true
 }

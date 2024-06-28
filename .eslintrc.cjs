@@ -23,12 +23,6 @@ module.exports = {
   },
   overrides: [
     {
-      files: [`packages/core/**/*.ts`],
-      parserOptions: {
-        tsconfigRootDir: join(__dirname, `packages/core`),
-      },
-    },
-    {
       files: ['*.test.*', '**/test/**/*', '**/testing/**/*'],
       rules: {
         '@typescript-eslint/no-empty-function': 'off',

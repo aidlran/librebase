@@ -4,7 +4,7 @@ export * from '@astrobase/core/indexeddb';
 export * from '@astrobase/core/internal';
 export * from '@astrobase/core/json';
 export * from '@astrobase/core/keyrings';
-export * from '@astrobase/core/keyrings/server';
+// export * from '@astrobase/core/keyrings/server';
 export * from '@astrobase/core/middleware';
 export * from '@astrobase/core/rpc';
 export * from '@astrobase/core/rpc/client';

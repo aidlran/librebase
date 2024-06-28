@@ -1,7 +1,6 @@
 {
-  "name": "astrobase",
+  "name": "@astrobase/core",
   "version": "0.1.0",
-  "private": true,
   "description": "An extensible suite of protocols for building decentralized, secure, multi-user apps.",
   "keywords": [
     "astrobase",
@@ -19,14 +18,71 @@
   },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
+  "sideEffects": false,
   "type": "module",
-  "workspaces": [
-    "packages/*"
+  "exports": {
+    ".": {
+      "types": "./dist/public/index.d.ts",
+      "default": "./dist/public/index.js"
+    },
+    "./immutable": {
+      "types": "./dist/immutable/index.d.ts",
+      "default": "./dist/immutable/index.js"
+    },
+    "./indexeddb": {
+      "types": "./dist/indexeddb/indexeddb.d.ts",
+      "default": "./dist/indexeddb/indexeddb.js"
+    },
+    "./internal": {
+      "types": "./dist/internal/index.d.ts",
+      "default": "./dist/internal/index.js"
+    },
+    "./json": {
+      "types": "./dist/json/codec.d.ts",
+      "default": "./dist/json/codec.js"
+    },
+    "./keyrings": {
+      "types": "./dist/keyrings/index.d.ts",
+      "default": "./dist/keyrings/index.js"
+    },
+    "./keyrings/server": {
+      "types": "./dist/keyrings/server/index.d.ts",
+      "default": "./dist/keyrings/server/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "default": "./dist/middleware/index.js"
+    },
+    "./rpc": {
+      "types": "./dist/rpc/types.d.ts",
+      "default": "./dist/rpc/types.js"
+    },
+    "./rpc/client": {
+      "types": "./dist/rpc/client/index.d.ts",
+      "default": "./dist/rpc/client/index.js"
+    },
+    "./rpc/server": {
+      "types": "./dist/rpc/server/index.d.ts",
+      "default": "./dist/rpc/server/index.js"
+    },
+    "./wordlist": {
+      "default": "./bip39-wordlist-english.json"
+    },
+    "./wraps": {
+      "types": "./dist/wraps/index.d.ts",
+      "default": "./dist/wraps/index.js"
+    }
+  },
+  "main": "./dist/public/index.js",
+  "types": "./dist/public/index.d.ts",
+  "files": [
+    "./bip39-wordlist-english.json",
+    "./dist"
   ],
   "scripts": {
-    "prebuild": "npx --workspaces rimraf dist",
-    "build": "npx -w packages/core tsc --project tsconfig.build.json",
-    "postbuild": "npx --workspaces publint",
+    "prebuild": "rimraf dist",
+    "build": "tsc --project tsconfig.build.json",
+    "postbuild": "publint",
     "build:diagrams": "plantuml docs/*.puml",
     "build:docs": "typedoc",
     "ci": "conc npm:build npm:lint npm:test",
@@ -34,19 +90,31 @@
     "coverage": "vitest run --coverage",
     "format": "conc npm:format:*",
     "format:prettier": "prettier --write .",
-    "format:sort-package-json": "sort-package-json package.json packages/*/package.json",
-    "lc": "find packages/*/dist -type f -name \"*.js\" -exec cat {} \\; | wc -l",
+    "format:sort-package-json": "sort-package-json package.json",
+    "lc": "find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l",
     "lint": "conc npm:lint:*",
     "lint:eslint": "eslint .",
-    "lint:sort-package-json": "sort-package-json --check package.json packages/*/package.json",
+    "lint:sort-package-json": "sort-package-json --check package.json",
     "lint:typedoc": "typedoc --emit none",
     "start": "npm run watch",
     "test": "vitest run",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.watch.json"
+    "watch": "tsc --watch --preserveWatchOutput --noEmit"
+  },
+  "dependencies": {
+    "@bitcoinerlab/secp256k1": "1.1.1",
+    "@noble/secp256k1": "1.7.1",
+    "base-x": "5.0.0",
+    "bip32": "4.0.0",
+    "buffer": "6.0.3",
+    "content-type": "1.0.5",
+    "valibot": "~0.30.0",
+    "varint": "6.0.0"
   },
   "devDependencies": {
-    "@astrobase/core": "file:packages/core",
+    "@astrobase/core": ".",
+    "@types/content-type": "^1.1.8",
     "@types/mime-db": "^1.0.0",
+    "@types/varint": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^7.14.0",
     "@typescript-eslint/parser": "^7.14.0",
     "@vitest/coverage-v8": "^1.0.0",

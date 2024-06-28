@@ -7,9 +7,11 @@
     "resolveJsonModule": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
+    "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "target": "ESNext",
     "verbatimModuleSyntax": true
-  }
+  },
+  "include": ["src", "testing"]
 }
