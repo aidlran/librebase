@@ -13,5 +13,5 @@
     "target": "ESNext",
     "verbatimModuleSyntax": true
   },
-  "include": ["src", "testing"]
+  "include": ["src", "testing", "eslintrc.cjs"]
 }
