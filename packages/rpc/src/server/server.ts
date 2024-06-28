@@ -1,4 +1,4 @@
-import type { MaybePromise } from '@librebase/core';
+import type { MaybePromise } from '@astrobase/core';
 import type { RequestMessage, ResponseMessage } from '../types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

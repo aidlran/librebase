@@ -1,10 +1,19 @@
 {
-  "name": "@librebase/fs",
-  "version": "0.2.0-rc",
+  "name": "@astrobase/immutable",
+  "version": "0.1.0",
   "description": "A content addressable file system protocol with an extensible codec system.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "keywords": [
+    "astrobase"
+  ],
+  "homepage": "https://astrobase.me",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/fs"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -20,17 +29,11 @@
     }
   },
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "./dist"
   ],
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.ts | gzip | wc -c",
-    "lc": "echo @librebase/fs: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
   "dependencies": {
     "content-type": "1.0.5"
   },
@@ -38,6 +41,6 @@
     "@types/content-type": "^1.1.8"
   },
   "peerDependencies": {
-    "@librebase/core": "~0.2.0-rc"
+    "@astrobase/core": "~0.1.0"
   }
 }

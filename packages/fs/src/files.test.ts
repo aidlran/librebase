@@ -1,4 +1,4 @@
-import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
+import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@astrobase/core';
 import { format, type MediaType } from 'content-type';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import { mockJSONCodec } from '../testing/codecs.js';

@@ -1,4 +1,4 @@
-import { identifierToBytes, payloadToBytes } from '@librebase/core/internal';
+import { identifierToBytes, payloadToBytes } from '@astrobase/core/internal';
 import { Hash, hash } from './hashes.js';
 
 /**

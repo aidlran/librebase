@@ -1,6 +1,6 @@
-import { getChannels } from '@librebase/core';
-import { indexeddb } from '@librebase/driver-indexeddb';
-import { Hash } from '@librebase/fs';
+import { getChannels } from '@astrobase/core';
+import { indexeddb } from '@astrobase/driver-indexeddb';
+import { Hash } from '@astrobase/immutable';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, it, test } from 'vitest';
 import wordlist from '../../bip39-wordlist-english.json';

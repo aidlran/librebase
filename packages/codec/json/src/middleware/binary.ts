@@ -1,5 +1,5 @@
-import { Base58, Base64 } from '@librebase/core/internal';
-import { Hash } from '@librebase/fs';
+import { Base58, Base64 } from '@astrobase/core/internal';
+import { Hash } from '@astrobase/immutable';
 import type { JsonCodecMiddleware } from '../types.js';
 
 /** A middleware to swap binary streams for base encoded strings. */

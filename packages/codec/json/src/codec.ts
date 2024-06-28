@@ -1,4 +1,4 @@
-import type { Codec, CodecProps } from '@librebase/fs';
+import type { Codec, CodecProps } from '@astrobase/immutable';
 import type { JsonCodecMiddleware } from './types.js';
 
 /** An extensible JSON codec for the `application/json` media type. */

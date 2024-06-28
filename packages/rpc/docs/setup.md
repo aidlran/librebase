@@ -13,7 +13,7 @@ The `NoWorker` strategy will simply run the procedures locally in the same threa
 Setup of the `NoWorker` strategy is relatively simple.
 
 ```js
-import { NoWorker, setClient } from '@librebase/rpc/client';
+import { NoWorker, setClient } from '@astrobase/rpc/client';
 
 setClient(NoWorker);
 
@@ -40,7 +40,7 @@ In your worker script, you can use `Handlers.set` to register a handler for a gi
 Packages that rely on RPC may offer scripts that can be imported to easily register their handlers, so check their documentation.
 
 ```js
-import { Handlers } from '@librebase/rpc/server';
+import { Handlers } from '@astrobase/rpc/server';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
@@ -52,7 +52,7 @@ Handlers.set('speak', (req, instanceID) => {
 Your worker needs to add an event listener to receive and process requests. You can do this with the `listen` function.
 
 ```js
-import { listen } from '@librebase/rpc/server';
+import { listen } from '@astrobase/rpc/server';
 
 listen();
 ```
@@ -74,7 +74,7 @@ This example of a worker script uses `Handlers.set` to register a handler, regis
 ```js
 // worker-entrypoint.js
 
-import { Handlers, listen } from '@librebase/rpc/server';
+import { Handlers, listen } from '@astrobase/rpc/server';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
@@ -94,7 +94,7 @@ Now we need to tell the main thread to spawn the worker(s) and use them for remo
 This example is for web workers and should work with Vite. Other bundlers may have different quirks when working with web workers, so please consult their documentation.
 
 ```js
-import { setClient, workerStrategy } from '@librebase/rpc/client';
+import { setClient, workerStrategy } from '@astrobase/rpc/client';
 
 function constructWorker() {
   return new Worker(new URL('./worker-entrypoint?worker', import.meta.url), {

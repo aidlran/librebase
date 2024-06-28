@@ -1,4 +1,4 @@
-import { Identifier, deleteOne, getOne, putOne } from '@librebase/core';
+import { Identifier, deleteOne, getOne, putOne } from '@astrobase/core';
 import { format, type MediaType } from 'content-type';
 import { cidToBytes, type CIDLike } from './cid.js';
 import { encodeWithCodec } from './codecs.js';

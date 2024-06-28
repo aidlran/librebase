@@ -1,11 +1,20 @@
 {
-  "name": "@librebase/keyrings",
-  "version": "0.2.0-rc",
-  "private": true,
-  "description": "A keyring and identity system for Librebase.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "name": "@astrobase/keyrings",
+  "version": "0.1.0",
+  "description": "Astrobase keyring and identity system.",
+  "keywords": [
+    "astrobase",
+    "encryption"
+  ],
+  "homepage": "https://astrobase.me",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/keyrings"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -22,19 +31,13 @@
       "default": "./dist/server/index.js"
     }
   },
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "./bip39-wordlist-english.json",
     "./dist"
   ],
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.ts | gzip | wc -c",
-    "lc": "echo @librebase/keyrings: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
   "dependencies": {
     "@bitcoinerlab/secp256k1": "1.1.1",
     "@noble/secp256k1": "1.7.1",
@@ -43,9 +46,9 @@
     "valibot": "~0.30.0"
   },
   "peerDependencies": {
-    "@librebase/core": "~0.2.0-rc",
-    "@librebase/fs": "~0.2.0-rc",
-    "@librebase/rpc": "~0.2.0-rc",
-    "@librebase/wraps": "~0.2.0-rc"
+    "@astrobase/core": "~0.1.0",
+    "@astrobase/immutable": "~0.1.0",
+    "@astrobase/rpc": "~0.1.0",
+    "@astrobase/wraps": "~0.1.0"
   }
 }

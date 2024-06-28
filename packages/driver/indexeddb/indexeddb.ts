@@ -1,17 +1,17 @@
-import type { ChannelDriver, Identifier } from '@librebase/core';
+import type { ChannelDriver, Identifier } from '@astrobase/core';
 
 /** Configuration object for the IndexedDB channel driver. */
 export interface IndexedDbChannelOptions {
   /**
    * The IndexedDB database name.
    *
-   * @default 'librebase'
+   * @default 'astrobase'
    */
   databaseName?: string;
   /**
    * The IndexedDB table name.
    *
-   * @default 'librebase'
+   * @default 'astrobase'
    */
   tableName?: string;
 }
@@ -24,8 +24,8 @@ export interface IndexedDbChannelOptions {
  *   indexedDB connection has been established.
  */
 export async function indexeddb(config?: IndexedDbChannelOptions): Promise<IndexedDB> {
-  const databaseName = config?.databaseName ?? 'librebase';
-  const tableName = config?.tableName ?? 'librebase';
+  const databaseName = config?.databaseName ?? 'astrobase';
+  const tableName = config?.tableName ?? 'astrobase';
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
     const request = indexedDB.open(databaseName);
     request.onerror = () => reject(request.error);

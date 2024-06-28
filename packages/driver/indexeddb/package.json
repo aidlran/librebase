@@ -1,10 +1,20 @@
 {
-  "name": "@librebase/driver-indexeddb",
-  "version": "0.2.0-rc",
-  "description": "An IndexedDB storage driver for @librebase/core.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "name": "@astrobase/driver-indexeddb",
+  "version": "0.1.0",
+  "description": "An IndexedDB driver for Astrobase.",
+  "keywords": [
+    "astrobase",
+    "indexeddb"
+  ],
+  "homepage": "https://astrobase.me",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/driver/indexeddb"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -19,19 +29,13 @@
       "default": "./dist/recommended.js"
     }
   },
-  "main": "./dist/indexeddb.js",
+  "main": "dist/indexeddb.js",
+  "module": "dist/indexeddb.js",
   "types": "./dist/indexeddb.d.ts",
   "files": [
     "./dist"
   ],
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify indexeddb.ts | gzip | wc -c",
-    "lc": "echo @librebase/driver-indexeddb: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
   "peerDependencies": {
-    "@librebase/core": "~0.2.0-rc"
+    "@astrobase/core": "~0.1.0"
   }
 }

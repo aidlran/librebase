@@ -1,5 +1,5 @@
-import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@librebase/core';
-import { Hash } from '@librebase/fs';
+import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@astrobase/core';
+import { Hash } from '@astrobase/immutable';
 import { afterAll, describe, expect, test } from 'vitest';
 import { getAddressHash, setAddressHash } from './address.js';
 

@@ -1,6 +1,6 @@
-# @librebase/codec-json
+# @astrobase/codec-json
 
-A JSON codec for `@librebase/fs` with an extensible middleware system.
+A JSON codec for Astrobase with an extensible middleware system.
 
 ## Usage
 
@@ -9,8 +9,8 @@ A JSON codec for `@librebase/fs` with an extensible middleware system.
 The recommended export will automatically register middleware that processes binary streams into base encoded strings. You can register additional middlewares by passing them as arguments.
 
 ```js
-import { json } from '@librebase/codec-json/recommended';
-import { registerCodec } from '@librebase/core';
+import { json } from '@astrobase/codec-json/recommended';
+import { registerCodec } from '@astrobase/core';
 
 const codec = json(/* pass any additional middlewares */);
 
@@ -22,9 +22,9 @@ registerCodec('application/json', codec);
 The main export does not register any middlewares. This may be desirable, but you can still register the binary middleware manually along with additional middlewares.
 
 ```js
-import { json } from '@librebase/codec-json';
-import { binary } from '@librebase/codec-json/middleware';
-import { registerCodec } from '@librebase/core';
+import { json } from '@astrobase/codec-json';
+import { binary } from '@astrobase/codec-json/middleware';
+import { registerCodec } from '@astrobase/core';
 
 const codec = json(
   binary,

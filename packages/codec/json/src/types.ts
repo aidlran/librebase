@@ -1,4 +1,4 @@
-import type { CodecProps } from '@librebase/fs';
+import type { CodecProps } from '@astrobase/immutable';
 
 /** Additional properties provided to the middleware. */
 export type MiddlewareProps = Pick<CodecProps, 'instanceID'>;

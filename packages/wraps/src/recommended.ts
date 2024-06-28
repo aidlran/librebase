@@ -1,4 +1,4 @@
-import { init as initJSON } from '@librebase/codec-json/recommended';
+import { init as initJSON } from '@astrobase/codec-json/recommended';
 import { ECDSAWrapModule } from './ecdsa.js';
 import { WrapMiddleware } from './middleware.js';
 import { WrapRegistry } from './wraps.js';

@@ -22,7 +22,7 @@ module.exports = {
     node: true,
   },
   overrides: [
-    ...['codec/json', 'core', 'driver/indexeddb', 'fs', 'keyrings', 'svelte', 'wraps'].map(
+    ...['client', 'codec/json', 'core', 'driver/indexeddb', 'fs', 'keyrings', 'wraps'].map(
       (path) => ({
         files: [`packages/${path}/**/*.ts`],
         parserOptions: {

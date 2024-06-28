@@ -1,6 +1,6 @@
-# @librebase/driver-indexeddb
+# @astrobase/driver-indexeddb
 
-An IndexedDB storage driver for `@librebase/core`.
+An IndexedDB driver for Astrobase.
 
 ## Usage
 
@@ -11,7 +11,7 @@ A special export provides an `init` function which automatically registers the d
 Note that this function returns a promise. The database connection will not be available until the returned promise has resolved.
 
 ```js
-import { init } from '@librebase/driver-indexeddb/recommended';
+import { init } from '@astrobase/driver-indexeddb/recommended';
 
 init();
 ```
@@ -21,8 +21,8 @@ init();
 For more control, you can register the driver manually. Be sure to await the promise returned by `indexeddb`. The database connection will not be available until the returned promise has resolved.
 
 ```js
-import { getChannels } from '@librebase/core';
-import { indexeddb } from '@librebase/driver-indexeddb';
+import { getChannels } from '@astrobase/core';
+import { indexeddb } from '@astrobase/driver-indexeddb';
 
 indexeddb().then((driver) => {
   getChannels().push(driver);

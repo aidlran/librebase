@@ -1,11 +1,20 @@
 {
-  "name": "@librebase/wraps",
-  "version": "0.2.0-rc",
-  "private": true,
-  "description": "Librebase wrap protocol implementation.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "name": "@astrobase/wraps",
+  "version": "0.1.0",
+  "description": "Astrobase wrap protocol implementation.",
+  "keywords": [
+    "astrobase",
+    "cryptography"
+  ],
+  "homepage": "https://astrobase.me",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/wraps"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -28,22 +37,16 @@
       "default": "./dist/recommended.js"
     }
   },
-  "main": "./dist/wraps.js",
+  "main": "dist/wraps.js",
+  "module": "dist/wraps.js",
   "types": "./dist/wraps.d.ts",
   "files": [
     "./dist"
   ],
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/wraps.ts | gzip | wc -c",
-    "lc": "echo @librebase/wraps: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
   "peerDependencies": {
-    "@librebase/codec-json": "~0.2.0-rc",
-    "@librebase/core": "~0.2.0-rc",
-    "@librebase/fs": "~0.2.0-rc",
+    "@astrobase/codec-json": "~0.1.0",
+    "@astrobase/core": "~0.1.0",
+    "@astrobase/immutable": "~0.1.0",
     "@noble/secp256k1": "^1.7.1",
     "valibot": "~0.30.0"
   }

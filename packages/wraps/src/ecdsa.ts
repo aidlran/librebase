@@ -1,4 +1,4 @@
-import { Base58 } from '@librebase/core/internal';
+import { Base58 } from '@astrobase/core/internal';
 import { verify } from '@noble/secp256k1';
 import type { WrapModule } from './wraps.js';
 

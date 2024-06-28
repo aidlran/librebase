@@ -1,4 +1,4 @@
-import { getChannels } from '@librebase/core';
+import { getChannels } from '@astrobase/core';
 import { indexeddb, type IndexedDbChannelOptions } from './indexeddb.js';
 
 export interface InitOptions extends IndexedDbChannelOptions {

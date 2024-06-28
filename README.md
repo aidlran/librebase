@@ -1,3 +1,3 @@
-# [Astrobase](https://astrobase.ai)
+# [Astrobase](https://astrobase.me)
 
-An extensible suite of protocols for building decentralized, multi-user apps.
+An extensible suite of protocols for building decentralized, secure, multi-user apps.

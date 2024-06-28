@@ -1,4 +1,4 @@
-import { Base58, Registry, type RegistryModule } from '@librebase/core/internal';
+import { Base58, Registry, type RegistryModule } from '@astrobase/core/internal';
 import {
   Hash,
   HashAlgorithm,
@@ -6,7 +6,7 @@ import {
   hash,
   parseFileContent,
   serializeFileContent,
-} from '@librebase/fs';
+} from '@astrobase/immutable';
 import type { MediaType } from 'content-type';
 
 export type WrapFn<T = unknown, R = unknown> = (config: {
@@ -54,7 +54,7 @@ export const WrapErrorCode = {
 } as const;
 
 /**
- * An error thrown by `@librebase/wraps`.
+ * An error thrown by `@astrobase/wraps`.
  *
  * @category Wraps
  */

@@ -1,5 +1,5 @@
-import type { MaybePromise } from '@librebase/core';
-import { Registry, stringToBytes, type RegistryModule } from '@librebase/core/internal';
+import type { MaybePromise } from '@astrobase/core';
+import { Registry, stringToBytes, type RegistryModule } from '@astrobase/core/internal';
 import { parse, type MediaType } from 'content-type';
 import { validateMediaType } from './media-types.js';
 

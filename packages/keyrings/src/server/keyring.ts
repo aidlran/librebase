@@ -1,6 +1,6 @@
-import { Identifier, getOne, type IdentifierSchema } from '@librebase/core';
-import { Hash, deleteFile, getFile, putFile, type CIDLike } from '@librebase/fs';
-import { type WrapConfig } from '@librebase/wraps';
+import { Identifier, getOne, type IdentifierSchema } from '@astrobase/core';
+import { Hash, deleteFile, getFile, putFile, type CIDLike } from '@astrobase/immutable';
+import { type WrapConfig } from '@astrobase/wraps';
 import { KEYRINGS_INSTANCE_ID } from '../shared/constants.js';
 import type * as P from '../shared/message-payloads.js';
 import { entropyToMnemonic, mnemonicToEntropy, mnemonicToSeed } from './mnemonic/bip39.js';

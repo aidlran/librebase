@@ -1,4 +1,4 @@
-import { Hash } from '@librebase/fs';
+import { Hash } from '@astrobase/immutable';
 import { describe, expect, it, test } from 'vitest';
 import { encodes } from '../../../../core/testing/encodes.js';
 import { binary } from './binary.js';

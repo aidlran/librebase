@@ -4,7 +4,7 @@
 
 skinparam WrapWidth 280
 
-package "@librebase/core" {
+package "@astrobase/core" {
   interface "Channel Driver" {
     Provides an implementation of data object storage for a provider.
     __
@@ -78,37 +78,37 @@ package "@librebase/core" {
   Core o-d- Queryer
 }
 
-package "@librebase/driver-memory" {
+package "@astrobase/driver-memory" {
   class "In-memory Driver" {
     Functions like a cache. Would typically be added first in the channels array and be trusted, so it is queried first and its data can skip validation. Can also be used for tests.
   }
   "In-memory Driver" .u.> "Channel Driver"
 }
 
-package "@librebase/driver-indexeddb" {
+package "@astrobase/driver-indexeddb" {
   class "IndexedDB Driver" {
     Local data persistence for web clients.
   }
   "IndexedDB Driver" .u.> "Channel Driver"
 }
 
-package "@librebase/driver-sqlite" {
+package "@astrobase/driver-sqlite" {
   class "SQLite Driver" {
     Local data persistence for desktop or mobile apps and daemons.
   }
   "SQLite Driver" .u.> "Channel Driver"
-  "SQLite Driver" -u[hidden]-> "@librebase/driver-memory"
+  "SQLite Driver" -u[hidden]-> "@astrobase/driver-memory"
 }
 
-package "@librebase/driver-enclaves" {
+package "@astrobase/driver-enclaves" {
   class "Enclaves Driver" {
     Remote data persistence, that we'll provide, in the cloud!
   }
   "Enclaves Driver" .u.> "Channel Driver"
-  "Enclaves Driver" -u[hidden]-> "@librebase/driver-indexeddb"
+  "Enclaves Driver" -u[hidden]-> "@astrobase/driver-indexeddb"
 }
 
-package "@librebase/codec-json" {
+package "@astrobase/codec-json" {
   class "JSON Codec" {
     - **plugins**
   }
@@ -126,16 +126,16 @@ package "@librebase/codec-json" {
   "JSON Codec" o-u- "JSON Middleware"
 }
 
-"@librebase/codec-json" -d[hidden]-> "@librebase/core"
+"@astrobase/codec-json" -d[hidden]-> "@astrobase/core"
 
-package "@librebase/middleware-binary" {
+package "@astrobase/middleware-binary" {
   class "Binary Middleware" {
     Quietly swaps unsupported binary streams with base64 or base58 as appropriate.
   }
   "Binary Middleware" .d.> "JSON Middleware"
 }
 
-package "@librebase/wraps" {
+package "@astrobase/wraps" {
   object "Wrap API" as Wraps {
     Implements serialization and deserialization for the wrap protocol, which is a schema for structured data to describe a "wrapped" (signed, encrypted, compressed, etc.) data object.
     __
@@ -152,7 +152,7 @@ package "@librebase/wraps" {
   "Wrap Middleware" o-- Wraps
 }
 
-package "@librebase/identity" {
+package "@astrobase/identity" {
   object "Identity API" as Identity {
     + **activateKeyring()**
     + **generateKeyring()**
@@ -163,6 +163,6 @@ package "@librebase/identity" {
   Identity o-d- Wraps
 }
 
-"@librebase/identity" -d[hidden]-> "@librebase/wraps"
+"@astrobase/identity" -d[hidden]-> "@astrobase/wraps"
 
 @enduml

@@ -1,4 +1,4 @@
-import type { JsonCodecMiddleware } from '@librebase/codec-json';
+import type { JsonCodecMiddleware } from '@astrobase/codec-json';
 import {
   instance,
   integer,

@@ -34,13 +34,5 @@
   "types": "./dist/index.d.ts",
   "files": [
     "./dist"
-  ],
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.js | gzip | wc -c",
-    "lc": "echo @astrobase/rpc: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  }
+  ]
 }

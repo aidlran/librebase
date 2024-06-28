@@ -1,10 +1,16 @@
-import { Identifier, queryChannelsSync } from '@librebase/core';
-import { Base58 } from '@librebase/core/internal';
-import { FS, decodeWithCodec, parseFileContent, putFile, type PutOptions } from '@librebase/fs';
-import { client } from '@librebase/rpc/client';
-import { wrap, type WrapValue } from '@librebase/wraps';
-import { isWrap } from '@librebase/wraps/middleware';
-import type { ECDSAWrappedMetadata } from '@librebase/wraps/module';
+import { Identifier, queryChannelsSync } from '@astrobase/core';
+import { Base58 } from '@astrobase/core/internal';
+import {
+  FS,
+  decodeWithCodec,
+  parseFileContent,
+  putFile,
+  type PutOptions,
+} from '@astrobase/immutable';
+import { client } from '@astrobase/rpc/client';
+import { wrap, type WrapValue } from '@astrobase/wraps';
+import { isWrap } from '@astrobase/wraps/middleware';
+import type { ECDSAWrappedMetadata } from '@astrobase/wraps/module';
 import type { MediaType } from 'content-type';
 import { getAddressHash, setAddressHash } from './address.js';
 

@@ -1,6 +1,6 @@
-import { Identifier, getOne, putOne } from '@librebase/core';
-import { identifierToBytes } from '@librebase/core/internal';
-import { Hash } from '@librebase/fs';
+import { Identifier, getOne, putOne } from '@astrobase/core';
+import { identifierToBytes } from '@astrobase/core/internal';
+import { Hash } from '@astrobase/immutable';
 
 export const AddressType = {
   BIP32: 0,

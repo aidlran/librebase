@@ -9,7 +9,7 @@ import type { RPCClient } from './client.js';
  * ## Usage
  *
  * ```js
- * import { NoWorker, setClient } from '@librebase/rpc/client';
+ * import { NoWorker, setClient } from '@astrobase/rpc/client';
  *
  * setClient(NoWorker);
  * ```

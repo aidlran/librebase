@@ -1,3 +1,3 @@
-# @librebase/keyrings
+# @astrobase/keyrings
 
-A keyring and identity system for Librebase based on `@librebase/wraps`.
+A keyring and identity system for Astrobase.

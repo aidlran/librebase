@@ -1,9 +1,9 @@
-import { json } from '@librebase/codec-json';
-import { binary } from '@librebase/codec-json/middleware';
-import { IdentifierRegistry } from '@librebase/core';
-import { CodecRegistry, FS, type Codec } from '@librebase/fs';
-import { WrapRegistry } from '@librebase/wraps';
-import { WrapMiddleware } from '@librebase/wraps/middleware';
+import { json } from '@astrobase/codec-json';
+import { binary } from '@astrobase/codec-json/middleware';
+import { IdentifierRegistry } from '@astrobase/core';
+import { CodecRegistry, FS, type Codec } from '@astrobase/immutable';
+import { WrapRegistry } from '@astrobase/wraps';
+import { WrapMiddleware } from '@astrobase/wraps/middleware';
 import { KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';
 import { KeyringIndexIdentifier } from './keyring.js';
 import { EncryptWrapSchema } from './wrap/encrypt.js';

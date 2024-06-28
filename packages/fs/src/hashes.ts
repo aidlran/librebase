@@ -1,4 +1,4 @@
-import { Base58 } from '@librebase/core/internal';
+import { Base58 } from '@astrobase/core/internal';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };
 

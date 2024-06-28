@@ -4,7 +4,7 @@
  * @module Recommended
  */
 
-import { CodecRegistry } from '@librebase/fs';
+import { CodecRegistry } from '@astrobase/immutable';
 import { json as codec } from '../codec.js';
 import { binary } from '../middleware/binary.js';
 import type { JsonCodecMiddleware } from '../types.js';

@@ -101,7 +101,7 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
 }
 
 /**
- * A common pattern used by `@librebase` packages is to allow plugin-like functionality to make the
+ * A common pattern used by `@astrobase` packages is to allow plugin-like functionality to make the
  * ecosystem extensible. The `Registry` class provides a common implementation for this pattern to
  * keep things consistent. It is used to define key and module types, validation, and provides
  * methods to register and retrieve modules based on those keys.

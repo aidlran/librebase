@@ -1,9 +1,14 @@
 {
   "name": "@astrobase/client",
   "version": "0.1.0",
-  "description": "An extensible suite of protocols for building decentralized, multi-user apps.",
-  "keywords": [],
-  "homepage": "https://astrobase.ai",
+  "description": "An extensible suite of protocols for building decentralized, secure, multi-user apps.",
+  "keywords": [
+    "astrobase",
+    "e2ee",
+    "encryption",
+    "web3"
+  ],
+  "homepage": "https://astrobase.me",
   "bugs": {
     "url": "https://github.com/AstrobaseTech/Astrobase/issues"
   },
@@ -28,12 +33,7 @@
   "files": [
     "./dist"
   ],
-  "scripts": {
-    "prebuild": "rimraf dist",
-    "build": "tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/index.js | gzip | wc -c",
-    "lc": "echo @astrobase/client: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
+  "peerDependencies": {
+    "@astrobase/core": "~0.1.0"
   }
 }

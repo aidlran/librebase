@@ -1,10 +1,19 @@
 {
-  "name": "@librebase/codec-json",
-  "version": "0.2.0-rc",
-  "description": "A JSON codec for @librebase/fs with an extensible middleware system.",
-  "homepage": "https://librebase.io",
-  "bugs": "https://github.com/aidlran/librebase/issues",
-  "repository": "github:aidlran/librebase",
+  "name": "@astrobase/codec-json",
+  "version": "0.1.0",
+  "description": "A JSON codec for Astrobase immutable storage.",
+  "keywords": [
+    "astrobase"
+  ],
+  "homepage": "https://astrobase.me",
+  "bugs": {
+    "url": "https://github.com/AstrobaseTech/Astrobase/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AstrobaseTech/Astrobase.git",
+    "directory": "packages/codec/json"
+  },
   "license": "Apache-2.0",
   "author": "Aidan Loughran",
   "sideEffects": false,
@@ -23,19 +32,13 @@
       "default": "./dist/recommended/index.js"
     }
   },
-  "main": "./dist/index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "./dist"
   ],
-  "scripts": {
-    "build": "rm -dr dist; tsc --project tsconfig.build.json",
-    "cost": "bun build --minify src/recommended/index.ts | gzip | wc -c",
-    "lc": "echo @librebase/codec-json: $(find dist -type f -name \"*.js\" -exec cat {} \\; | wc -l) lines",
-    "start": "npm run watch",
-    "watch": "tsc --watch --preserveWatchOutput --project tsconfig.build.json"
-  },
   "peerDependencies": {
-    "@librebase/fs": "~0.2.0-rc"
+    "@astrobase/immutable": "~0.1.0"
   }
 }

@@ -1,6 +1,6 @@
-import { getChannels } from '@librebase/core';
-import { Handlers, createDispatch } from '@librebase/rpc';
-import { unwrap, wrap } from '@librebase/wraps';
+import { getChannels } from '@astrobase/core';
+import { Handlers, createDispatch } from '@astrobase/rpc';
+import { unwrap, wrap } from '@astrobase/wraps';
 import { Buffer } from 'buffer';
 import { KEYRINGS_INSTANCE_ID } from '../shared/index.js';
 import { getIdentity } from './identity.js';
