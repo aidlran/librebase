@@ -1,14 +1,14 @@
-import { Identifier, queryChannelsSync } from '@astrobase/core';
 import {
   FS,
   decodeWithCodec,
   parseFileContent,
   putFile,
   type PutOptions,
-} from '@astrobase/core/immutable';
-import { Base58 } from '@astrobase/core/internal';
-import { client } from '@astrobase/core/rpc/client';
-import { isWrap, wrap, type ECDSAWrappedMetadata, type WrapValue } from '@astrobase/core/wraps';
+} from '../../immutable/index.js';
+import { Base58 } from '../../internal/encoding.js';
+import { Identifier, queryChannelsSync } from '../../public/index.js';
+import { client } from '../../rpc/client/client.js';
+import { isWrap, wrap, type ECDSAWrappedMetadata, type WrapValue } from '../../wraps/index.js';
 import type { MediaType } from 'content-type';
 import { getAddressHash, setAddressHash } from './address.js';
 

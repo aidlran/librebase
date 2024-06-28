@@ -1,6 +1,11 @@
-import { getChannels, Identifier, IdentifierRegistry, type ChannelDriver } from '@astrobase/core';
-import { Hash } from '@astrobase/core/immutable';
 import { afterAll, describe, expect, test } from 'vitest';
+import { Hash } from '../../immutable/index.js';
+import {
+  getChannels,
+  Identifier,
+  IdentifierRegistry,
+  type ChannelDriver,
+} from '../../public/index.js';
 import { getAddressHash, setAddressHash } from './address.js';
 
 describe('Address CRUD', () => {

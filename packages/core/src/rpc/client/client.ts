@@ -49,7 +49,7 @@ export let client = NoWorker;
  * thread) strategy to invoke procedures.
  *
  * ```js
- * import { NoWorker, setClient } from '@astrobase/rpc/client';
+ * import { NoWorker, setClient } from '@astrobase/core/rpc/client';
  *
  * setClient(NoWorker);
  * ```

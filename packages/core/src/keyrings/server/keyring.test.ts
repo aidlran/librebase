@@ -1,9 +1,9 @@
-import { getChannels } from '@astrobase/core';
-import { indexeddb } from '@astrobase/core/indexeddb';
-import { Hash } from '@astrobase/core/immutable';
 import 'fake-indexeddb/auto';
 import { beforeAll, describe, expect, it, test } from 'vitest';
-import wordlist from '../../bip39-wordlist-english.json';
+import wordlist from '../../../bip39-wordlist-english.json';
+import { getChannels } from '../../public/channels.js';
+import { Hash } from '../../immutable/hashes.js';
+import { indexeddb } from '../../indexeddb/indexeddb.js';
 import { KEYRINGS_INSTANCE_ID, KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';
 import './init-instance.js';
 import { activeSeeds, clearKeyring, createKeyring, importKeyring } from './keyring.js';

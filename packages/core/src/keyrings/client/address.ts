@@ -1,6 +1,6 @@
-import { Identifier, getOne, putOne } from '@astrobase/core';
-import { Hash } from '@astrobase/core/immutable';
-import { identifierToBytes } from '@astrobase/core/internal';
+import { Hash } from '../../immutable/hashes.js';
+import { identifierToBytes } from '../../internal/encoding.js';
+import { Identifier, getOne, putOne } from '../../public/index.js';
 
 export const AddressType = {
   BIP32: 0,

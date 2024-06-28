@@ -1,26 +1,18 @@
 ---
-title: Client Setup Guide
+title: RPC Client Setup Guide
 ---
 
-# Client Setup Guide
+# RPC Client Setup Guide
 
 This guide covers setting up the `RPCClient` in your application.
 
 ## `NoWorker` Strategy
 
-The `NoWorker` strategy will simply run the procedures locally in the same thread. This is fine for prototyping and getting up and running quickly, and it can be useful when debugging or testing.
-
-Setup of the `NoWorker` strategy is relatively simple.
-
-```js
-import { NoWorker, setClient } from '@astrobase/rpc/client';
-
-setClient(NoWorker);
-
-// Register any handlers in the same thread.
-```
+The `NoWorker` strategy is used by default. It will simply run the procedures locally in the same thread. This is fine for prototyping and getting up and running quickly, and it can be useful when debugging or testing. Handlers can be registered in the same thread.
 
 ## Worker Strategy
+
+> ⚠️ Experimental
 
 A worker is a script that runs as a different thread. You can think of each worker as its own program, with its own state. A worker can communicate with the program that spawned it by sending and receiving messages. This strategy can increase performance by offloading workloads to another thread. For browsers this is exceptionally useful for freeing up the main thread and improving application responsiveness.
 
@@ -40,7 +32,7 @@ In your worker script, you can use `Handlers.set` to register a handler for a gi
 Packages that rely on RPC may offer scripts that can be imported to easily register their handlers, so check their documentation.
 
 ```js
-import { Handlers } from '@astrobase/rpc/server';
+import { Handlers } from '@astrobase/core/rpc/server';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
@@ -52,7 +44,7 @@ Handlers.set('speak', (req, instanceID) => {
 Your worker needs to add an event listener to receive and process requests. You can do this with the `listen` function.
 
 ```js
-import { listen } from '@astrobase/rpc/server';
+import { listen } from '@astrobase/core/rpc/server';
 
 listen();
 ```
@@ -74,7 +66,7 @@ This example of a worker script uses `Handlers.set` to register a handler, regis
 ```js
 // worker-entrypoint.js
 
-import { Handlers, listen } from '@astrobase/rpc/server';
+import { Handlers, listen } from '@astrobase/core/rpc/server';
 
 Handlers.set('speak', (req, instanceID) => {
   return 'Hello!';
@@ -94,7 +86,7 @@ Now we need to tell the main thread to spawn the worker(s) and use them for remo
 This example is for web workers and should work with Vite. Other bundlers may have different quirks when working with web workers, so please consult their documentation.
 
 ```js
-import { setClient, workerStrategy } from '@astrobase/rpc/client';
+import { setClient, workerStrategy } from '@astrobase/core/rpc/client';
 
 function constructWorker() {
   return new Worker(new URL('./worker-entrypoint?worker', import.meta.url), {

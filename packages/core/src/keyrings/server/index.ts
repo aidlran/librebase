@@ -1,8 +1,8 @@
-import { getChannels } from '@astrobase/core';
-import { createDispatch } from '@astrobase/core/rpc/client';
-import { Handlers } from '@astrobase/core/rpc/server';
-import { unwrap, wrap } from '@astrobase/core/wraps';
 import { Buffer } from 'buffer';
+import { getChannels } from '../../public/channels.js';
+import { createDispatch } from '../../rpc/client/dispatch.js';
+import { Handlers } from '../../rpc/server/server.js';
+import { unwrap, wrap } from '../../wraps/wraps.js';
 import { KEYRINGS_INSTANCE_ID } from '../shared/index.js';
 import { getIdentity } from './identity.js';
 import { clearKeyring, createKeyring, importKeyring, loadKeyring } from './keyring.js';

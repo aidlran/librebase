@@ -54,7 +54,7 @@ export const WrapErrorCode = {
 } as const;
 
 /**
- * An error thrown by `@astrobase/wraps`.
+ * An error thrown by the wrap system.
  *
  * @category Wraps
  */

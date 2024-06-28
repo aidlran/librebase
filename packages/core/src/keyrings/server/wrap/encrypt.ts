@@ -1,5 +1,5 @@
-import { Base58 } from '@astrobase/core/internal';
-import type { WrapConfig, WrapModule, WrapValue } from '@astrobase/core/wraps';
+import { Base58 } from '../../../internal/encoding.js';
+import type { WrapConfig, WrapModule, WrapValue } from '../../../wraps/index.js';
 import { findPrivateKey } from '../identity.js';
 
 export interface EncryptWrapMetadata {

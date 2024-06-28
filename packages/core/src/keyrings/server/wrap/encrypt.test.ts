@@ -1,6 +1,6 @@
-import { Hash, HashAlgorithm } from '@astrobase/core/immutable';
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
+import { Hash, HashAlgorithm } from '../../../immutable/hashes.js';
 import { EncryptWrapSchema, defaultMetadata } from './encrypt.js';
 
 describe('Encrypt wrap schema - wrap', () => {

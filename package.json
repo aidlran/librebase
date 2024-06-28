@@ -25,13 +25,11 @@
   ],
   "scripts": {
     "prebuild": "npx --workspaces rimraf dist",
-    "build": "npm run build:lib:core && npm run build:lib:keyrings",
+    "build": "npx -w packages/core tsc --project tsconfig.build.json",
     "postbuild": "npx --workspaces publint",
     "build:diagrams": "plantuml docs/*.puml",
     "build:docs": "typedoc",
-    "build:lib:core": "npx -w packages/core tsc --project tsconfig.build.json",
-    "build:lib:keyrings": "npx -w packages/keyrings tsc --project tsconfig.build.json",
-    "ci": "npm run build && conc npm:lint npm:test",
+    "ci": "conc npm:build npm:lint npm:test",
     "cost": "bun build --minify index.js | gzip | wc -c",
     "coverage": "vitest run --coverage",
     "format": "conc npm:format:*",
@@ -48,7 +46,6 @@
   },
   "devDependencies": {
     "@astrobase/core": "file:packages/core",
-    "@astrobase/keyrings": "file:packages/keyrings",
     "@types/mime-db": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^7.14.0",
     "@typescript-eslint/parser": "^7.14.0",

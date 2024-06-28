@@ -1,8 +1,8 @@
-import { IdentifierRegistry } from '@astrobase/core';
-import { CodecRegistry, FS, type Codec } from '@astrobase/core/immutable';
-import { json } from '@astrobase/core/json';
-import { binary } from '@astrobase/core/middleware';
-import { WrapMiddleware, WrapRegistry } from '@astrobase/core/wraps';
+import { CodecRegistry, FS, type Codec } from '../../immutable/index.js';
+import { json } from '../../json/codec.js';
+import { binary } from '../../middleware/binary.js';
+import { IdentifierRegistry } from '../../public/identifiers.js';
+import { WrapMiddleware, WrapRegistry } from '../../wraps/index.js';
 import { KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';
 import { KeyringIndexIdentifier } from './keyring.js';
 import { EncryptWrapSchema } from './wrap/encrypt.js';

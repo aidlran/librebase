@@ -1,4 +1,4 @@
-import { sha256 } from '@astrobase/core/immutable';
+import { sha256 } from '../../../immutable/hashes.js';
 
 async function deriveChecksum(entropy: Uint8Array) {
   return toBinaryString(new Uint8Array(await sha256(entropy))).slice(0, entropy.length / 4);

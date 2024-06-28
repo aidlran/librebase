@@ -1,4 +1,4 @@
-import { client } from '@astrobase/core/rpc/client';
+import { client } from '../../rpc/client/client.js';
 import type { CreateKeyringRequest, ImportKeyringRequest } from '../shared/message-payloads.js';
 import { ACTIVE_KEYRING_CHANGE, emit } from './events.js';
 
