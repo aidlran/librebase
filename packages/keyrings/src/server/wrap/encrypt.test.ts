@@ -1,4 +1,4 @@
-import { Hash, HashAlgorithm } from '@astrobase/immutable';
+import { Hash, HashAlgorithm } from '@astrobase/core/immutable';
 import 'fake-indexeddb/auto';
 import { describe, expect, it } from 'vitest';
 import { EncryptWrapSchema, defaultMetadata } from './encrypt.js';

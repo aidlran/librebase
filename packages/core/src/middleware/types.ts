@@ -1,4 +1,4 @@
-import type { CodecProps } from '../codecs.js';
+import type { CodecProps } from '../immutable/codecs.js';
 
 /** Additional properties provided to the middleware. */
 export type MiddlewareProps = Pick<CodecProps, 'instanceID'>;

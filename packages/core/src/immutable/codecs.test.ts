@@ -1,6 +1,6 @@
-import { RegistryError } from '@astrobase/core/internal';
 import mediaTypes from 'mime-db';
 import { describe, expect, it, test } from 'vitest';
+import { RegistryError } from '../internal/registry.js';
 import { CodecRegistry, decodeWithCodec, encodeWithCodec, type Codec } from './codecs.js';
 
 describe('Codec functions', () => {

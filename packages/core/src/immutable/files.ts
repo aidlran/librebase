@@ -1,5 +1,5 @@
-import { Identifier, deleteOne, getOne, putOne } from '@astrobase/core';
 import { format, type MediaType } from 'content-type';
+import { Identifier, deleteOne, getOne, putOne } from '../public/index.js';
 import { cidToBytes, type CIDLike } from './cid.js';
 import { encodeWithCodec } from './codecs.js';
 import { Hash, HashAlgorithm, hash } from './hashes.js';

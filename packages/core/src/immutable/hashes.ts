@@ -1,4 +1,4 @@
-import { Base58 } from '@astrobase/core/internal';
+import { Base58 } from '../internal/encoding.js';
 
 export type HashBytes = Uint8Array & { 0: HashAlgorithm };
 

@@ -1,4 +1,4 @@
-import { type IdentifierSchema } from '@astrobase/core';
+import type { IdentifierSchema } from '../public/identifiers.js';
 import { validateCID } from './cid.js';
 import { decodeWithCodec } from './codecs.js';
 import { parseFileContent } from './files.js';

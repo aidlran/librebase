@@ -47,7 +47,6 @@
   },
   "peerDependencies": {
     "@astrobase/core": "~0.1.0",
-    "@astrobase/immutable": "~0.1.0",
     "@astrobase/rpc": "~0.1.0",
     "@astrobase/wraps": "~0.1.0"
   }

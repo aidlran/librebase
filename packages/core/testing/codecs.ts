@@ -1,4 +1,4 @@
-import type { Codec } from '../src/codecs.js';
+import type { Codec } from '../src/immutable/codecs.js';
 
 export const mockJSONCodec = {
   key: 'application/json',

@@ -1,5 +1,5 @@
-import { Base58, Base64 } from '@astrobase/core/internal';
-import { Hash } from '../hashes.js';
+import { Hash } from '../immutable/hashes.js';
+import { Base58, Base64 } from '../internal/encoding.js';
 import type { JsonCodecMiddleware } from './types.js';
 
 /** A middleware to swap binary streams for base encoded strings. */

@@ -1,4 +1,4 @@
-import { identifierToBytes, payloadToBytes } from '@astrobase/core/internal';
+import { identifierToBytes, payloadToBytes } from '../internal/encoding.js';
 import { Hash, hash } from './hashes.js';
 
 /**

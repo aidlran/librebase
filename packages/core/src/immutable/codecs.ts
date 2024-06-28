@@ -1,6 +1,6 @@
-import type { MaybePromise } from '@astrobase/core';
-import { Registry, stringToBytes, type RegistryModule } from '@astrobase/core/internal';
 import { parse, type MediaType } from 'content-type';
+import { Registry, stringToBytes, type RegistryModule } from '../internal/index.js';
+import type { MaybePromise } from '../public/channels.js';
 import { validateMediaType } from './media-types.js';
 
 export interface CodecProps {

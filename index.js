@@ -3,9 +3,9 @@
 export * from '@astrobase/core';
 export * from '@astrobase/core/driver';
 export * from '@astrobase/core/internal';
-export * from '@astrobase/immutable';
-export * from '@astrobase/immutable/json';
-export * from '@astrobase/immutable/middleware';
+export * from '@astrobase/core/immutable';
+export * from '@astrobase/core/json';
+export * from '@astrobase/core/middleware';
 export * from '@astrobase/keyrings';
 // export * from '@astrobase/keyrings/server';
 export * from '@astrobase/rpc';

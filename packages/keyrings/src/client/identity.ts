@@ -1,12 +1,12 @@
 import { Identifier, queryChannelsSync } from '@astrobase/core';
-import { Base58 } from '@astrobase/core/internal';
 import {
   FS,
   decodeWithCodec,
   parseFileContent,
   putFile,
   type PutOptions,
-} from '@astrobase/immutable';
+} from '@astrobase/core/immutable';
+import { Base58 } from '@astrobase/core/internal';
 import { client } from '@astrobase/rpc/client';
 import { wrap, type WrapValue } from '@astrobase/wraps';
 import { isWrap } from '@astrobase/wraps/middleware';

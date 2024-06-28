@@ -1,6 +1,6 @@
 import { describe, expect, it, test } from 'vitest';
-import { encodes } from '../../../core/testing/encodes.js';
-import { Hash } from '../hashes.js';
+import { encodes } from '../../testing/encodes.js';
+import { Hash } from '../immutable/hashes.js';
 import { binary } from './binary.js';
 
 describe('JSON codec binary middleware', () => {

@@ -1,4 +1,4 @@
-import type { CIDLike, Hash } from '@astrobase/immutable';
+import type { CIDLike, Hash } from '@astrobase/core/immutable';
 
 export interface CreateKeyringRequest<T = unknown> {
   /** The passphrase used to protect the keyring payload. */

@@ -1,4 +1,4 @@
-import type { Codec, CodecProps } from '../codecs.js';
+import type { Codec, CodecProps } from '../immutable/codecs.js';
 import type { JsonCodecMiddleware } from '../middleware/types.js';
 
 /** An extensible JSON codec for the `application/json` media type. */

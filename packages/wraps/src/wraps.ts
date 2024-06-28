@@ -1,4 +1,3 @@
-import { Base58, Registry, type RegistryModule } from '@astrobase/core/internal';
 import {
   Hash,
   HashAlgorithm,
@@ -6,7 +5,8 @@ import {
   hash,
   parseFileContent,
   serializeFileContent,
-} from '@astrobase/immutable';
+} from '@astrobase/core/immutable';
+import { Base58, Registry, type RegistryModule } from '@astrobase/core/internal';
 import type { MediaType } from 'content-type';
 
 export type WrapFn<T = unknown, R = unknown> = (config: {

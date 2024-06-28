@@ -25,13 +25,12 @@
   ],
   "scripts": {
     "prebuild": "npx --workspaces rimraf dist",
-    "build": "npm run build:lib:core && npm run build:lib:client && npm run build:lib:immutable && npm run build:lib:rpc && npm run build:lib:wraps && npm run build:lib:keyrings",
+    "build": "npm run build:lib:core && npm run build:lib:client && npm run build:lib:rpc && npm run build:lib:wraps && npm run build:lib:keyrings",
     "postbuild": "npx --workspaces publint",
     "build:diagrams": "plantuml docs/*.puml",
     "build:docs": "typedoc",
     "build:lib:client": "npx -w packages/client tsc --project tsconfig.build.json",
     "build:lib:core": "npx -w packages/core tsc --project tsconfig.build.json",
-    "build:lib:immutable": "npx -w packages/fs tsc --project tsconfig.build.json",
     "build:lib:keyrings": "npx -w packages/keyrings tsc --project tsconfig.build.json",
     "build:lib:rpc": "npx -w packages/rpc tsc --project tsconfig.build.json",
     "build:lib:wraps": "npx -w packages/wraps tsc --project tsconfig.build.json",
@@ -53,7 +52,6 @@
   "devDependencies": {
     "@astrobase/client": "file:packages/client",
     "@astrobase/core": "file:packages/core",
-    "@astrobase/immutable": "file:packages/fs",
     "@astrobase/keyrings": "file:packages/keyrings",
     "@astrobase/rpc": "file:packages/rpc",
     "@astrobase/wraps": "file:packages/wraps",

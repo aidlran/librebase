@@ -1,7 +1,7 @@
 import { IdentifierRegistry } from '@astrobase/core';
-import { CodecRegistry, FS, type Codec } from '@astrobase/immutable';
-import { json } from '@astrobase/immutable/json';
-import { binary } from '@astrobase/immutable/middleware';
+import { CodecRegistry, FS, type Codec } from '@astrobase/core/immutable';
+import { json } from '@astrobase/core/json';
+import { binary } from '@astrobase/core/middleware';
 import { WrapRegistry } from '@astrobase/wraps';
 import { WrapMiddleware } from '@astrobase/wraps/middleware';
 import { KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';

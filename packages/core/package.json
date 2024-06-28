@@ -30,9 +30,21 @@
       "types": "./dist/driver/index.d.ts",
       "default": "./dist/driver/index.js"
     },
+    "./immutable": {
+      "types": "./dist/immutable/index.d.ts",
+      "default": "./dist/immutable/index.js"
+    },
     "./internal": {
       "types": "./dist/internal/index.d.ts",
       "default": "./dist/internal/index.js"
+    },
+    "./json": {
+      "types": "./dist/json/index.d.ts",
+      "default": "./dist/json/index.js"
+    },
+    "./middleware": {
+      "types": "./dist/middleware/index.d.ts",
+      "default": "./dist/middleware/index.js"
     }
   },
   "main": "./dist/public/index.js",
@@ -42,9 +54,11 @@
   ],
   "dependencies": {
     "base-x": "5.0.0",
+    "content-type": "1.0.5",
     "varint": "6.0.0"
   },
   "devDependencies": {
+    "@types/content-type": "^1.1.8",
     "@types/varint": "^6.0.3"
   }
 }
