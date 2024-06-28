@@ -12,7 +12,7 @@ import {
   union,
   unknown,
 } from 'valibot';
-import type { JsonCodecMiddleware } from '../middleware/types.js';
+import type { CodecMiddleware } from '../middleware/types.js';
 import { unwrap, wrap, type WrapConfig, type WrapValue } from './wraps.js';
 
 export const wrapConfigSchema = object(
@@ -45,11 +45,11 @@ export function isWrapConfig(value: unknown): boolean {
   return safeParse(wrapConfigSchema, value, { abortEarly: true }).success;
 }
 
-export const WrapMiddleware: JsonCodecMiddleware = {
+export const WrapMiddleware = {
   replacer(_, value, props) {
     return isWrapConfig(value) ? wrap(value as WrapConfig, props.instanceID) : value;
   },
   reviver(_, value, props) {
     return isWrap(value) ? unwrap(value as WrapValue, props.instanceID) : value;
   },
-};
+} satisfies CodecMiddleware;

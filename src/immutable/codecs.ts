@@ -1,9 +1,7 @@
 import { parse, type MediaType } from 'content-type';
 import type { MaybePromise } from '../core/channels.js';
 import { Registry, stringToBytes, type RegistryModule } from '../internal/index.js';
-import { json } from '../json/codec.js';
-import { binary } from '../middleware/binary.js';
-import { WrapMiddleware } from '../wraps/middleware.js';
+import { JSONCodec } from '../json/codec.js';
 import { validateMediaType } from './media-types.js';
 
 export interface CodecProps {
@@ -32,7 +30,7 @@ export interface Codec<T = unknown> extends RegistryModule<string> {
 
 export const CodecRegistry = new Registry<string, Codec>({
   defaults: {
-    'application/json': json(binary, WrapMiddleware),
+    'application/json': JSONCodec,
     'application/octet-stream': {
       decode: (v) => v,
       encode: (v) => v,

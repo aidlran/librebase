@@ -3,8 +3,8 @@ import type { CodecProps } from '../immutable/codecs.js';
 /** Additional properties provided to the middleware. */
 export type MiddlewareProps = Pick<CodecProps, 'instanceID'>;
 
-/** A middleware that hooks into the JSON parse and stringification processes. */
-export interface JsonCodecMiddleware {
+/** A middleware that hooks into the transformation process of structured data. */
+export interface CodecMiddleware {
   /**
    * A function that may alter the value that ends up in the stringified output. This function
    * behaves similarly to the replacer function that can be provided to `JSON.stringify`. (See:

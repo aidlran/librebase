@@ -3,53 +3,35 @@
  * @category API Reference
  */
 
-import type { Codec, CodecProps } from '../immutable/codecs.js';
-import type { JsonCodecMiddleware } from '../middleware/types.js';
+import type { Codec } from '../immutable/codecs.js';
+import { getMiddlewares, type CodecMiddleware } from '../middleware/index.js';
 
-/** An extensible JSON codec for the `application/json` media type. */
-export interface JSONCodec extends Codec {
-  key: 'application/json';
-  decode<T>(payload: Uint8Array, props: CodecProps): Promise<T>;
-  encode(data: unknown, props: CodecProps): Promise<Uint8Array>;
-}
-
-/**
- * Creates a {@linkcode JSONCodec}.
- *
- * @param middlewares Middlewares can be registered here at creation time.
- * @returns The {@linkcode JSONCodec} instance.
- */
-export function json(...middlewares: JsonCodecMiddleware[]): JSONCodec {
-  return {
-    key: 'application/json',
-    decode: decode.bind(middlewares) as JSONCodec['decode'],
-    encode: encode.bind(middlewares),
-  };
-}
-
-function decode(
-  this: JsonCodecMiddleware[],
-  payload: Uint8Array,
-  props: CodecProps,
-): Promise<unknown> {
-  const refTrack = new Set();
-  const parsed = JSON.parse(new TextDecoder().decode(payload)) as unknown;
-  return Promise.resolve(replace(this, 'reviver', props.instanceID, refTrack, parsed));
-}
-
-async function encode(
-  this: JsonCodecMiddleware[],
-  data: unknown,
-  props: CodecProps,
-): Promise<Uint8Array> {
-  const refTrack = new Set();
-  const replaced = await replace(this, 'replacer', props.instanceID, refTrack, data);
-  return new TextEncoder().encode(JSON.stringify(replaced));
-}
+/** An JSON codec with extensible middleware system for the `application/json` media type. */
+export const JSONCodec = {
+  key: 'application/json',
+  decode(payload, props) {
+    const refTrack = new Set();
+    const parsed = JSON.parse(new TextDecoder().decode(payload)) as unknown;
+    return Promise.resolve(
+      replace(getMiddlewares(props.instanceID), 'reviver', props.instanceID, refTrack, parsed),
+    );
+  },
+  async encode(data, props) {
+    const refTrack = new Set();
+    const replaced = await replace(
+      getMiddlewares(props.instanceID),
+      'replacer',
+      props.instanceID,
+      refTrack,
+      data,
+    );
+    return new TextEncoder().encode(JSON.stringify(replaced));
+  },
+} satisfies Codec;
 
 async function replace(
-  plugins: JsonCodecMiddleware[],
-  fn: keyof JsonCodecMiddleware,
+  plugins: CodecMiddleware[],
+  fn: keyof CodecMiddleware,
   instanceID: string | undefined,
   refTrack: Set<unknown>,
   value: unknown,
