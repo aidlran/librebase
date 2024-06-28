@@ -22,7 +22,7 @@ module.exports = {
     node: true,
   },
   overrides: [
-    ...['client', 'core', 'keyrings', 'wraps'].map((path) => ({
+    ...['core', 'keyrings', 'rpc', 'wraps'].map((path) => ({
       files: [`packages/${path}/**/*.ts`],
       parserOptions: {
         tsconfigRootDir: join(__dirname, `packages/${path}`),
