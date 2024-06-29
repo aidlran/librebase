@@ -6,6 +6,7 @@ import {
   fakeVoidDriver,
 } from '../../testing/drivers.js';
 import { resolveBeforeTimeout } from '../../testing/utils.js';
+import { Identifier } from '../core/identifiers.js';
 import {
   getChannels,
   queryChannelsSync,
@@ -13,7 +14,6 @@ import {
   type Channels,
   type ChannelQuery,
 } from './channels.js';
-import { Identifier } from './identifiers.js';
 
 test('getChannels', () => {
   const value = getChannels();

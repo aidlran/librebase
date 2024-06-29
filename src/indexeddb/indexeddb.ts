@@ -15,7 +15,8 @@
  * @category API Reference
  */
 
-import type { ChannelDriver, Identifier } from '../core/index.js';
+import type { ChannelDriver } from '../channels/channels.js';
+import type { Identifier } from '../core/identifiers.js';
 
 /**
  * Configuration object for the IndexedDB channel driver.

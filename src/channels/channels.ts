@@ -1,17 +1,14 @@
-import type { Identifier } from './identifiers.js';
-
 /**
- * A value that may or may not be in Promise form.
+ * Asfafaf
  *
- * @category General
+ * @module Channels
+ * @category API Reference
  */
-export type MaybePromise<T> = T | Promise<T>;
 
-/**
- * Interface for a channel implementation. All functionality is optional to implement.
- *
- * @category Channels
- */
+import type { Identifier } from '../core/identifiers.js';
+import type { MaybePromise } from '../internal/index.js';
+
+/** Interface for a channel implementation. All functionality is optional to implement. */
 export interface ChannelDriver {
   /**
    * A function that handles a delete request.
@@ -45,9 +42,8 @@ export interface ChannelDriver {
  *
  * While querying for objects, each entry in the array is queried one by one until a valid result is
  * returned or until the end of the array is reached. Each entry can be either a single
- * `ChannelDriver` instance, or a subarray of `ChannelDriver` instances. When a subarray is
- * encountered, each channel in the subarray is queried asynchronously and raced for the first valid
- * result.
+ * {@linkcode ChannelDriver}, or a subarray of many channels. When a subarray is encountered, each
+ * channel in the subarray is queried asynchronously and raced for the first valid result.
  *
  * This allows control over when channels are queried. A typical set up would be to query local
  * sources followed by remote sources, as demonstated in the theoretical example below.
@@ -58,15 +54,12 @@ export interface ChannelDriver {
  *   [remoteSource1, remoteSource2],
  * ];
  * ```
- *
- * @category Channels
  */
 export type Channels = (ChannelDriver | ChannelDriver[])[];
 
 /**
  * A query function that is called per item.
  *
- * @category Channels
  * @template T The type of the item.
  * @template R The type of the return value.
  * @param item One of the items to query.
@@ -78,10 +71,8 @@ const channels: Record<string, Channels> = {};
 
 /**
  * Gets the array of channels registered for the instance. The returned array can be manipulated
- * directly to change the registered channels. See the type definition of `Channels` for more
- * information about how it is used.
+ * directly to change the registered channels. See also the {@linkcode Channels} typedef.
  *
- * @category Channels
  * @example Push to the array to register new channels:
  *
  * ```js
@@ -96,11 +87,7 @@ export function getChannels(instanceID?: string): Channels {
   return (channels[instanceID ?? ''] ??= []);
 }
 
-/**
- * Queries channels synchronously, one by one. Groups of channels are raced asynchronously.
- *
- * @category Channels
- */
+/** Queries channels synchronously, one by one. Groups of channels are raced asynchronously. */
 export async function queryChannelsSync<T>(
   query: ChannelQuery<ChannelDriver, T>,
   instanceID?: string,
@@ -152,11 +139,7 @@ function race<T, R>(channels: T[], query: ChannelQuery<T, R>): Promise<R | void>
   });
 }
 
-/**
- * Queries all channels asynchronously.
- *
- * @category Channels
- */
+/** Queries all channels asynchronously. */
 export function queryChannelsAsync<T>(
   query: ChannelQuery<ChannelDriver, T>,
   instanceID?: string,

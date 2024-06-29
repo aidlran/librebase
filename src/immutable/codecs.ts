@@ -1,6 +1,10 @@
 import { parse, type MediaType } from 'content-type';
-import type { MaybePromise } from '../core/channels.js';
-import { Registry, stringToBytes, type RegistryModule } from '../internal/index.js';
+import {
+  Registry,
+  stringToBytes,
+  type MaybePromise,
+  type RegistryModule,
+} from '../internal/index.js';
 import { JSONCodec } from '../json/codec.js';
 import { validateMediaType } from './media-types.js';
 

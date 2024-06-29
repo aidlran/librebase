@@ -1,4 +1,4 @@
-import { queryChannelsAsync, queryChannelsSync } from './channels.js';
+import { queryChannelsAsync, queryChannelsSync } from '../channels/channels.js';
 import { Identifier, IdentifierRegistry, type IdentifierSchema } from './identifiers.js';
 
 /**

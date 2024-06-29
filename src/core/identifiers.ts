@@ -1,7 +1,6 @@
 import { decode, encode, encodingLength } from 'varint';
 import { Immutable } from '../immutable/schema.js';
-import { Base58, Registry, type RegistryModule } from '../internal/index.js';
-import type { MaybePromise } from './channels.js';
+import { Base58, Registry, type MaybePromise, type RegistryModule } from '../internal/index.js';
 
 /**
  * This interface describes an identifier type and how the application should handle those

@@ -1,4 +1,4 @@
-import type { MaybePromise } from '../../core/channels.js';
+import type { MaybePromise } from '../../internal/index.js';
 import type { RequestMessage, ResponseMessage } from '../types.js';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -25,6 +25,10 @@
       "types": "./dist/core/index.d.ts",
       "default": "./dist/core/index.js"
     },
+    "./channels": {
+      "types": "./dist/channels/channels.d.ts",
+      "default": "./dist/channels/channels.js"
+    },
     "./immutable": {
       "types": "./dist/immutable/index.d.ts",
       "default": "./dist/immutable/index.js"

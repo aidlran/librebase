@@ -1,6 +1,7 @@
 {
   "$schema": "https://typedoc.org/schema.json",
   "entryPoints": [
+    "./src/channels/channels.ts",
     "./src/core/index.ts",
     "./src/immutable/index.ts",
     "./src/indexeddb/indexeddb.ts",

@@ -3,7 +3,6 @@
  * @category API Reference
  */
 
-export * from './channels.js';
 export * from './identifiers.js';
 export * from './repository.js';
 
