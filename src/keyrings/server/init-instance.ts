@@ -1,5 +1,4 @@
-import '../../middleware/index.js'; // TODO: why test breaks without this??
-import { IdentifierRegistry } from '../../core/identifiers.js';
+import { IdentifierRegistry } from '../../identifiers/identifiers.js';
 import { WrapRegistry } from '../../wraps/index.js';
 import { KEYRINGS_INSTANCE_ID as instanceID } from '../shared/constants.js';
 import { KeyringIndexIdentifier } from './keyring.js';

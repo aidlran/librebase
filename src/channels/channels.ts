@@ -5,7 +5,7 @@
  * @category API Reference
  */
 
-import type { Identifier } from '../core/identifiers.js';
+import { Identifier } from '../identifiers/identifiers.js';
 import type { MaybePromise } from '../internal/index.js';
 
 /** Interface for a channel implementation. All functionality is optional to implement. */

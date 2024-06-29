@@ -1,6 +1,6 @@
 import { afterAll, describe, expect, test } from 'vitest';
 import { getChannels, type ChannelDriver } from '../../channels/channels.js';
-import { Identifier, IdentifierRegistry } from '../../core/index.js';
+import { Identifier, IdentifierRegistry } from '../../identifiers/identifiers.js';
 import { Hash } from '../../immutable/index.js';
 import { getAddressHash, setAddressHash } from './address.js';
 

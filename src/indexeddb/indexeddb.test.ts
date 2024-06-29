@@ -1,6 +1,6 @@
-import { Identifier } from '../core/index.js';
 import 'fake-indexeddb/auto';
 import { expect, test } from 'vitest';
+import { Identifier } from '../identifiers/identifiers.js';
 import { indexeddb } from './indexeddb.js';
 
 test('IndexedDB channel driver', async () => {

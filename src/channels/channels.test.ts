@@ -6,7 +6,7 @@ import {
   fakeVoidDriver,
 } from '../../testing/drivers.js';
 import { resolveBeforeTimeout } from '../../testing/utils.js';
-import { Identifier } from '../core/identifiers.js';
+import { Identifier } from '../identifiers/identifiers.js';
 import {
   getChannels,
   queryChannelsSync,

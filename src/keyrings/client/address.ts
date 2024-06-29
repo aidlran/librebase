@@ -1,6 +1,6 @@
 import { Hash } from '../../immutable/hashes.js';
+import { Identifier, getOne, putOne } from '../../identifiers/identifiers.js';
 import { identifierToBytes } from '../../internal/encoding.js';
-import { Identifier, getOne, putOne } from '../../core/index.js';
 
 export const AddressType = {
   BIP32: 0,

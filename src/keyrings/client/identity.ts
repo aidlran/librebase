@@ -1,5 +1,5 @@
 import { queryChannelsSync } from '../../channels/channels.js';
-import { Identifier } from '../../core/identifiers.js';
+import { Identifier } from '../../identifiers/identifiers.js';
 import {
   Immutable,
   decodeWithCodec,

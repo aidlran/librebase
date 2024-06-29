@@ -16,7 +16,7 @@
  */
 
 import type { ChannelDriver } from '../channels/channels.js';
-import type { Identifier } from '../core/identifiers.js';
+import type { Identifier } from '../identifiers/identifiers.js';
 
 /**
  * Configuration object for the IndexedDB channel driver.

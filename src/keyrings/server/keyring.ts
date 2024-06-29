@@ -1,5 +1,5 @@
+import { Identifier, getOne, type IdentifierSchema } from '../../identifiers/identifiers.js';
 import { Hash, deleteFile, getFile, putFile, type CIDLike } from '../../immutable/index.js';
-import { Identifier, getOne, type IdentifierSchema } from '../../core/index.js';
 import type { WrapConfig } from '../../wraps/wraps.js';
 import { KEYRINGS_INSTANCE_ID } from '../shared/constants.js';
 import type * as P from '../shared/message-payloads.js';
