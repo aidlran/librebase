@@ -124,7 +124,7 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
  */
 export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
   /** @ignore */
-  private readonly registry: Partial<Record<string, Partial<Record<K, T>>>> = {};
+  private readonly registry: Partial<Record<string, Map<K, T>>> = {};
 
   /**
    * @template K The type used for keys.
@@ -141,7 +141,7 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
    * @returns The module or `undefined` if no module is registered with the key.
    */
   get(key: K, instanceID?: string): T | undefined {
-    return this.registry[instanceID ?? '']?.[key] ?? this.options?.defaults?.[key];
+    return this.registry[instanceID ?? '']?.get(key) ?? this.options?.defaults?.[key];
   }
 
   /**
@@ -175,19 +175,19 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
       throw new RegistryError(RegistryErrorCode.KeyMissing);
     }
     key = key instanceof Array ? key : [key];
-    const instance = (this.registry[options?.instanceID ?? ''] ??= {} as Record<K, T>);
+    const instance = (this.registry[options?.instanceID ?? ''] ??= new Map<K, T>());
     if (this.options?.validateKey ?? !options?.force) {
       for (const k of key) {
         if (this.options?.validateKey && !this.options.validateKey(k)) {
           throw new RegistryError(RegistryErrorCode.KeyInvalid);
         }
-        if (!options?.force && instance[k]) {
+        if (!options?.force && instance.get(k)) {
           throw new RegistryError(RegistryErrorCode.KeyInUse);
         }
       }
     }
     for (const k of key) {
-      instance[k] = module;
+      instance.set(k, module);
     }
   }
 }
