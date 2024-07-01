@@ -22,7 +22,7 @@ export interface RegistryModule<K extends RegistryKey> {
  *
  * @category Registry
  */
-export interface RegisterOptions<K extends RegistryKey> {
+export type RegisterOptions<K extends RegistryKey> = {
   /** When specified, overrides the key(s) that the module is registered with. */
   key?: K | Array<K>;
 
@@ -31,10 +31,24 @@ export interface RegisterOptions<K extends RegistryKey> {
    * replaced with the one being registered.
    */
   force?: boolean;
+} & (
+  | {
+      /** If true, the module is registered at the global level. */
+      global?: false;
 
-  /** Sets the instance ID that the module will be registered under. */
-  instanceID?: string;
-}
+      /**
+       * When registering at the instance level:
+       *
+       * - If set, will register for that instance.
+       * - If left undefined, will register for the default instance.
+       */
+      instanceID?: string;
+    }
+  | {
+      /** If true, the module is registered at the global level. */
+      global: true;
+    }
+);
 
 /**
  * Error codes related to the registry.
@@ -106,17 +120,51 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
 }
 
 /**
- * A common pattern used by `@astrobase` packages is to allow plugin-like functionality to make the
- * ecosystem extensible. The `Registry` class provides a common implementation for this pattern to
- * keep things consistent. It is used to define key and module types, validation, and provides
- * methods to register and retrieve modules based on those keys.
+ * Astrobase is designed to be modular and extensible, and, as such, many features use a strategy
+ * pattern to be able to allow users to register or override functionality in a plugin-like way. The
+ * `Registry` class is a common implementation of this pattern that can be shared across the
+ * ecosystem to keep things consistent, but also to reduce code duplication.
  *
- *     interface Encoder extends RegistryModule<string> {
- *       encode(value): ArrayBuffer;
- *       decode(value): string;
- *     }
+ * Features like the Codec and Middleware systems expose an instance of `Registry` to allow users to
+ * register Codecs and Middlewares.
  *
- *     const EncoderRegistry = new Registry<string, Encoder>();
+ * ## Order of Precendence
+ *
+ * The `Registry` class has three levels:
+ *
+ * 1. Default - "built in" modules provided by the constructor of the `Registry`, available across all
+ *    instances.
+ * 2. Global - user provided modules, available across all instances.
+ * 3. Instance - user provided modules, available to a particular instance.
+ *
+ * Each level takes precedent over the last - so, for example, if a module has been provided for the
+ * same key at both the global and instance levels, the instance level module is the one that is
+ * retrieved by {@linkcode get} and {@linkcode getStrict}.
+ *
+ * ## Options
+ *
+ * When creating a `Registry` a {@linkcode RegistryOptions} object may be provided to provide
+ * defaults, and validation for registration keys and values (modules).
+ *
+ * TypeScript type parameters may also be provided to restrict the key and module types. The module
+ * type must extend {@linkcode RegistryModule}`<K>` which has a mechanism for a module optionally
+ * defining its key.
+ *
+ * ## Example
+ *
+ * Using TypeScript and providing type parameters:
+ *
+ * ```ts
+ * interface Encoder extends RegistryModule<string> {
+ *   encode(value): ArrayBuffer;
+ *   decode(value): string;
+ * }
+ *
+ * const EncoderRegistry = new Registry<string, Encoder>({
+ *   validateKey: (k) => typeof k === 'string',
+ *   validateModule: (m) => typeof m.encode === 'function' && typeof m.decode === 'function',
+ * });
+ * ```
  *
  * @category Registry
  * @template K The type used for keys.
@@ -124,7 +172,10 @@ export interface RegistryOptions<K extends RegistryKey, T extends RegistryModule
  */
 export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
   /** @ignore */
-  private readonly registry: Partial<Record<string, Map<K, T>>> = {};
+  private readonly global = new Map<K, T>();
+
+  /** @ignore */
+  private readonly instance: Partial<Record<string, Map<K, T>>> = {};
 
   /**
    * @template K The type used for keys.
@@ -134,18 +185,24 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
   constructor(private readonly options?: RegistryOptions<K, T>) {}
 
   /**
-   * Gets a module safely without throwing.
+   * Gets a module safely, by key. If not found, this method will simply return `void`. See
+   * {@linkcode Registry} for more on the order of precedence when retrieving modules.
    *
    * @param key The key of the target module.
    * @param instanceID The target instance ID.
    * @returns The module or `undefined` if no module is registered with the key.
    */
   get(key: K, instanceID?: string): T | undefined {
-    return this.registry[instanceID ?? '']?.get(key) ?? this.options?.defaults?.[key];
+    return (
+      this.instance[instanceID ?? '']?.get(key) ??
+      this.global.get(key) ??
+      this.options?.defaults?.[key]
+    );
   }
 
   /**
-   * Gets a module unsafely, throwing if not found.
+   * Gets a module unsafely. If not found, an error is thrown. See {@linkcode Registry} for more on
+   * the order of precedence when retrieving modules.
    *
    * @param key The key of the target module.
    * @param instanceID The target instance ID.
@@ -161,7 +218,8 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
   }
 
   /**
-   * Registers a module.
+   * Registers a module. A module can be registered either globally or targeted for a specific
+   * instance (see {@linkcode Registry} and {@linkcode RegisterOptions}).
    *
    * @param module A module to register.
    * @param options An optional {@linkcode RegistrationOptions} object.
@@ -175,7 +233,9 @@ export class Registry<K extends RegistryKey, T extends RegistryModule<K>> {
       throw new RegistryError(RegistryErrorCode.KeyMissing);
     }
     key = key instanceof Array ? key : [key];
-    const instance = (this.registry[options?.instanceID ?? ''] ??= new Map<K, T>());
+    const instance = options?.global
+      ? this.global
+      : (this.instance[options?.instanceID ?? ''] ??= new Map<K, T>());
     if (this.options?.validateKey ?? !options?.force) {
       for (const k of key) {
         if (this.options?.validateKey && !this.options.validateKey(k)) {

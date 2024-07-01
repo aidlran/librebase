@@ -103,6 +103,26 @@ describe('Registry', () => {
       expect(registry.get(key, 'a')).not.toBe(thing1);
       expect(registry.get(key, 'a')).toBe(thing2);
     });
+
+    test('Global', () => {
+      const registry = new Registry();
+      const key = 1;
+      const thing1 = { key };
+      const thing2 = { key };
+
+      expect(registry.get(key)).toBeUndefined();
+
+      registry.register(thing1, { global: true });
+
+      expect(registry.get(key)).toBe(thing1);
+      expect(registry.get(key, 'a')).toBe(thing1);
+
+      registry.register(thing2, { instanceID: 'a' });
+
+      expect(registry.get(key, 'a')).not.toBe(thing1);
+      expect(registry.get(key, 'a')).toBe(thing2);
+      expect(registry.get(key)).toBe(thing1);
+    });
   });
 
   test('Defaults', () => {
