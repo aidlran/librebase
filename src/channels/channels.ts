@@ -1,6 +1,4 @@
 /**
- * Asfafaf
- *
  * @module Channels
  * @category API Reference
  */
