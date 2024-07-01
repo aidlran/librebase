@@ -10,7 +10,7 @@ import { roundRobin, type LoadBalancer } from './load-balancer.js';
  * @template Req The request body type.
  * @param operation The request operation type.
  * @param request The request body.
- * @param instanceID The Librebase instance ID.
+ * @param instanceID The instance ID, otherwise will use the default instance.
  */
 export type ClusterDispatch = <Res, Req = unknown>(
   operation: string,

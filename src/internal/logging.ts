@@ -62,7 +62,7 @@ export async function log(
     return;
   }
   const logFn = level === 'warn' || level === 'error' ? console[level] : console.log;
-  logFn(`${level}: Librebase:`, ...(await Promise.resolve(messages())));
+  logFn(`${level}: Astrobase:`, ...(await Promise.resolve(messages())));
 }
 
 // Set the default log verbosity level
